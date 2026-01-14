@@ -165,12 +165,12 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useCitasStore } from '../stores/citas'
-import { useProfesionalesStore } from '../stores/profesionales'
+import { useCitasStore } from '@clinica/stores/citas'
+import { useProfesionalesStore } from '@clinica/stores/profesionales'
 import { useNotification } from '@/composables/useNotification'
-import CitasCalendarSimple from '../components/citas/CitasCalendarSimple.vue'
-import CitaFormModal from '../components/citas/CitaFormModal.vue'
-import CitaViewModal from '../components/citas/CitaViewModal.vue'
+import CitasCalendarSimple from '@clinica/components/citas/CitasCalendarSimple.vue'
+import CitaFormModal from '@clinica/components/citas/CitaFormModal.vue'
+import CitaViewModal from '@clinica/components/citas/CitaViewModal.vue'
 
 const citasStore = useCitasStore()
 const profesionalesStore = useProfesionalesStore()

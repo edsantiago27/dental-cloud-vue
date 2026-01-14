@@ -85,7 +85,7 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-import { useConfiguracionStore } from '../stores/configuracion'
+import { useConfiguracionStore } from '@clinica/stores/configuracion'
 import { useNotification } from '@/composables/useNotification'
 
 const configuracionStore = useConfiguracionStore()

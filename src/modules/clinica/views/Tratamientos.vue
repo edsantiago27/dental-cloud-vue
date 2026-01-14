@@ -144,10 +144,10 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useTratamientosStore } from '../stores/tratamientos'
+import { useTratamientosStore } from '@clinica/stores/tratamientos'
 import { useNotification } from '@/composables/useNotification'
-import TratamientosList from '../components/tratamientos/TratamientosList.vue'
-import TratamientoFormModal from '../components/tratamientos/TratamientoFormModal.vue'
+import TratamientosList from '@clinica/components/tratamientos/TratamientosList.vue'
+import TratamientoFormModal from '@clinica/components/tratamientos/TratamientoFormModal.vue'
 
 const tratamientosStore = useTratamientosStore()
 const notify = useNotification()

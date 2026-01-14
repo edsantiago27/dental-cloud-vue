@@ -1,18 +1,13 @@
-// src/router/paciente.js
-import PacienteLayout from '../layouts/PacienteLayout.vue'
-import { usePacienteAuthStore } from '../stores/auth'
+// src/modules/paciente/router/index.js
+import { useAuthStore } from '@shared/stores/auth'
 
 // Middleware de autenticación
 function requireAuth(to, from, next) {
-  const authStore = usePacienteAuthStore()
+  const authStore = useAuthStore()
   
-  if (!authStore.isAuthenticated) {
-    // Guardar ruta a la que intentaba acceder
+  if (!authStore.isAuthenticated || !authStore.isPacienteUser) {
     sessionStorage.setItem('intended_route', to.fullPath)
-    
-    // Redirigir a login
-    const clinicaSlug = to.params.clinicaSlug || 'demo'
-    next(`/${clinicaSlug}/paciente/login`)
+    next('/paciente/login')
   } else {
     next()
   }
@@ -20,90 +15,89 @@ function requireAuth(to, from, next) {
 
 // Middleware para redirigir si ya está autenticado
 function redirectIfAuthenticated(to, from, next) {
-  const authStore = usePacienteAuthStore()
+  const authStore = useAuthStore()
   
-  if (authStore.isAuthenticated) {
-    const clinicaSlug = to.params.clinicaSlug || 'demo'
-    next(`/${clinicaSlug}/paciente/dashboard`)
+  if (authStore.isAuthenticated && authStore.isPacienteUser) {
+    next('/paciente/portal')
   } else {
     next()
   }
 }
 
-export default [
+export const pacienteRoutes = [  // ⭐ CAMBIO PRINCIPAL: export const
+  // Rutas públicas
   {
-    path: '/:clinicaSlug/paciente',
-    redirect: (to) => `/${to.params.clinicaSlug}/paciente/login`
-  },
-  
-  // Rutas públicas (sin autenticación)
-  {
-    path: '/:clinicaSlug/paciente/login',
-    name: 'PacienteLogin',
+    path: '/paciente/login',
+    name: 'paciente-login',
     component: () => import('../views/Login.vue'),
     beforeEnter: redirectIfAuthenticated,
-    meta: { title: 'Login Paciente' }
+    meta: { title: 'Login Paciente', requiresAuth: false }
   },
   {
-    path: '/:clinicaSlug/paciente/registro',
-    name: 'PacienteRegistro',
+    path: '/paciente/registro',
+    name: 'paciente-registro',
     component: () => import('../views/Registro.vue'),
     beforeEnter: redirectIfAuthenticated,
-    meta: { title: 'Registro Paciente' }
+    meta: { title: 'Registro Paciente', requiresAuth: false }
   },
   {
-    path: '/:clinicaSlug/paciente/recuperar-password',
-    name: 'PacienteRecuperarPassword',
+    path: '/paciente/recuperar-password',
+    name: 'paciente-recuperar-password',
     component: () => import('../views/RecuperarPassword.vue'),
     beforeEnter: redirectIfAuthenticated,
-    meta: { title: 'Recuperar Contraseña' }
+    meta: { title: 'Recuperar Contraseña', requiresAuth: false }
   },
   
-  // Rutas protegidas (requieren autenticación)
+  // Rutas protegidas
   {
-    path: '/:clinicaSlug/paciente',
-    component: PacienteLayout,
+    path: '/paciente',
+    component: () => import('../layouts/PacienteLayout.vue'),
     beforeEnter: requireAuth,
+    meta: { requiresAuth: true, module: 'paciente' },
     children: [
       {
-        path: 'dashboard',
-        name: 'PacienteDashboard',
+        path: '',
+        redirect: '/paciente/portal'
+      },
+      {
+        path: 'portal',
+        name: 'paciente-portal',
         component: () => import('../views/Dashboard.vue'),
-        meta: { title: 'Dashboard Paciente' }
+        meta: { title: 'Portal Paciente' }
       },
       {
         path: 'citas',
-        name: 'PacienteCitas',
+        name: 'paciente-citas',
         component: () => import('../views/Citas.vue'),
         meta: { title: 'Mis Citas' }
       },
       {
         path: 'historia-clinica',
-        name: 'PacienteHistoriaClinica',
+        name: 'paciente-historia-clinica',
         component: () => import('../views/HistoriaClinica.vue'),
         meta: { title: 'Historia Clínica' }
       },
       {
         path: 'documentos',
-        name: 'PacienteDocumentos',
+        name: 'paciente-documentos',
         component: () => import('../views/Documentos.vue'),
         meta: { title: 'Documentos' }
       },
       {
         path: 'pagos',
-        name: 'PacientePagos',
+        name: 'paciente-pagos',
         component: () => import('../views/Pagos.vue'),
-        meta: { title: 'Pagos' }
+        meta: { title: 'Mis Pagos' }
       },
       {
         path: 'perfil',
-        name: 'PacientePerfil',
+        name: 'paciente-perfil',
         component: () => import('../views/Perfil.vue'),
         meta: { title: 'Mi Perfil' }
       },
       {
         path: 'configuracion',
-        name: 'PacienteConfiguracion',
+        name: 'paciente-configuracion',
         component: () => import('../views/Configuracion.vue'),
         meta: { title: 'Configuración' }
       }

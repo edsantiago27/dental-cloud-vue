@@ -2,10 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { authGuard, guestGuard } from './guards'
 import { useAuthStore } from '@shared/stores/auth'
 
-// Importar rutas de módulos (TODOS con named imports)
+// Importar rutas de módulos
 import { superAdminRoutes } from '@superadmin/router'
 import { pacienteRoutes } from '@paciente/router'
-// import { clinicaRoutes } from '@clinica/router'  // Cuando lo crees
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,16 +13,16 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: () => import('../views/auth/Login.vue'),
+      component: () => import('@/views/auth/Login.vue'),  // ← CAMBIAR AQUÍ
       beforeEnter: guestGuard,
       meta: { title: 'Iniciar Sesión', requiresAuth: false }
     },
 
-    // Módulo Clínica (temporal - mientras refactorizamos)
+    // Módulo Clínica
     {
       path: '/',
-    component: () => import('@clinica/layouts/ClinicaLayout.vue'),  
-    beforeEnter: authGuard,
+      component: () => import('@clinica/layouts/ClinicaLayout.vue'),  
+      beforeEnter: authGuard,
       meta: { requiresAuth: true, module: 'clinica' },
       children: [
         {
@@ -91,7 +90,6 @@ const router = createRouter({
           return '/login'
         }
         
-        // Redirigir según tipo de usuario
         if (authStore.isPacienteUser) {
           return '/paciente/portal'
         }
@@ -104,7 +102,7 @@ const router = createRouter({
     {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
-      component: () => import('../views/NotFound.vue'),
+      component: () => import('@/views/NotFound.vue'),  // ← CAMBIAR AQUÍ
       meta: { title: 'Página No Encontrada' }
     }
   ]

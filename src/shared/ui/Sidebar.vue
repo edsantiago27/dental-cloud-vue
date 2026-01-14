@@ -166,11 +166,10 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { useAuthStore } from '../stores/auth'
+import { computed, onMounted } from 'vue'
+import { useAuthStore } from '@shared/stores/auth'
 import MenuItem from './MenuItem.vue'
-import { useConfiguracionStore } from '../stores/configuracion'
-import { onMounted } from 'vue'
+import { useConfiguracionStore } from '@clinica/stores/configuracion'
 
 const configuracionStore = useConfiguracionStore()
 
@@ -189,33 +188,16 @@ defineProps({
     default: true
   }
 })
+
 const emit = defineEmits(['toggle'])
+
 function handleToggle() {
   console.log('🔄 Toggle sidebar clicked')
   emit('toggle')
 }
+
 // Datos de ejemplo para badges
 // TODO: Conectar con API real
 const newPatientsCount = computed(() => 5)
 const todayAppointments = computed(() => 8)
 </script>
-
-<style scoped>
-/* Scrollbar personalizado */
-aside::-webkit-scrollbar {
-  width: 6px;
-}
-
-aside::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-aside::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 3px;
-}
-
-aside::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5);
-}
-</style>

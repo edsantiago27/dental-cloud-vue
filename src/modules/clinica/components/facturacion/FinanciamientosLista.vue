@@ -97,7 +97,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useFacturacionStore } from '../stores/facturacion'
+import { useFacturacionStore } from '@clinica/stores/facturacion'
 
 const props = defineProps({
   limit: {

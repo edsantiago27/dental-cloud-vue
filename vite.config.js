@@ -16,5 +16,8 @@ export default defineConfig({
       '@paciente': fileURLToPath(new URL('./src/modules/paciente', import.meta.url)),
       '@superadmin': fileURLToPath(new URL('./src/modules/superadmin', import.meta.url))
     }
+  },
+  server: {
+    port: 5173
   }
 })

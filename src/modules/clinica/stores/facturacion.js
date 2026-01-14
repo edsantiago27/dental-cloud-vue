@@ -1,6 +1,6 @@
 // stores/facturacion.js
 import { defineStore } from 'pinia'
-import facturacionService from '../services/facturacionService'
+import facturacionService from '@clinica/services/facturacionService'
 
 export const useFacturacionStore = defineStore('facturacion', {
   state: () => ({

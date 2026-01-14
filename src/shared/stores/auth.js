@@ -62,25 +62,38 @@ export const useAuthStore = defineStore('auth', () => {
         clinica_slug: credentials.clinica_slug,
         email: credentials.email
       })
+
       const { default: api } = await import('@clinica/services/api')
-      const response = await api.post('/auth/login/usuario', {
-        clinica_slug: credentials.clinica_slug,
-        email: credentials.email,
-        password: credentials.password
-      })
+     const response = await api.post('/auth/login/usuario', {
+  clinica_slug: credentials.clinica_slug,
+  email: credentials.email,
+  password: credentials.password
+})
 
-      const data = response.data || response
+console.log('📦 Respuesta completa del servidor:', response)
 
-      if (!data.token) {
-        throw new Error('Token no recibido del servidor')
-      }
+// Laravel envuelve la respuesta en { success, message, data }
+// Extraer el objeto data que contiene { token, user, clinica }
+let authData = response.data || response
 
-      // Guardar en state
-      token.value = data.token
-      user.value = data.user
-      clinica.value = data.clinica
-      userType.value = 'clinica'
-      clinicas.value = []
+// Si la respuesta tiene un campo "data" anidado, usarlo
+if (authData.data && authData.data.token) {
+  authData = authData.data
+}
+
+console.log('🔑 Datos de autenticación:', authData)
+
+if (!authData.token) {
+  throw new Error('Token no recibido del servidor')
+}
+
+// Guardar en state
+token.value = authData.token
+user.value = authData.user
+clinica.value = authData.clinica
+userType.value = 'clinica'
+clinicas.value = []
+
 
       // Persistir en localStorage
       localStorage.setItem('token', token.value)
@@ -107,80 +120,91 @@ export const useAuthStore = defineStore('auth', () => {
   // ==========================================
   
   async function loginPaciente(credentials) {
-    loading.value = true
-    error.value = null
+  loading.value = true
+  error.value = null
 
-    try {
-      console.log('🔐 Login Paciente...', {
-        email: credentials.email
-      })
-const { default: api } = await import('@paciente/services/api')
-      const response = await api.post('/auth/login/paciente', {
-        email: credentials.email,
-        password: credentials.password
-      })
+  try {
+    console.log('🔐 Login Paciente...', {
+      email: credentials.email
+    })
 
-      const data = response.data || response
+    const response = await api.post('/auth/login/paciente', {
+      email: credentials.email,
+      password: credentials.password
+    })
 
-      if (!data.token) {
-        throw new Error('Token no recibido del servidor')
-      }
+    console.log('📦 Respuesta completa del servidor:', response)
 
-      // Guardar token y usuario
-      token.value = data.token
-      user.value = data.user
-      userType.value = 'paciente'
+    // Laravel envuelve la respuesta en { success, message, data }
+    let authData = response.data || response
 
-      // Persistir básico (sin clínica aún)
-      localStorage.setItem('token', token.value)
-      localStorage.setItem('user', JSON.stringify(user.value))
-      localStorage.setItem('userType', 'paciente')
-
-      // Verificar si tiene clínicas
-      if (data.clinicas && Array.isArray(data.clinicas)) {
-        clinicas.value = data.clinicas
-        localStorage.setItem('clinicas', JSON.stringify(clinicas.value))
-
-        console.log(`✅ Login Paciente exitoso - ${clinicas.value.length} clínica(s)`)
-
-        // Si tiene múltiples clínicas, requiere selección
-        if (clinicas.value.length > 1) {
-          return { 
-            success: true, 
-            requiresSelection: true,
-            clinicas: clinicas.value
-          }
-        }
-        
-        // Si tiene solo una, seleccionarla automáticamente
-        if (clinicas.value.length === 1) {
-          clinica.value = clinicas.value[0]
-          localStorage.setItem('clinica', JSON.stringify(clinica.value))
-          
-          return { 
-            success: true, 
-            requiresSelection: false
-          }
-        }
-      }
-
-      // Sin clínicas asignadas
-      console.log('⚠️ Paciente sin clínicas asignadas')
-      return { 
-        success: true, 
-        requiresSelection: false,
-        noClinicas: true
-      }
-
-    } catch (err) {
-      console.error('❌ Error en login paciente:', err)
-      logout()
-      error.value = parseError(err)
-      return { success: false, message: error.value }
-    } finally {
-      loading.value = false
+    // Si la respuesta tiene un campo "data" anidado, usarlo
+    if (authData.data && authData.data.token) {
+      authData = authData.data
     }
+
+    console.log('🔑 Datos de autenticación:', authData)
+
+    if (!authData.token) {
+      throw new Error('Token no recibido del servidor')
+    }
+
+    // Guardar token y usuario
+    token.value = authData.token
+    user.value = authData.user
+    userType.value = 'paciente'
+
+    // Persistir básico (sin clínica aún)
+    localStorage.setItem('token', token.value)
+    localStorage.setItem('user', JSON.stringify(user.value))
+    localStorage.setItem('userType', 'paciente')
+
+    // Verificar si tiene clínicas
+    if (authData.clinicas && Array.isArray(authData.clinicas)) {
+      clinicas.value = authData.clinicas
+      localStorage.setItem('clinicas', JSON.stringify(clinicas.value))
+
+      console.log(`✅ Login Paciente exitoso - ${clinicas.value.length} clínica(s)`)
+
+      // Si tiene múltiples clínicas, requiere selección
+      if (clinicas.value.length > 1) {
+        return { 
+          success: true, 
+          requiresSelection: true,
+          clinicas: clinicas.value
+        }
+      }
+      
+      // Si tiene solo una, seleccionarla automáticamente
+      if (clinicas.value.length === 1) {
+        clinica.value = clinicas.value[0]
+        localStorage.setItem('clinica', JSON.stringify(clinica.value))
+        
+        return { 
+          success: true, 
+          requiresSelection: false
+        }
+      }
+    }
+
+    // Sin clínicas asignadas
+    console.log('⚠️ Paciente sin clínicas asignadas')
+    return { 
+      success: true, 
+      requiresSelection: false,
+      noClinicas: true
+    }
+
+  } catch (err) {
+    console.error('❌ Error en login paciente:', err)
+    logout()
+    error.value = parseError(err)
+    return { success: false, message: error.value }
+  } finally {
+    loading.value = false
   }
+}
+
 
   // ==========================================
   // ACTIONS - SELECCIONAR CLÍNICA (PACIENTE)

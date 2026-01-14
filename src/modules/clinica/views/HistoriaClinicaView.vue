@@ -163,15 +163,15 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { usePacientesStore } from '../stores/pacientes'
-import { useHistoriaClinicaStore } from '../stores/historiaClinica'
+import { usePacientesStore } from '@clinica/stores/pacientes'
+import { useHistoriaClinicaStore } from '@clinica/stores/historiaClinica'
 import { useNotification } from '@/composables/useNotification'
 
 // Componentes
-import Odontograma from '../components/historiaClinica/Odontograma.vue'
-import TimelineTratamientos from '../components/historiaClinica/TimelineTratamientos.vue'
-import FichaMedica from '../components/historiaClinica/FichaMedica.vue'
-import ArchivosClinica from '../components/historiaClinica/ArchivosClinica.vue'
+import Odontograma from '@clinica/components/historiaClinica/Odontograma.vue'
+import TimelineTratamientos from '@clinica/components/historiaClinica/TimelineTratamientos.vue'
+import FichaMedica from '@clinica/components/historiaClinica/FichaMedica.vue'
+import ArchivosClinica from '@clinica/components/historiaClinica/ArchivosClinica.vue'
 
 const route = useRoute()
 const pacientesStore = usePacientesStore()

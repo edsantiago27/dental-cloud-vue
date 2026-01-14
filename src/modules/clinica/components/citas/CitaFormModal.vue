@@ -283,10 +283,10 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useVuelidate } from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
-import { useCitasStore } from '../stores/citas'
-import { usePacientesStore } from '../stores/pacientes'
-import { useProfesionalesStore } from '../stores/profesionales'
-import { useTratamientosStore } from '../stores/tratamientos'
+import { useCitasStore } from '@clinica/stores/citas'
+import { usePacientesStore } from '@clinica/stores/pacientes'
+import { useProfesionalesStore } from '@clinica/stores/profesionales'
+import { useTratamientosStore } from '@clinica/stores/tratamientos'
 
 const citasStore = useCitasStore()
 const pacientesStore = usePacientesStore()

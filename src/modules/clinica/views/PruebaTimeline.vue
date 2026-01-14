@@ -52,5 +52,5 @@
 </template>
 
 <script setup>
-import TimelineTratamientos from '../components/historiaClinica/TimelineTratamientos.vue'
+import TimelineTratamientos from '@clinica/components/historiaClinica/TimelineTratamientos.vue'
 </script>

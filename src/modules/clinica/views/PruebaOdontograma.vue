@@ -50,5 +50,5 @@
 </template>
 
 <script setup>
-import Odontograma from '../components/historiaClinica/Odontograma.vue'
+import Odontograma from '@clinica/components/historiaClinica/Odontograma.vue'
 </script>

@@ -61,11 +61,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useConfiguracionStore } from '../stores/configuracion'
-import DatosGeneralesTab from '../components/configuracion/DatosGeneralesTab.vue'
-import LogoBrandingTab from '../components/configuracion/LogoBrandingTab.vue'
-import HorariosPreferenciasTab from '../components/configuracion/HorariosPreferenciasTab.vue'
-import DatosFiscalesTab from '../components/configuracion/DatosFiscalesTab.vue'
+import { useConfiguracionStore } from '@clinica/stores/configuracion'
+import DatosGeneralesTab from '@clinica/components/configuracion/DatosGeneralesTab.vue'
+import LogoBrandingTab from '@clinica/components/configuracion/LogoBrandingTab.vue'
+import HorariosPreferenciasTab from '@clinica/components/configuracion/HorariosPreferenciasTab.vue'
+import DatosFiscalesTab from '@clinica/components/configuracion/DatosFiscalesTab.vue'
 
 const configuracionStore = useConfiguracionStore()
 

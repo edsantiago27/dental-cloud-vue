@@ -43,9 +43,9 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useAuthStore } from '../stores/auth'
-import Sidebar from '../components/admin/Sidebar.vue'
-import Header from '../components/admin/Header.vue'
+import { useAuthStore } from '@shared/stores/auth'
+import Sidebar from '@shared/ui/Sidebar.vue'
+import Header from '@shared/ui/Header.vue'
 
 const authStore = useAuthStore()
 

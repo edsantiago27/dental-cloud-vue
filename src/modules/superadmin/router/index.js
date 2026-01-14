@@ -1,10 +1,9 @@
-// src/router/superadmin.js
+// src/modules/superadmin/router/index.js
 import { useSuperAdminAuthStore } from '../stores/auth'
 
 function requireAuth(to, from, next) {
   const authStore = useSuperAdminAuthStore()
 
-  // Intentar restaurar sesión desde localStorage
   if (!authStore.isAuthenticated) {
     const ok = authStore.checkAuth()
     if (!ok) {
@@ -15,7 +14,6 @@ function requireAuth(to, from, next) {
   next()
 }
 
-// Middleware para redirigir si ya está autenticado
 function redirectIfAuthenticated(to, from, next) {
   const authStore = useSuperAdminAuthStore()
 
@@ -28,22 +26,21 @@ function redirectIfAuthenticated(to, from, next) {
   }
 
   next()
-};
+}
 
-export const superAdminRoutes = [
+export const superAdminRoutes = [  // ✅ Ya tiene export const correcto
   {
     path: '/superadmin/login',
-    name: 'SuperAdminLogin',
+    name: 'superadmin-login',
     component: () => import('../views/Login.vue'),
     beforeEnter: redirectIfAuthenticated,
-    meta: {
-      title: 'SuperAdmin - Login'
-    }
+    meta: { title: 'SuperAdmin - Login', requiresAuth: false }
   },
   {
     path: '/superadmin',
     component: () => import('../layouts/SuperAdminLayout.vue'),
     beforeEnter: requireAuth,
+    meta: { requiresAuth: true, module: 'superadmin' },
     children: [
       {
         path: '',
@@ -51,67 +48,51 @@ export const superAdminRoutes = [
       },
       {
         path: 'dashboard',
-        name: 'SuperAdminDashboard',
+        name: 'superadmin-dashboard',
         component: () => import('../views/Dashboard.vue'),
-        meta: {
-          title: 'Dashboard'
-        }
+        meta: { title: 'Dashboard' }
       },
       {
         path: 'clinicas',
-        name: 'SuperAdminClinicas',
+        name: 'superadmin-clinicas',
         component: () => import('../views/Clinicas.vue'),
-        meta: {
-          title: 'Clínicas'
-        }
+        meta: { title: 'Clínicas' }
       },
       {
         path: 'clinicas/:id',
-        name: 'SuperAdminClinicaDetalle',
+        name: 'superadmin-clinica-detalle',
         component: () => import('../views/ClinicaDetalle.vue'),
-        meta: {
-          title: 'Detalle de Clínica'
-        }
+        meta: { title: 'Detalle de Clínica' }
       },
       {
         path: 'suscripciones',
-        name: 'SuperAdminSuscripciones',
+        name: 'superadmin-suscripciones',
         component: () => import('../views/Suscripciones.vue'),
-        meta: {
-          title: 'Suscripciones'
-        }
+        meta: { title: 'Suscripciones' }
       },
       {
         path: 'planes',
-        name: 'SuperAdminPlanes',
+        name: 'superadmin-planes',
         component: () => import('../views/Planes.vue'),
-        meta: {
-          title: 'Planes'
-        }
+        meta: { title: 'Planes' }
       },
       {
         path: 'facturacion',
-        name: 'SuperAdminFacturacion',
+        name: 'superadmin-facturacion',
         component: () => import('../views/Facturacion.vue'),
-        meta: {
-          title: 'Facturación'
-        }
+        meta: { title: 'Facturación' }
       },
       {
         path: 'reportes',
-        name: 'SuperAdminReportes',
+        name: 'superadmin-reportes',
         component: () => import('../views/Reportes.vue'),
-        meta: {
-          title: 'Reportes'
-        }
+        meta: { title: 'Reportes' }
       },
       {
         path: 'configuracion',
-        name: 'SuperAdminConfiguracion',
+        name: 'superadmin-configuracion',
         component: () => import('../views/Configuracion.vue'),
-        meta: {
-          title: 'Configuración del Sistema'
-        }
+        meta: { title: 'Configuración del Sistema' }
       }
     ]
   }

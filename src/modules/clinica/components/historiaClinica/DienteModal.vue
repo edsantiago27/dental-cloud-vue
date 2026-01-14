@@ -152,7 +152,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { useHistoriaClinicaStore } from '../stores/historiaClinica'
+import { useHistoriaClinicaStore } from '@clinica/stores/historiaClinica'
 
 const props = defineProps({
   modelValue: {

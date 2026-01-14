@@ -166,7 +166,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '../stores/auth'
+import { useAuthStore } from '@shared/stores/auth'  // ⭐ CAMBIO AQUÍ
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -185,7 +185,8 @@ const currentYear = computed(() => new Date().getFullYear())
 
 // Handle login
 async function handleLogin() {
-  const result = await authStore.login({
+  // ⭐ CAMBIO: Usar loginClinica en lugar de login
+  const result = await authStore.loginClinica({
     clinica_slug: form.value.clinica_slug,
     email: form.value.email,
     password: form.value.password
@@ -200,16 +201,3 @@ async function handleLogin() {
   }
 }
 </script>
-
-<style scoped>
-/* Animaciones suaves */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>

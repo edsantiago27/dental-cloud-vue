@@ -203,7 +203,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useTratamientosStore } from '../stores/tratamientos'
+import { useTratamientosStore } from '@clinica/stores/tratamientos'
 
 const tratamientosStore = useTratamientosStore()
 

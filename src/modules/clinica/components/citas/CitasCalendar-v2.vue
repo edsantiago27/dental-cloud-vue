@@ -115,7 +115,7 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import listPlugin from '@fullcalendar/list'
 import esLocale from '@fullcalendar/core/locales/es'
-import { useCitasStore } from '../stores/citas'
+import { useCitasStore } from '@clinica/stores/citas'
 
 const citasStore = useCitasStore()
 const emit = defineEmits(['event-click', 'date-click'])

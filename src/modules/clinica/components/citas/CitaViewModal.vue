@@ -217,7 +217,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useCitasStore } from '../stores/citas'
+import { useCitasStore } from '@clinica/stores/citas'
 
 const citasStore = useCitasStore()
 

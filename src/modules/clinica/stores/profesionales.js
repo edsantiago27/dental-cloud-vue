@@ -1,7 +1,7 @@
 // src/stores/profesionales.js
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import profesionalesService from '../services/profesionalesService'
+import profesionalesService from '@clinica/services/profesionalesService'
 
 export const useProfesionalesStore = defineStore('profesionales', () => {
   // State

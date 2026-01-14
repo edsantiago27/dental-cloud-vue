@@ -1,7 +1,7 @@
 // stores/citas.js
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import citasService from '../services/citasService'
+import citasService from '@clinica/services/citasService'
 
 export const useCitasStore = defineStore('citas', () => {
   // ==========================================

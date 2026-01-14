@@ -268,10 +268,10 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { useHistoriaClinicaStore } from '../stores/historiaClinica'
-import { useProfesionalesStore } from '../stores/profesionales'
-import { useTratamientosStore } from '../stores/tratamientos'
-import historiaClinicaService from '../services/historiaClinicaService'
+import { useHistoriaClinicaStore } from '@clinica/stores/historiaClinica'
+import { useProfesionalesStore } from '@clinica/stores/profesionales'
+import { useTratamientosStore } from '@clinica/stores/tratamientos'
+import historiaClinicaService from '@clinica/services/historiaClinicaService'
 
 const props = defineProps({
   modelValue: {

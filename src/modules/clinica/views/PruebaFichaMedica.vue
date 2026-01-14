@@ -54,5 +54,5 @@
 </template>
 
 <script setup>
-import FichaMedica from '../components/historiaClinica/FichaMedica.vue'
+import FichaMedica from '@clinica/components/historiaClinica/FichaMedica.vue'
 </script>

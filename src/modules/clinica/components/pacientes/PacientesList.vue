@@ -194,8 +194,8 @@
 
 <script setup>
 import { computed } from 'vue'
-import { usePacientesStore } from '../stores/pacientes'
-import HistoriaClinicaButton from '../components/pacientes/HistoriaClinicaButton.vue'
+import { usePacientesStore } from '@clinica/stores'
+import HistoriaClinicaButton from '@clinica/pacientes/components/HistoriaClinicaButton.vue'
 
 const pacientesStore = usePacientesStore()
 

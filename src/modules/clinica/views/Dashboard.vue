@@ -237,11 +237,11 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useDashboardStore } from '../stores/dashboard'
-import { useProfesionalesStore } from '../stores/profesionales'
-import { useAuthStore } from '../stores/auth'
-import KPICard from '../components/dashboard/KPICard.vue'
-import ProximasCitasWidget from '../components/dashboard/ProximasCitasWidget.vue'
+import { useDashboardStore } from '@clinica/stores/dashboard'
+import { useProfesionalesStore } from '@clinica/stores/profesionales'
+import { useAuthStore } from '@shared/stores/auth'
+import KPICard from '@clinica/components/dashboard/KPICard.vue'
+import ProximasCitasWidget from '@clinica/components/dashboard/ProximasCitasWidget.vue'
 
 const dashboardStore = useDashboardStore()
 const profesionalesStore = useProfesionalesStore()

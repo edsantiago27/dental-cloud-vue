@@ -267,7 +267,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { useProfesionalesStore } from '../stores/profesionales'
+import { useProfesionalesStore } from '@clinica/stores/profesionales'
 import { useNotification } from '@/composables/useNotification'
 import HorariosEditor from './HorariosEditor.vue'
 

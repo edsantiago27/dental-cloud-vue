@@ -213,7 +213,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { useFacturacionStore } from '../stores/facturacion'
+import { useFacturacionStore } from '@clinica/stores/facturacion'
 
 const props = defineProps({
   modelValue: Boolean,

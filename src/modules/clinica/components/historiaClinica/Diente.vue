@@ -65,7 +65,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useHistoriaClinicaStore } from '../stores/historiaClinica'
+import { useHistoriaClinicaStore } from '@clinica/stores/historiaClinica'
 
 const props = defineProps({
   numero: {

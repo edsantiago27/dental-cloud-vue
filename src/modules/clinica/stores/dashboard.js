@@ -1,7 +1,7 @@
 // src/stores/dashboard.js - VERSION CORREGIDA
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import dashboardService from '../services/dashboardService'
+import dashboardService from '@clinica/services/dashboardService'
 import { usePacientesStore } from './pacientes'
 import { useCitasStore } from './citas'
 import { useFacturacionStore } from './facturacion'

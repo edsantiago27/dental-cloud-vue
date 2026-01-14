@@ -198,8 +198,8 @@
 
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
-import { useFacturacionStore } from '../stores/facturacion'
-import { usePacientesStore } from '../stores/pacientes'
+import { useFacturacionStore } from '@clinica/stores/facturacion'
+import { usePacientesStore } from '@clinica/stores/pacientes'
 
 const props = defineProps({
   modelValue: {
@@ -226,7 +226,7 @@ const facturacionStore = useFacturacionStore()
 const pacientesStore = usePacientesStore()
 
 // Importar store de tratamientos
-import { useTratamientosStore } from '../stores/tratamientos'
+import { useTratamientosStore } from '@clinica/stores/tratamientos'
 const tratamientosStore = useTratamientosStore()
 
 // State

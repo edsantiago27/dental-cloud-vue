@@ -187,11 +187,11 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useFacturacionStore } from '../stores/facturacion'
+import { useFacturacionStore } from '@clinica/stores/facturacion'
 import { useNotification } from '@/composables/useNotification'
-import CuentasLista from '../components/facturacion/CuentasLista.vue'
-import PagosLista from '../components/facturacion/PagosLista.vue'
-import FinanciamientosLista from '../components/facturacion/FinanciamientosLista.vue'
+import CuentasLista from '@clinica/components/facturacion/CuentasLista.vue'
+import PagosLista from '@clinica/components/facturacion/PagosLista.vue'
+import FinanciamientosLista from '@clinica/components/facturacion/FinanciamientosLista.vue'
 
 const facturacionStore = useFacturacionStore()
 const notify = useNotification()

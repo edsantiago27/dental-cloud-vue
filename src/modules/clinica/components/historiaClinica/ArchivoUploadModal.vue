@@ -251,7 +251,7 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-import historiaClinicaService from '../services/historiaClinicaService'
+import historiaClinicaService from '@clinica/services/historiaClinicaService'
 
 const props = defineProps({
   modelValue: {

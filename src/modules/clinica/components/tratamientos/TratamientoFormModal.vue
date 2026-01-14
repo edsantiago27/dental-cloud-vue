@@ -236,7 +236,7 @@
 import { ref, computed, watch } from 'vue'
 import { useVuelidate } from '@vuelidate/core'
 import { required, minValue, minLength, maxLength } from '@vuelidate/validators'
-import { useTratamientosStore } from '../stores/tratamientos'
+import { useTratamientosStore } from '@clinica/stores/tratamientos'
 
 const tratamientosStore = useTratamientosStore()
 

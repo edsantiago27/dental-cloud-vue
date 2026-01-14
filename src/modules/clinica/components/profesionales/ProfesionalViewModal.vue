@@ -272,7 +272,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { useProfesionalesStore } from '../stores/profesionales'
+import { useProfesionalesStore } from '@clinica/stores/profesionales'
 
 const props = defineProps({
   modelValue: {

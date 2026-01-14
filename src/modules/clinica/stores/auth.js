@@ -1,7 +1,7 @@
 // stores/auth.js
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import api from '../services/api'
+import api from '@clinica/services/api'
 
 export const useAuthStore = defineStore('auth', () => {
   // ==========================================

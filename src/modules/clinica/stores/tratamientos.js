@@ -1,7 +1,7 @@
 // stores/tratamientos.js
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import tratamientosService from '../services/tratamientosService'
+import tratamientosService from '@clinica/services/tratamientosService'
 
 export const useTratamientosStore = defineStore('tratamientos', () => {
   // ==========================================

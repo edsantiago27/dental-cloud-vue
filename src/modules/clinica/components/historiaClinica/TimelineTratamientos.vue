@@ -313,8 +313,8 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import { useHistoriaClinicaStore } from '../stores/historiaClinica'
-import { useProfesionalesStore } from '../stores/profesionales'
+import { useHistoriaClinicaStore } from '@clinica/stores/historiaClinica'
+import { useProfesionalesStore } from '@clinica/stores/profesionales'
 import { useNotification } from '@/composables/useNotification'
 import EntradaModal from './EntradaModal.vue'
 import EntradaViewModal from './EntradaViewModal.vue'

@@ -246,7 +246,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { useFacturacionStore } from '../stores/facturacion'
+import { useFacturacionStore } from '@clinica/stores/facturacion'
 import { useNotification } from '@/composables/useNotification'
 
 const props = defineProps({

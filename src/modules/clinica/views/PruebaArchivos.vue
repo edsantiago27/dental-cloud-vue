@@ -54,5 +54,5 @@
 </template>
 
 <script setup>
-import ArchivosClinica from '../components/historiaClinica/ArchivosClinica.vue'
+import ArchivosClinica from '@clinica/components/historiaClinica/ArchivosClinica.vue'
 </script>

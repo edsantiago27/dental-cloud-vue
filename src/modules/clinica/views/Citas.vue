@@ -177,14 +177,14 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useCitasStore } from '../stores/citas'
-import { usePacientesStore } from '../stores/pacientes'
-import { useProfesionalesStore } from '../stores/profesionales'
-import { useTratamientosStore } from '../stores/tratamientos'
+import { useCitasStore } from '@clinica/stores/citas'
+import { usePacientesStore } from '@clinica/stores/pacientes'
+import { useProfesionalesStore } from '@clinica/stores/profesionales'
+import { useTratamientosStore } from '@clinica/stores/tratamientos'
 import { useNotification } from '@/composables/useNotification'
-import CitasCalendar from '../components/citas/CitasCalendar-v2.vue'
-import CitaFormModal from '../components/citas/CitaFormModal.vue'
-import CitaViewModal from '../components/citas/CitaViewModal.vue'
+import CitasCalendar from '@clinica/components/citas/CitasCalendar-v2.vue'
+import CitaFormModal from '@clinica/components/citas/CitaFormModal.vue'
+import CitaViewModal from '@clinica/components/citas/CitaViewModal.vue'
 
 const citasStore = useCitasStore()
 const pacientesStore = usePacientesStore()
