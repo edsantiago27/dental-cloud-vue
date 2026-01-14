@@ -1,36 +1,29 @@
-// main.js
+// src/main.js
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
-import './assets/main.css'
-// Font Awesome Icons
+import '@shared/assets/main.css' // Ajustar según tu estructura
 import '@fortawesome/fontawesome-free/css/all.css'
-// Toast notifications
-import toastPlugin from './plugins/toast'
+import toastPlugin from '@shared/plugins/toast'
 
-// Crear app
 const app = createApp(App)
-
-// Pinia (debe ir antes del router)
 const pinia = createPinia()
+
 app.use(pinia)
-
-// Router
 app.use(router)
-
-// Toast
 app.use(toastPlugin)
 
-// Inicializar auth store
-import { useAuthStore } from './stores/auth'
+// Verificar sesión al iniciar (solo para Clínica/Paciente)
+import { useAuthStore } from '@shared/stores/auth'
 const authStore = useAuthStore()
-
-// Verificar si hay sesión guardada
 authStore.checkAuth()
 
 console.log('🚀 DentalCloud iniciado')
-console.log('👤 Usuario autenticado:', authStore.isAuthenticated)
+console.log('👤 Sesión activa:', authStore.isAuthenticated)
+if (authStore.isAuthenticated) {
+  console.log('📋 Tipo usuario:', authStore.userType)
+  console.log('🏥 Clínica:', authStore.clinica?.nombre || 'Sin seleccionar')
+}
 
-// Montar app
 app.mount('#app')

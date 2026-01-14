@@ -1,50 +1,43 @@
 // router/guards.js
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '../modules/clinica/stores/auth'
 
 /**
  * Guard para rutas que requieren autenticación
  */
-export function authGuard(to, from, next) {
+export const authGuard = (to, from, next) => {
   const authStore = useAuthStore()
   
-  console.log('🔐 authGuard:', {
-    to: to.path,
-    from: from.path,
-    isAuthenticated: authStore.isAuthenticated
-  })
-
   if (!authStore.isAuthenticated) {
-    console.log('❌ No autenticado, redirigiendo a /login')
-    next({
-      path: '/login',
-      query: { redirect: to.fullPath } // Guardar ruta destino
-    })
-  } else {
-    console.log('✅ Autenticado, permitir acceso')
-    next()
+    return next({ name: 'login', query: { redirect: to.fullPath } })
   }
+  
+  // Validar acceso por módulo
+  const module = to.meta.module
+  const userRole = authStore.user?.role
+  
+  if (module === 'superadmin' && userRole !== 'superadmin') {
+    return next({ name: 'not-found' })
+  }
+  
+  if (module === 'paciente' && userRole !== 'paciente') {
+    return next({ name: 'not-found' })
+  }
+  
+  next()
 }
 
 /**
  * Guard para rutas de invitados (login, registro, etc.)
  * Si ya está autenticado, redirige al dashboard
  */
-export function guestGuard(to, from, next) {
+export const guestGuard = (to, from, next) => {
   const authStore = useAuthStore()
   
-  console.log('👤 guestGuard:', {
-    to: to.path,
-    from: from.path,
-    isAuthenticated: authStore.isAuthenticated
-  })
-
   if (authStore.isAuthenticated) {
-    console.log('✅ Ya autenticado, redirigiendo a /dashboard')
-    next('/dashboard')
-  } else {
-    console.log('👤 No autenticado, permitir acceso a', to.path)
-    next()
+    return next({ name: 'clinica-dashboard' })
   }
+  
+  next()
 }
 
 /**

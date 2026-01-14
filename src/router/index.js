@@ -1,269 +1,121 @@
-// router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
 import { authGuard, guestGuard } from './guards'
-import { useAuthStore } from '@/stores/auth'
-import { superAdminRoutes } from './superadmin'
-import pacienteRoutes from './paciente'
+import { useAuthStore } from '@shared/stores/auth'
+
+// Importar rutas de módulos (TODOS con named imports)
+import { superAdminRoutes } from '@superadmin/router'
+import { pacienteRoutes } from '@paciente/router'
+// import { clinicaRoutes } from '@clinica/router'  // Cuando lo crees
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    // ==========================================
-    // RUTAS PÚBLICAS (invitados)
-    // ==========================================
+    // Rutas públicas
     {
       path: '/login',
       name: 'login',
       component: () => import('../views/auth/Login.vue'),
       beforeEnter: guestGuard,
-      meta: { 
-        title: 'Iniciar Sesión',
-        requiresAuth: false 
-      }
+      meta: { title: 'Iniciar Sesión', requiresAuth: false }
     },
 
-    // ==========================================
-    // RUTAS PROTEGIDAS CON LAYOUT (requieren auth)
-    // ==========================================
+    // Módulo Clínica (temporal - mientras refactorizamos)
     {
       path: '/',
-      component: () => import('../layouts/AdminLayout.vue'),
-      beforeEnter: authGuard,
+    component: () => import('@clinica/layouts/ClinicaLayout.vue'),  
+    beforeEnter: authGuard,
+      meta: { requiresAuth: true, module: 'clinica' },
       children: [
         {
           path: 'dashboard',
-          name: 'dashboard',
-          component: () => import('../views/admin/Dashboard.vue'),
-          meta: { 
-            title: 'Dashboard',
-            requiresAuth: true 
-          }
+          name: 'clinica-dashboard',
+          component: () => import('@clinica/views/Dashboard.vue'),
+          meta: { title: 'Dashboard' }
         },
         {
           path: 'pacientes',
-          name: 'pacientes',
-          component: () => import('../views/admin/Pacientes.vue'),
-          meta: { 
-            title: 'Pacientes',
-            requiresAuth: true 
-          }
-        },
-        {
-          path: '/pacientes/:id/historia-clinica',
-          name: 'paciente-historia-clinica',
-          component: () => import('@/views/admin/HistoriaClinicaView.vue'),
-          meta: { 
-            requiresAuth: true, 
-            title: 'Historia Clínica',
-            breadcrumb: 'Historia Clínica'
-          }
-        },
-        {
-          path: '/facturacion',
-          name: 'facturacion',
-          component: () => import('@/views/admin/FacturacionDashboard.vue'),
-          meta: { 
-            requiresAuth: true,
-            title: 'Facturación'
-          }
-        },
-        {
-          path: '/facturacion/cuentas',
-          name: 'facturacion-cuentas',
-          component: () => import('@/views/admin/CuentasView.vue'),
-          meta: { 
-            requiresAuth: true,
-            title: 'Cuentas por Cobrar'
-          }
+          name: 'clinica-pacientes',
+          component: () => import('@clinica/views/Pacientes.vue'),
+          meta: { title: 'Pacientes' }
         },
         {
           path: 'profesionales',
-          name: 'profesionales',
-          component: () => import('../views/admin/Profesionales.vue'),
-          meta: { 
-            title: 'Profesionales',
-            requiresAuth: true 
-          }
-        },
-        {
-          path: 'tratamientos',
-          name: 'tratamientos',
-          component: () => import('../views/admin/Tratamientos.vue'),
-          meta: { 
-            title: 'Tratamientos',
-            requiresAuth: true 
-          }
+          name: 'clinica-profesionales',
+          component: () => import('@clinica/views/Profesionales.vue'),
+          meta: { title: 'Profesionales' }
         },
         {
           path: 'citas',
-          name: 'citas-lista',
-          component: () => import('../views/admin/CitasLista.vue'),
-          meta: { 
-            title: 'Lista de Citas',
-            requiresAuth: true 
-          }
+          name: 'clinica-citas',
+          component: () => import('@clinica/views/CitasLista.vue'),
+          meta: { title: 'Citas' }
         },
         {
           path: 'calendario',
-          name: 'calendario',
-          component: () => import('../views/admin/Citas.vue'),
-          meta: { 
-            title: 'Calendario',
-            requiresAuth: true 
-          }
+          name: 'clinica-calendario',
+          component: () => import('@clinica/views/Citas.vue'),
+          meta: { title: 'Calendario' }
+        },
+        {
+          path: 'tratamientos',
+          name: 'clinica-tratamientos',
+          component: () => import('@clinica/views/Tratamientos.vue'),
+          meta: { title: 'Tratamientos' }
         },
         {
           path: 'facturacion',
-          name: 'facturacion',
-          component: () => import('../views/admin/Facturacion.vue'),
-          meta: { 
-            title: 'Facturación',
-            requiresAuth: true 
-          }
-        },
-        {
-          path: 'pagos',
-          name: 'pagos',
-          component: () => import('../views/admin/Pagos.vue'),
-          meta: { 
-            title: 'Pagos',
-            requiresAuth: true 
-          }
-        },
-        {
-          path: 'reportes',
-          name: 'reportes',
-          component: () => import('../views/admin/Reportes.vue'),
-          meta: { 
-            title: 'Reportes',
-            requiresAuth: true 
-          }
+          name: 'clinica-facturacion',
+          component: () => import('@clinica/views/FacturacionDashboard.vue'),
+          meta: { title: 'Facturación' }
         },
         {
           path: 'configuracion',
-          name: 'configuracion',
-          component: () => import('../views/admin/Configuracion.vue'),
-          meta: { 
-            title: 'Configuración',
-            requiresAuth: true 
-          }
-        },
-        {
-          path: 'usuarios',
-          name: 'usuarios',
-          component: () => import('../views/admin/Usuarios.vue'),
-          meta: { 
-            title: 'Usuarios',
-            requiresAuth: true,
-            adminOnly: true
-          }
-        },
-        {
-          path: 'perfil',
-          name: 'perfil',
-          component: () => import('../views/admin/Perfil.vue'),
-          meta: { 
-            title: 'Mi Perfil',
-            requiresAuth: true 
-          }
+          name: 'clinica-configuracion',
+          component: () => import('@clinica/views/Configuracion.vue'),
+          meta: { title: 'Configuración' }
         }
       ]
     },
 
-    // ==========================================
-    // REDIRECCIONES
-    // ==========================================
+    // Módulos
+    ...superAdminRoutes,
+    ...pacienteRoutes,
+
+    // Redirección raíz
     {
       path: '/',
       redirect: () => {
         const authStore = useAuthStore()
-        return authStore.isAuthenticated ? '/dashboard' : '/login'
+        
+        if (!authStore.isAuthenticated) {
+          return '/login'
+        }
+        
+        // Redirigir según tipo de usuario
+        if (authStore.isPacienteUser) {
+          return '/paciente/portal'
+        }
+        
+        return '/dashboard'
       }
     },
-      ...superAdminRoutes,
-       ...pacienteRoutes,
-    // ==========================================
-    // 404 - Not Found
-    // ==========================================
+
+    // 404
     {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('../views/NotFound.vue'),
-      meta: { 
-        title: 'Página No Encontrada'
-      }
-    },
-    // ==========================================
-    // TEST - paginas de prueba
-    // ==========================================
-     {
-       path: '/:pathMatch(.*)*',
-      path: '/test',
-      name: 'test',
-      component: () => import('../views/TestConexion.vue'),
-      meta: { 
-        title: 'Test'
-      }
-    },
-    {
-      path: '/odontograma-prueba',
-      name: 'odontograma-prueba',
-      component: () => import('@/views/admin/PruebaOdontograma.vue'),
-      meta: { requiresAuth: true, title: 'Odontograma' }
-    },
-    {
-      path: '/timeline-prueba',
-      name: 'timeline-prueba',
-      component: () => import('@/views/admin/PruebaTimeline.vue'),
-      meta: { requiresAuth: true }
-    },
-    {
-      path: '/ficha-medica-prueba',
-      name: 'ficha-medica-prueba',
-      component: () => import('@/views/admin/PruebaFichaMedica.vue'),
-      meta: { requiresAuth: true }
-    },
-    {
-      path: '/archivos-prueba',
-      component: () => import('@/views/admin/PruebaArchivos.vue'),
-      meta: { requiresAuth: true }
-    },
-    {
-      path: '/historia-clinica-prueba',
-      name: 'historia-clinica-prueba',
-      component: () => import('@/views/admin/PruebaHistoriaClinica.vue'),
-      meta: { requiresAuth: true, title: 'Historia Clínica' }
-    },
-    {
-      path: '/pacientes/:id/historia-clinica',
-      name: 'historia-clinica',
-      component: () => import('@/views/admin/HistoriaClinicaView.vue'),
-      meta: { requiresAuth: true, title: 'Historia Clínica' }
+      meta: { title: 'Página No Encontrada' }
     }
   ]
 })
 
-// ==========================================
-// GLOBAL GUARDS
-// ==========================================
-
-// Before Each - Se ejecuta antes de cada navegación
+// Global guards
 router.beforeEach((to, from, next) => {
-  console.log('🧭 Navegación:', {
-    from: from.path,
-    to: to.path
-  })
-
-  // Actualizar título de la página
   document.title = to.meta.title 
     ? `${to.meta.title} - DentalCloud` 
     : 'DentalCloud'
-
   next()
-})
-
-// After Each - Se ejecuta después de cada navegación
-router.afterEach((to, from) => {
-  console.log('✅ Navegación completada:', to.path)
 })
 
 export default router
