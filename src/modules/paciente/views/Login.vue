@@ -102,7 +102,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@shared/stores/auth'
 import { useToast } from 'vue-toastification'
-import ClinicaSelector from '../components/ClinicaSelector.vue'
+import ClinicaSelector from '@paciente/components/ClinicaSelector.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()

@@ -338,7 +338,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { usePacienteAuthStore } from '../stores/auth'
+import { usePacienteAuthStore } from '@paciente/stores/auth'
 
 const router = useRouter()
 const authStore = usePacienteAuthStore()

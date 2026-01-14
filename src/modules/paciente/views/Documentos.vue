@@ -225,7 +225,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import VerDocumento from '../components/VerDocumento.vue'
+import VerDocumento from '@paciente/components/VerDocumento.vue'
 
 // State
 const documentos = ref([])

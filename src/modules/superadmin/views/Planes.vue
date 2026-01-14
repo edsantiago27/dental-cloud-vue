@@ -223,9 +223,9 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useSuperAdminPlanesStore } from '../stores/superadmin/planes'
-import PlanFormModal from '../components/PlanFormModal.vue'
-import ConfirmModal from '../components/ConfirmModal.vue'
+import { useSuperAdminPlanesStore } from '@superadmin/stores/superadmin/planes'
+import PlanFormModal from '@superadmin/components/PlanFormModal.vue'
+import ConfirmModal from '@superadmin/components/ConfirmModal.vue'
 
 const planesStore = useSuperAdminPlanesStore()
 

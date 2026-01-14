@@ -174,7 +174,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useHistoriaClinicaStore } from '@clinica/stores/historiaClinica'
-import { useNotification } from '@/composables/useNotification'
+import { useNotification } from '@shared/composables/useNotification'
 import Diente from './Diente.vue'
 import DienteModal from './DienteModal.vue'
 

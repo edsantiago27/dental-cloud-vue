@@ -162,7 +162,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useSuperAdminFacturacionStore } from '../stores/superadmin/facturacion'
+import { useSuperAdminFacturacionStore } from '@superadmin/stores/superadmin/facturacion'
 
 const props = defineProps({
   factura: {

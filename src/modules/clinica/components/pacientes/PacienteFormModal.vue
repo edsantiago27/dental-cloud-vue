@@ -271,7 +271,7 @@ import { ref, computed, watch } from 'vue'
 import { useVuelidate } from '@vuelidate/core'
 import { required, email, minLength, maxLength } from '@vuelidate/validators'
 import { usePacientesStore } from '@clinica/stores/pacientes'
-import { formatRut, validateRut } from '@/utils/rutUtils'
+import { formatRut, validateRut } from '@shared/utils/rutUtils'
 
 const pacientesStore = usePacientesStore()
 

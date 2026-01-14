@@ -363,9 +363,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useSuperAdminClinicasStore } from '../stores/superadmin/clinicas'
-import ClinicaFormModal from '../components/ClinicaFormModal.vue'
-import ConfirmModal from '../components/ConfirmModal.vue'
+import { useSuperAdminClinicasStore } from '@superadmin/stores/superadmin/clinicas'
+import ClinicaFormModal from '@superadmin/components/ClinicaFormModal.vue'
+import ConfirmModal from '@superadmin/components/ConfirmModal.vue'
 
 const router = useRouter()
 const clinicasStore = useSuperAdminClinicasStore()

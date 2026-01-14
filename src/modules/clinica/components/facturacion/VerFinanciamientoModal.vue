@@ -247,7 +247,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useFacturacionStore } from '@clinica/stores/facturacion'
-import { useNotification } from '@/composables/useNotification'
+import { useNotification } from '@shared/composables/useNotification'
 
 const props = defineProps({
   modelValue: Boolean,

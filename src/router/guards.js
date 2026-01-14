@@ -1,5 +1,5 @@
 // router/guards.js
-import { useAuthStore } from '../modules/clinica/stores/auth'
+import { useAuthStore } from '@shared/stores/auth'
 
 /**
  * Guard para rutas que requieren autenticación
@@ -11,15 +11,22 @@ export const authGuard = (to, from, next) => {
     return next({ name: 'login', query: { redirect: to.fullPath } })
   }
   
-  // Validar acceso por módulo
+  // Validar acceso por módulo según userType
   const module = to.meta.module
-  const userRole = authStore.user?.role
+  const userType = authStore.userType
   
-  if (module === 'superadmin' && userRole !== 'superadmin') {
+  // SuperAdmin solo puede acceder a rutas superadmin
+  if (module === 'superadmin' && userType !== 'superadmin') {
     return next({ name: 'not-found' })
   }
   
-  if (module === 'paciente' && userRole !== 'paciente') {
+  // Paciente solo puede acceder a rutas paciente
+  if (module === 'paciente' && userType !== 'paciente') {
+    return next({ name: 'not-found' })
+  }
+  
+  // Usuario de clínica solo puede acceder a rutas de clínica
+  if (module === 'clinica' && userType !== 'clinica') {
     return next({ name: 'not-found' })
   }
   
@@ -28,20 +35,29 @@ export const authGuard = (to, from, next) => {
 
 /**
  * Guard para rutas de invitados (login, registro, etc.)
- * Si ya está autenticado, redirige al dashboard
+ * Si ya está autenticado, redirige según el tipo de usuario
  */
 export const guestGuard = (to, from, next) => {
   const authStore = useAuthStore()
   
   if (authStore.isAuthenticated) {
-    return next({ name: 'clinica-dashboard' })
+    // Redirigir según el tipo de usuario
+    switch (authStore.userType) {
+      case 'superadmin':
+        return next({ name: 'superadmin-dashboard' })
+      case 'paciente':
+        return next({ name: 'paciente-portal' })
+      case 'clinica':
+      default:
+        return next({ name: 'clinica-dashboard' })
+    }
   }
   
   next()
 }
 
 /**
- * Guard para rutas que requieren rol específico
+ * Guard para rutas que requieren rol específico dentro de una clínica
  */
 export function roleGuard(allowedRoles) {
   return (to, from, next) => {

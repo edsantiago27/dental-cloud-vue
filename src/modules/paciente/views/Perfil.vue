@@ -370,7 +370,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { usePacienteAuthStore } from '../stores/auth'
+import { usePacienteAuthStore } from '@paciente/stores/auth'
 
 const authStore = usePacienteAuthStore()
 

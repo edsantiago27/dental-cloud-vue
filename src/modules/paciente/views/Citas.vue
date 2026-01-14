@@ -251,11 +251,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { usePacienteCitasStore } from '../stores/citas'
-import AgendarCita from '../components/paciente/AgendarCita.vue'
-import CancelarCita from '../components/CancelarCita.vue'
-import ReagendarCita from '../components/ReagendarCita.vue'
-import DetalleCita from '../components/DetalleCita.vue'
+import { usePacienteCitasStore } from '@paciente/stores/citas'
+import AgendarCita from '@paciente/components/paciente/AgendarCita.vue'
+import CancelarCita from '@paciente/components/CancelarCita.vue'
+import ReagendarCita from '@paciente/components/ReagendarCita.vue'
+import DetalleCita from '@paciente/components/DetalleCita.vue'
 
 const citasStore = usePacienteCitasStore()
 

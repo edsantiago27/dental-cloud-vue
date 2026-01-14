@@ -183,7 +183,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useHistoriaClinicaStore } from '@clinica/stores/historiaClinica'
-import { useNotification } from '@/composables/useNotification'
+import { useNotification } from '@shared/composables/useNotification'
 import ArchivoUploadModal from './ArchivoUploadModal.vue'
 import ArchivoViewModal from './ArchivoViewModal.vue'
 

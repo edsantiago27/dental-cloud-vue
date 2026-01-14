@@ -145,7 +145,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useTratamientosStore } from '@clinica/stores/tratamientos'
-import { useNotification } from '@/composables/useNotification'
+import { useNotification } from '@shared/composables/useNotification'
 import TratamientosList from '@clinica/components/tratamientos/TratamientosList.vue'
 import TratamientoFormModal from '@clinica/components/tratamientos/TratamientoFormModal.vue'
 

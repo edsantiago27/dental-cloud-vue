@@ -188,7 +188,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useFacturacionStore } from '@clinica/stores/facturacion'
-import { useNotification } from '@/composables/useNotification'
+import { useNotification } from '@shared/composables/useNotification'
 import CuentasLista from '@clinica/components/facturacion/CuentasLista.vue'
 import PagosLista from '@clinica/components/facturacion/PagosLista.vue'
 import FinanciamientosLista from '@clinica/components/facturacion/FinanciamientosLista.vue'

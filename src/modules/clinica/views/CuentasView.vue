@@ -176,7 +176,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useFacturacionStore } from '@clinica/stores/facturacion'
-import { useNotification } from '@/composables/useNotification'
+import { useNotification } from '@shared/composables/useNotification'
 import CrearCuentaModal from '@clinica/components/facturacion/CrearCuentaModal.vue'
 import RegistrarPagoModal from '@clinica/components/facturacion/RegistrarPagoModal.vue'
 import VerCuentaModal from '@clinica/components/facturacion/VerCuentaModal.vue'

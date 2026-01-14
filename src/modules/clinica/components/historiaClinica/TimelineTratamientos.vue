@@ -315,7 +315,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useHistoriaClinicaStore } from '@clinica/stores/historiaClinica'
 import { useProfesionalesStore } from '@clinica/stores/profesionales'
-import { useNotification } from '@/composables/useNotification'
+import { useNotification } from '@shared/composables/useNotification'
 import EntradaModal from './EntradaModal.vue'
 import EntradaViewModal from './EntradaViewModal.vue'
 

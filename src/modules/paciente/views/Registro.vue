@@ -233,7 +233,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { usePacienteAuthStore } from '../stores/auth'
+import { usePacienteAuthStore } from '@paciente/stores/auth'
 
 const router = useRouter()
 const route = useRoute()

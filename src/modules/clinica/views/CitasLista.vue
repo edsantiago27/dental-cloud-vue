@@ -167,7 +167,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useCitasStore } from '@clinica/stores/citas'
 import { useProfesionalesStore } from '@clinica/stores/profesionales'
-import { useNotification } from '@/composables/useNotification'
+import { useNotification } from '@shared/composables/useNotification'
 import CitasCalendarSimple from '@clinica/components/citas/CitasCalendarSimple.vue'
 import CitaFormModal from '@clinica/components/citas/CitaFormModal.vue'
 import CitaViewModal from '@clinica/components/citas/CitaViewModal.vue'

@@ -437,7 +437,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useHistoriaClinicaStore } from '@clinica/stores/historiaClinica'
-import { useNotification } from '@/composables/useNotification'
+import { useNotification } from '@shared/composables/useNotification'
 
 const props = defineProps({
   pacienteId: {

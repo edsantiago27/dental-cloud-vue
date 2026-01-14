@@ -165,7 +165,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { usePacientesStore } from '@clinica/stores/pacientes'
 import { useHistoriaClinicaStore } from '@clinica/stores/historiaClinica'
-import { useNotification } from '@/composables/useNotification'
+import { useNotification } from '@shared/composables/useNotification'
 
 // Componentes
 import Odontograma from '@clinica/components/historiaClinica/Odontograma.vue'

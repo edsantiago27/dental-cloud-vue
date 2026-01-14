@@ -285,8 +285,8 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue'
-import { usePacientePagosStore } from '../stores/pagos'
-import DetalleCuenta from '../components/DetalleCuenta.vue'
+import { usePacientePagosStore } from '@paciente/stores/pagos'
+import DetalleCuenta from '@paciente/components/DetalleCuenta.vue'
 
 const pagosStore = usePacientePagosStore()
 

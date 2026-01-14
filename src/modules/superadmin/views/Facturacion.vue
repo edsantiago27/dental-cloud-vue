@@ -374,11 +374,11 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useSuperAdminFacturacionStore } from '../stores/superadmin/facturacion'
-import GenerarFacturaModal from '../components/GenerarFacturaModal.vue'
-import RegistrarPagoModal from '../components/RegistrarPagoModal.vue'
-import GenerarMasivoModal from '../components/GenerarMasivoModal.vue'
-import ConfirmModal from '../components/ConfirmModal.vue'
+import { useSuperAdminFacturacionStore } from '@superadmin/stores/superadmin/facturacion'
+import GenerarFacturaModal from '@superadmin/components/GenerarFacturaModal.vue'
+import RegistrarPagoModal from '@superadmin/components/RegistrarPagoModal.vue'
+import GenerarMasivoModal from '@superadmin/components/GenerarMasivoModal.vue'
+import ConfirmModal from '@superadmin/components/ConfirmModal.vue'
 
 const facturacionStore = useSuperAdminFacturacionStore()
 

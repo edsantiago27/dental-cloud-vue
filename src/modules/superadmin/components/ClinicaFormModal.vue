@@ -269,7 +269,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useSuperAdminClinicasStore } from '../stores/superadmin/clinicas'
+import { useSuperAdminClinicasStore } from '@superadmin/stores/superadmin/clinicas'
 
 const props = defineProps({
   clinica: {

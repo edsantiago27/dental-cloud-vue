@@ -189,7 +189,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { usePacienteCitasStore } from '../stores/citas'
+import { usePacienteCitasStore } from '@paciente/stores/citas'
 
 const emit = defineEmits(['close', 'success'])
 

@@ -181,13 +181,14 @@
   </div>
 </template>
 
-<script setup>import { ref, computed, onMounted } from 'vue'
+<script setup>
+import { ref, computed, onMounted } from 'vue'
 import { usePacientesStore } from '@clinica/stores'
 import { useNotification } from '@shared/composables/useNotification'
-import PacientesList from '@modules/clinica/components/pacientes/PacientesList.vue'
-import PacienteFormModal from '@modules/clinica/components/pacientes/PacienteFormModal.vue'
-import PacienteViewModal from '@modules/clinica/components/pacientes/PacienteViewModal.vue'
-import CitaFormModal from '@modules/clinica/components/citas/CitaFormModal.vue'
+import PacientesList from '@clinica/components/pacientes/PacientesList.vue'
+import PacienteFormModal from '@clinica/components/pacientes/PacienteFormModal.vue'
+import PacienteViewModal from '@clinica/components/pacientes/PacienteViewModal.vue'
+import CitaFormModal from '@clinica/components/citas/CitaFormModal.vue'
 
 const pacientesStore = usePacientesStore()
 const notify = useNotification()

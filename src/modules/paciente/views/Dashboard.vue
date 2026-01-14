@@ -315,7 +315,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { usePacienteAuthStore } from '../stores/auth'
+import { usePacienteAuthStore } from '@paciente/stores/auth'
 import { citasService, pagosService } from '../services'
 
 const route = useRoute()

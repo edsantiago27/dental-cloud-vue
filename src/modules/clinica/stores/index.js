@@ -1,4 +1,4 @@
-export { useAuthStore } from './auth'
+//export { useAuthStore } from './auth'
 export { useCitasStore } from './citas'
 export { useConfiguracionStore } from './configuracion'
 export { useDashboardStore } from './dashboard'

@@ -258,7 +258,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useSuperAdminPlanesStore } from '../stores/superadmin/planes'
+import { useSuperAdminPlanesStore } from '@superadmin/stores/superadmin/planes'
 
 const props = defineProps({
   plan: {

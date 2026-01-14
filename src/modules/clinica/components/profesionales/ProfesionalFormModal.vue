@@ -268,7 +268,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useProfesionalesStore } from '@clinica/stores/profesionales'
-import { useNotification } from '@/composables/useNotification'
+import { useNotification } from '@shared/composables/useNotification'
 import HorariosEditor from './HorariosEditor.vue'
 
 const props = defineProps({

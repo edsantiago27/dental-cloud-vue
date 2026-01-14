@@ -50,7 +50,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useSuperAdminDashboardStore } from '../stores/superadmin/dashboard'
+import { useSuperAdminDashboardStore } from '@superadmin/stores/superadmin/dashboard'
 
 const props = defineProps({
   title: { type: String, required: true },

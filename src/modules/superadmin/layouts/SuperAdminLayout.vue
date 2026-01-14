@@ -17,10 +17,10 @@
 <script setup>
 import { computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import SuperAdminSidebar from '../components/Sidebar.vue'
-import SuperAdminHeader from '../components/Header.vue'
-import { useSuperAdminAuthStore } from '../stores/auth'
-import { useSuperAdminDashboardStore } from '../stores/dashboard'
+import SuperAdminSidebar from '@superadmin/components/Sidebar.vue'
+import SuperAdminHeader from '@superadmin/components/Header.vue'
+import { useSuperAdminAuthStore } from '@superadmin/stores/auth'
+import { useSuperAdminDashboardStore } from '@superadmin/stores/dashboard'
 
 const route = useRoute()
 const router = useRouter()

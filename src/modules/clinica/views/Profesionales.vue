@@ -168,7 +168,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useProfesionalesStore } from '@clinica/stores/profesionales'
-import { useNotification } from '@/composables/useNotification'
+import { useNotification } from '@shared/composables/useNotification'
 import ProfesionalCard from '@clinica/components/profesionales/ProfesionalCard.vue'
 import ProfesionalViewModal from '@clinica/components/profesionales/ProfesionalViewModal.vue'
 import ProfesionalFormModal from '@clinica/components/profesionales/ProfesionalFormModal.vue'

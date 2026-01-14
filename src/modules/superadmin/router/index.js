@@ -1,5 +1,5 @@
 // src/modules/superadmin/router/index.js
-import { useSuperAdminAuthStore } from '../stores/auth'
+import { useSuperAdminAuthStore } from '@superadmin/stores/auth'
 
 function requireAuth(to, from, next) {
   const authStore = useSuperAdminAuthStore()

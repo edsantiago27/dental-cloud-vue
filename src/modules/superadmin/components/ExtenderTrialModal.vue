@@ -164,7 +164,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useSuperAdminSuscripcionesStore } from '../stores/superadmin/suscripciones'
+import { useSuperAdminSuscripcionesStore } from '@superadmin/stores/superadmin/suscripciones'
 
 const props = defineProps({
   suscripcion: {

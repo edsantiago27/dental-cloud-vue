@@ -149,7 +149,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { usePacienteCitasStore } from '../stores/citas'
+import { usePacienteCitasStore } from '@paciente/stores/citas'
 
 const props = defineProps({
   cita: {
