@@ -9,28 +9,41 @@ import { pacienteRoutes } from '@paciente/router'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    // Rutas públicas
+    // ============================================
+    // 🔐 RUTAS PÚBLICAS
+    // ============================================
     {
       path: '/login',
       name: 'login',
-      component: () => import('@/views/auth/Login.vue'),  // ← CAMBIAR AQUÍ
+      component: () => import('@shared/views/auth/Login.vue'),
       beforeEnter: guestGuard,
       meta: { title: 'Iniciar Sesión', requiresAuth: false }
     },
 
-    // Módulo Clínica
+    // ============================================
+    // 🏥 MÓDULO CLÍNICA (ADMIN)
+    // ============================================
     {
       path: '/',
-      component: () => import('@clinica/layouts/ClinicaLayout.vue'),  
+      component: () => import('@clinica/layouts/ClinicaLayout.vue'),
       beforeEnter: authGuard,
       meta: { requiresAuth: true, module: 'clinica' },
       children: [
+        // Redirección raíz de clínica
+        {
+          path: '',
+          redirect: '/dashboard'
+        },
+        
+        // Dashboard
         {
           path: 'dashboard',
           name: 'clinica-dashboard',
           component: () => import('@clinica/views/Dashboard.vue'),
           meta: { title: 'Dashboard' }
         },
+
+        // Gestión de Pacientes
         {
           path: 'pacientes',
           name: 'clinica-pacientes',
@@ -38,29 +51,44 @@ const router = createRouter({
           meta: { title: 'Pacientes' }
         },
         {
+          path: 'pacientes/:pacienteId/historia-clinica',
+          name: 'clinica-historia-clinica',
+          component: () => import('@clinica/views/HistoriaClinicaView.vue'),
+          meta: { title: 'Historia Clínica' },
+          props: true
+        },
+
+        // Gestión de Profesionales
+        {
           path: 'profesionales',
           name: 'clinica-profesionales',
           component: () => import('@clinica/views/Profesionales.vue'),
           meta: { title: 'Profesionales' }
         },
+
+        // Gestión de Citas
         {
           path: 'citas',
           name: 'clinica-citas',
           component: () => import('@clinica/views/CitasLista.vue'),
-          meta: { title: 'Citas' }
+          meta: { title: 'Citas - Lista' }
         },
         {
           path: 'calendario',
           name: 'clinica-calendario',
           component: () => import('@clinica/views/Citas.vue'),
-          meta: { title: 'Calendario' }
+          meta: { title: 'Calendario de Citas' }
         },
+
+        // Tratamientos
         {
           path: 'tratamientos',
           name: 'clinica-tratamientos',
           component: () => import('@clinica/views/Tratamientos.vue'),
           meta: { title: 'Tratamientos' }
         },
+
+        // Facturación
         {
           path: 'facturacion',
           name: 'clinica-facturacion',
@@ -68,19 +96,61 @@ const router = createRouter({
           meta: { title: 'Facturación' }
         },
         {
+          path: 'facturacion/cuentas',
+          name: 'clinica-cuentas',
+          component: () => import('@clinica/views/CuentasView.vue'),
+          meta: { title: 'Cuentas por Cobrar' }
+        },
+        {
+          path: 'facturacion/pagos',
+          name: 'clinica-pagos',
+          component: () => import('@clinica/views/Pagos.vue'),
+          meta: { title: 'Registro de Pagos' }
+        },
+
+        // Reportes
+        {
+          path: 'reportes',
+          name: 'clinica-reportes',
+          component: () => import('@clinica/views/Reportes.vue'),
+          meta: { title: 'Reportes' }
+        },
+
+        // Usuarios y Configuración
+        {
+          path: 'usuarios',
+          name: 'clinica-usuarios',
+          component: () => import('@clinica/views/Usuarios.vue'),
+          meta: { title: 'Usuarios' }
+        },
+        {
           path: 'configuracion',
           name: 'clinica-configuracion',
           component: () => import('@clinica/views/Configuracion.vue'),
           meta: { title: 'Configuración' }
+        },
+        {
+          path: 'perfil',
+          name: 'clinica-perfil',
+          component: () => import('@clinica/views/Perfil.vue'),
+          meta: { title: 'Mi Perfil' }
         }
       ]
     },
 
-    // Módulos
-    ...superAdminRoutes,
+    // ============================================
+    // 👤 MÓDULO PACIENTE (PORTAL)
+    // ============================================
     ...pacienteRoutes,
 
-    // Redirección raíz
+    // ============================================
+    // ⚙️ MÓDULO SUPERADMIN
+    // ============================================
+    ...superAdminRoutes,
+
+    // ============================================
+    // 🔀 REDIRECCIONES
+    // ============================================
     {
       path: '/',
       redirect: () => {
@@ -90,29 +160,40 @@ const router = createRouter({
           return '/login'
         }
         
+        // Redirección según tipo de usuario
         if (authStore.isPacienteUser) {
           return '/paciente/portal'
+        }
+        
+        if (authStore.isSuperAdmin) {
+          return '/superadmin/dashboard'
         }
         
         return '/dashboard'
       }
     },
 
-    // 404
+    // ============================================
+    // ❌ 404 - PÁGINA NO ENCONTRADA
+    // ============================================
     {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
-      component: () => import('@/views/NotFound.vue'),  // ← CAMBIAR AQUÍ
+      component: () => import('@shared/views/NotFound.vue'),
       meta: { title: 'Página No Encontrada' }
     }
   ]
 })
 
-// Global guards
+// ============================================
+// 🛡️ GLOBAL NAVIGATION GUARDS
+// ============================================
 router.beforeEach((to, from, next) => {
+  // Actualizar título de página
   document.title = to.meta.title 
     ? `${to.meta.title} - DentalCloud` 
     : 'DentalCloud'
+  
   next()
 })
 
