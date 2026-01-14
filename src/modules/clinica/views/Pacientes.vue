@@ -313,14 +313,10 @@ function handleEditPaciente(paciente) {
   console.log('Editar paciente:', paciente)
 }
 function openHistorialModal(paciente) {
-  // TODO: Implementar cuando tengas el módulo de Historial Clínico
-  selectedPaciente.value = paciente
-  notify.info(
-    `Esta funcionalidad estará disponible cuando implementemos el módulo de Historial Clínico.`,
-    `Historial Clínico de: ${paciente.nombre} ${paciente.apellido}`
-  )
-  // Luego será:
-  // router.push({ name: 'historial-clinico', params: { pacienteId: paciente.id } })
+  router.push({ 
+    name: 'clinica-historia-clinica', 
+    params: { pacienteId: paciente.id } 
+  })
 }
 
 function handleSaved() {

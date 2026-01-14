@@ -16,6 +16,13 @@ export const clinicaRoutes = [
         component: () => import('../views/Pacientes.vue'),
         meta: { title: 'Pacientes' }
       },
+      {
+  path: 'historia-clinica/:pacienteId',
+  name: 'clinica-historia-clinica',
+  component: () => import('../views/HistoriaClinica.vue'),
+  meta: { title: 'Historia Clínica' },
+  props: true
+}
       // ... más rutas
     ]
   }
