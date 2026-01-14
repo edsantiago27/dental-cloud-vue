@@ -21,6 +21,7 @@ export const useConfiguracionStore = defineStore('configuracion', () => {
     
     // Branding
     logo: null,
+    logo_url: null, // ⭐ IMPORTANTE: Agregar esto
     color_primario: '#3B82F6',
     color_secundario: '#10B981',
     
@@ -60,16 +61,24 @@ export const useConfiguracionStore = defineStore('configuracion', () => {
   ]
 
   // Getters
-  const hasLogo = computed(() => !!configuracion.value.logo)
+  const hasLogo = computed(() => !!configuracion.value.logo_url || !!configuracion.value.logo)
   
   const logoUrl = computed(() => {
-    if (!configuracion.value.logo) return null
-    // Si es una URL completa, retornarla tal cual
-    if (configuracion.value.logo.startsWith('http')) {
-      return configuracion.value.logo
+    // ⭐ CAMBIO PRINCIPAL: Usar logo_url del backend si existe
+    if (configuracion.value.logo_url) {
+      console.log('🖼️ Usando logo_url del backend:', configuracion.value.logo_url)
+      return configuracion.value.logo_url
     }
-    // Si es una ruta relativa, construir URL completa
-    return `${import.meta.env.VITE_API_URL}/storage/${configuracion.value.logo}`
+    
+    // Fallback: construir URL si solo tenemos el filename
+    if (configuracion.value.logo) {
+      const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8001'
+      const url = `${baseUrl}/assets/uploads/logos/${configuracion.value.logo}`
+      console.log('🖼️ Logo URL construida:', url)
+      return url
+    }
+    
+    return null
   })
 
   const horarioFormateado = computed(() => {
@@ -101,6 +110,12 @@ export const useConfiguracionStore = defineStore('configuracion', () => {
           recordatorios_activos: response.data.recordatorios_activos === 1 || response.data.recordatorios_activos === true,
           whatsapp_activo: response.data.whatsapp_activo === 1 || response.data.whatsapp_activo === true
         }
+        
+        console.log('✅ Logo cargado:', {
+          logo: configuracion.value.logo,
+          logo_url: configuracion.value.logo_url,
+          computed_logoUrl: logoUrl.value
+        })
       }
 
       return { success: true }
@@ -168,10 +183,18 @@ export const useConfiguracionStore = defineStore('configuracion', () => {
 
       const response = await configuracionService.updateLogo(formData)
       
-      console.log('✅ Logo actualizado:', response)
+      console.log('✅ Logo actualizado - Respuesta:', response)
 
       if (response.success && response.data) {
+        // ⭐ ACTUALIZAR AMBOS: logo y logo_url
         configuracion.value.logo = response.data.logo
+        configuracion.value.logo_url = response.data.logo_url
+        
+        console.log('✅ Logo guardado en state:', {
+          logo: configuracion.value.logo,
+          logo_url: configuracion.value.logo_url
+        })
+        
         return { success: true, data: response.data }
       }
 

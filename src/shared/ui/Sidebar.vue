@@ -8,27 +8,27 @@
   >
   <!-- Logo Dinámico -->
     <div class="logo-section">
-      
-      <!-- CON LOGO -->
-      <div v-if="configuracionStore.hasLogo" class="text-center">
-        <img 
-          :src="configuracionStore.logoUrl" 
-          :alt="configuracionStore.configuracion.nombre"
-          class="h-16 mx-auto object-contain"
-        >
-        <p class="text-sm font-semibold mt-2">
-          {{ configuracionStore.configuracion.nombre || 'DentalCloud' }}
-        </p>
-      </div>
-      <!-- SIN LOGO - Default -->
-      <div v-else class="text-center">
-        <div class="h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mb-2">
-          <i class="fas fa-tooth text-white text-3xl"></i>
-        </div>
-        <p class="text-sm font-semibold">
-          {{ configuracionStore.configuracion.nombre || 'DentalCloud' }}
-        </p>
-      </div>
+     <!-- CON LOGO -->
+<div v-if="configuracionStore.hasLogo" class="text-center">
+  <img 
+    :src="configuracionStore.logoUrl" 
+    :alt="configuracionStore.configuracion.nombre"
+    class="h-16 mx-auto object-contain"
+  >
+  <p class="text-sm font-semibold mt-2">
+    {{ configuracionStore.configuracion.nombre || 'DentalCloud' }}
+  </p>
+</div>
+
+<!-- SIN LOGO - Default -->
+<div v-else class="text-center">
+  <div class="h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mb-2">
+    <i class="fas fa-tooth text-white text-3xl"></i>
+  </div>
+  <p class="text-sm font-semibold">
+    {{ configuracionStore.configuracion.nombre || 'DentalCloud' }}
+  </p>
+</div>
       
     </div>
 
