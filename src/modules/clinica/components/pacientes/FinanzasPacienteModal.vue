@@ -269,75 +269,236 @@
                 <p class="text-gray-600">Este paciente no tiene financiamientos activos</p>
               </div>
 
-              <!-- Lista de financiamientos -->
-              <div v-else class="space-y-4">
+              <!-- Lista de financiamientos CON DETALLE DE CUOTAS -->
+              <div v-else class="space-y-6">
                 <div
                   v-for="fin in financiamientos"
                   :key="fin.id"
-                  class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition cursor-pointer"
-                  @click="verDetalleFinanciamiento(fin)"
+                  class="border-2 border-gray-200 rounded-xl overflow-hidden"
                 >
-                  <div class="flex items-start justify-between mb-3">
-                    <div class="flex-1">
-                      <h4 class="font-semibold text-gray-900 flex items-center gap-2">
-                        <i class="fas fa-credit-card text-blue-600"></i>
-                        Plan de {{ fin.cuotas_totales || fin.numero_cuotas }} Cuotas
-                      </h4>
-                      <p class="text-sm text-gray-600 mt-1">
-                        {{ fin.cuenta?.concepto || 'Financiamiento' }}
-                      </p>
-                    </div>
-                    <div class="text-right">
+                  
+                  <!-- HEADER DEL FINANCIAMIENTO -->
+                  <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center gap-3 text-white">
+                        <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                          <i class="fas fa-credit-card text-xl"></i>
+                        </div>
+                        <div>
+                          <h4 class="font-bold text-lg">
+                            Plan de {{ fin.cuotas_totales || fin.numero_cuotas }} Cuotas
+                          </h4>
+                          <p class="text-blue-100 text-sm">
+                            {{ fin.cuenta?.concepto || fin.tratamiento?.nombre || 'Financiamiento' }}
+                          </p>
+                        </div>
+                      </div>
                       <span
                         :class="[
-                          'inline-block px-3 py-1 rounded-full text-xs font-medium',
+                          'px-4 py-2 rounded-full text-sm font-bold',
                           fin.estado === 'activo' || fin.estado === 'vigente'
-                            ? 'bg-green-100 text-green-800'
+                            ? 'bg-green-500 text-white'
                             : fin.estado === 'completado'
-                            ? 'bg-blue-100 text-blue-800'
-                            : 'bg-gray-100 text-gray-800'
+                            ? 'bg-blue-500 text-white'
+                            : 'bg-gray-500 text-white'
                         ]"
                       >
-                        {{ fin.estado === 'activo' || fin.estado === 'vigente' ? 'Activo' : fin.estado }}
+                        {{ fin.estado === 'activo' || fin.estado === 'vigente' ? 'ACTIVO' : fin.estado.toUpperCase() }}
                       </span>
                     </div>
                   </div>
 
-                  <!-- Progreso de cuotas -->
-                  <div class="mb-3">
-                    <div class="flex items-center justify-between text-xs text-gray-600 mb-1">
-                      <span>Cuotas pagadas: {{ fin.cuotas_pagadas || 0 }} / {{ fin.cuotas_totales || fin.numero_cuotas }}</span>
-                      <span>Saldo: {{ formatMonto(fin.saldo_pendiente || 0) }}</span>
+                  <!-- RESUMEN FINANCIERO -->
+                  <div class="bg-blue-50 border-b border-blue-100 px-6 py-4">
+                    <div class="grid grid-cols-4 gap-4">
+                      <div class="text-center">
+                        <p class="text-xs text-blue-700 font-medium mb-1">Total a Pagar</p>
+                        <p class="text-xl font-bold text-blue-900">{{ formatMonto(fin.monto_total || 0) }}</p>
+                      </div>
+                      <div class="text-center">
+                        <p class="text-xs text-green-700 font-medium mb-1">Ya Pagado</p>
+                        <p class="text-xl font-bold text-green-900">{{ formatMonto(fin.monto_pagado || 0) }}</p>
+                      </div>
+                      <div class="text-center">
+                        <p class="text-xs text-orange-700 font-medium mb-1">Saldo Pendiente</p>
+                        <p class="text-xl font-bold text-orange-900">{{ formatMonto(fin.saldo_pendiente || 0) }}</p>
+                      </div>
+                      <div class="text-center">
+                        <p class="text-xs text-purple-700 font-medium mb-1">Monto por Cuota</p>
+                        <p class="text-xl font-bold text-purple-900">{{ formatMonto(fin.monto_cuota || 0) }}</p>
+                      </div>
                     </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2">
+
+                    <!-- Barra de Progreso -->
+                    <div class="mt-4">
+                      <div class="flex items-center justify-between text-xs text-blue-700 mb-1">
+                        <span>Progreso de Pago</span>
+                        <span class="font-bold">{{ calcularProgresoCuotas(fin) }}% completado</span>
+                      </div>
+                      <div class="w-full bg-blue-200 rounded-full h-3">
+                        <div
+                          class="bg-gradient-to-r from-green-500 to-green-600 h-3 rounded-full transition-all duration-500"
+                          :style="{ width: calcularProgresoCuotas(fin) + '%' }"
+                        ></div>
+                      </div>
+                      <div class="flex items-center justify-between text-xs text-blue-600 mt-1">
+                        <span>{{ fin.cuotas_pagadas || 0 }} de {{ fin.cuotas_totales || fin.numero_cuotas || 0 }} cuotas pagadas</span>
+                        <span>{{ Math.max(0, (fin.cuotas_totales || fin.numero_cuotas || 0) - (fin.cuotas_pagadas || 0)) }} cuotas pendientes</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- DETALLE DE CUOTAS -->
+                  <div class="px-6 py-4">
+                    <h5 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                      <i class="fas fa-list"></i>
+                      Detalle de Cuotas
+                    </h5>
+
+                    <!-- Sin cuotas -->
+                    <div v-if="!fin.cuotas || fin.cuotas.length === 0" class="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                      <i class="fas fa-exclamation-circle text-3xl text-gray-400 mb-3"></i>
+                      <p class="text-sm font-medium text-gray-700 mb-1">No hay cuotas disponibles</p>
+                      <p class="text-xs text-gray-500">ID Financiamiento: {{ fin.id }}</p>
+                      <p class="text-xs text-gray-500 mt-1">
+                        Cuotas esperadas: {{ fin.numero_cuotas || 'No definido' }}
+                      </p>
+                      <button
+                        @click="loadFinanciamientos"
+                        class="mt-3 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-lg transition"
+                      >
+                        <i class="fas fa-sync-alt mr-2"></i>
+                        Recargar
+                      </button>
+                    </div>
+
+                    <!-- Con cuotas -->
+                    <div v-else class="space-y-2 max-h-[400px] overflow-y-auto">
                       <div
-                        class="bg-blue-500 h-2 rounded-full transition-all"
-                        :style="{ width: calcularProgresoCuotas(fin) + '%' }"
-                      ></div>
+                        v-for="cuota in fin.cuotas"
+                        :key="cuota.id"
+                        :class="[
+                          'p-4 rounded-lg border-2 transition-all',
+                          cuota.estado === 'pagada' 
+                            ? 'bg-green-50 border-green-300' 
+                            : esCuotaVencida(cuota)
+                            ? 'bg-red-50 border-red-300'
+                            : 'bg-white border-gray-200 hover:border-blue-300'
+                        ]"
+                      >
+                        <div class="flex items-center justify-between">
+                          
+                          <!-- Info Cuota -->
+                          <div class="flex items-center gap-4 flex-1">
+                            
+                            <!-- Número -->
+                            <div class="text-center">
+                              <div
+                                :class="[
+                                  'w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg',
+                                  cuota.estado === 'pagada'
+                                    ? 'bg-green-500 text-white'
+                                    : esCuotaVencida(cuota)
+                                    ? 'bg-red-500 text-white'
+                                    : 'bg-blue-500 text-white'
+                                ]"
+                              >
+                                {{ cuota.numero_cuota }}
+                              </div>
+                            </div>
+
+                            <!-- Detalles -->
+                            <div class="flex-1">
+                              <div class="flex items-center gap-2 mb-1">
+                                <p class="font-bold text-gray-900">Cuota {{ cuota.numero_cuota }}</p>
+                                <span
+                                  :class="[
+                                    'px-2 py-0.5 rounded-full text-xs font-bold',
+                                    cuota.estado === 'pagada'
+                                      ? 'bg-green-500 text-white'
+                                      : esCuotaVencida(cuota)
+                                      ? 'bg-red-500 text-white'
+                                      : 'bg-orange-500 text-white'
+                                  ]"
+                                >
+                                  {{ cuota.estado === 'pagada' ? 'PAGADA' : esCuotaVencida(cuota) ? 'VENCIDA' : 'PENDIENTE' }}
+                                </span>
+                              </div>
+
+                              <div class="grid grid-cols-3 gap-3 text-sm">
+                                <div>
+                                  <p class="text-gray-600 text-xs">Monto</p>
+                                  <p class="font-bold text-gray-900">{{ formatMonto(cuota.monto) }}</p>
+                                </div>
+                                <div>
+                                  <p class="text-gray-600 text-xs">Vencimiento</p>
+                                  <p class="font-semibold" :class="esCuotaVencida(cuota) ? 'text-red-600' : 'text-gray-900'">
+                                    {{ formatDate(cuota.fecha_vencimiento) }}
+                                  </p>
+                                </div>
+                                <div v-if="cuota.fecha_pago">
+                                  <p class="text-gray-600 text-xs">Fecha de Pago</p>
+                                  <p class="font-semibold text-green-600">{{ formatDate(cuota.fecha_pago) }}</p>
+                                </div>
+                              </div>
+
+                              <!-- Alerta de vencida -->
+                              <div v-if="esCuotaVencida(cuota)" class="mt-2 flex items-center gap-2 text-red-600 text-xs font-medium">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span>Esta cuota está vencida</span>
+                              </div>
+                            </div>
+
+                          </div>
+
+                          <!-- Botón Pagar o Icono Pagado -->
+                          <div class="ml-4">
+                            <button
+                              v-if="cuota.estado === 'pendiente' && (fin.estado === 'activo' || fin.estado === 'vigente')"
+                              @click="pagarCuotaDirecta(fin, cuota)"
+                              :class="[
+                                'px-6 py-3 rounded-lg font-bold transition-all transform hover:scale-105',
+                                esCuotaVencida(cuota)
+                                  ? 'bg-red-600 hover:bg-red-700 text-white shadow-lg'
+                                  : 'bg-green-600 hover:bg-green-700 text-white shadow-lg'
+                              ]"
+                            >
+                              <i class="fas fa-dollar-sign mr-2"></i>
+                              {{ esCuotaVencida(cuota) ? 'Pagar Ahora' : 'Pagar' }}
+                            </button>
+
+                            <div
+                              v-else-if="cuota.estado === 'pagada'"
+                              class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-lg"
+                            >
+                              <i class="fas fa-check text-3xl text-white"></i>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  <!-- Info adicional -->
-                  <div class="grid grid-cols-3 gap-3 text-sm">
-                    <div>
-                      <p class="text-gray-600">Monto Cuota</p>
-                      <p class="font-medium text-gray-900">{{ formatMonto(fin.monto_cuota || 0) }}</p>
-                    </div>
-                    <div>
-                      <p class="text-gray-600">Total</p>
-                      <p class="font-medium text-gray-900">{{ formatMonto(fin.monto_total || 0) }}</p>
-                    </div>
-                    <div>
-                      <p class="text-gray-600">Próximo Venc.</p>
-                      <p class="font-medium text-gray-900">{{ formatDate(fin.proxima_fecha_vencimiento) }}</p>
+                  <!-- FOOTER - Info adicional -->
+                  <div class="bg-gray-50 border-t border-gray-200 px-6 py-3 text-sm text-gray-600">
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center gap-4">
+                        <span>
+                          <i class="fas fa-calendar-day text-blue-600 mr-1"></i>
+                          Día de vencimiento: {{ fin.dia_vencimiento || '-' }}
+                        </span>
+                        <span>
+                          <i class="fas fa-percentage text-blue-600 mr-1"></i>
+                          Interés: {{ fin.tasa_interes || 0 }}%
+                        </span>
+                      </div>
+                      <span class="text-xs text-gray-500">
+                        Creado: {{ formatDate(fin.created_at) }}
+                      </span>
                     </div>
                   </div>
 
-                  <!-- Click para ver detalle -->
-                  <div class="mt-3 pt-3 border-t border-gray-200 text-sm text-gray-600 text-center">
-                    <i class="fas fa-eye mr-2"></i>
-                    Click para ver detalle de cuotas
-                  </div>
                 </div>
               </div>
             </div>
@@ -511,6 +672,15 @@
   <VerFinanciamientoModal
     v-model="showVerFinanciamientoModal"
     :financiamiento="financiamientoSeleccionado"
+    @pagar-cuota="handlePagarCuota"
+    @refresh="loadFinanciamientos"
+  />
+
+  <!-- Modal Pagar Cuota -->
+  <PagarCuotaModal
+    v-model="showPagarCuotaModal"
+    :cuota-data="cuotaDataParaPagar"
+    @saved="handleCuotaPagada"
   />
 
   <!-- Modal Exonerar -->
@@ -620,6 +790,7 @@ import VerCuentaModal from '@clinica/components/facturacion/VerCuentaModal.vue'
 import RegistrarPagoModal from '@clinica/components/facturacion/RegistrarPagoModal.vue'
 import CrearFinanciamientoModal from '@clinica/components/facturacion/CrearFinanciamientoModal.vue'
 import VerFinanciamientoModal from '@clinica/components/facturacion/VerFinanciamientoModal.vue'
+import PagarCuotaModal from '@clinica/components/facturacion/PagarCuotaModal.vue'
 
 const props = defineProps({
   modelValue: {
@@ -659,6 +830,10 @@ const showFinanciamientoModal = ref(false)
 const cuentaParaFinanciar = ref(null)
 const showVerFinanciamientoModal = ref(false)
 const financiamientoSeleccionado = ref(null)
+
+// Modal de Pagar Cuota
+const showPagarCuotaModal = ref(false)
+const cuotaDataParaPagar = ref(null)
 
 // Modal de Exonerar
 const showExonerarModal = ref(false)
@@ -771,13 +946,40 @@ async function loadPagos() {
 async function loadFinanciamientos() {
   loadingFinanciamientos.value = true
   try {
+    // Primero obtener la lista de financiamientos
     const response = await facturacionStore.fetchFinanciamientos({
       paciente_id: props.paciente.id
     })
     
     if (response.success) {
-      financiamientos.value = response.data.data || response.data || []
-      console.log('💳 Financiamientos cargados:', financiamientos.value.length)
+      const listaFinanciamientos = response.data.data || response.data || []
+      
+      console.log('📋 Lista de financiamientos obtenida:', listaFinanciamientos.length)
+      
+      // Cargar el detalle completo de cada financiamiento (incluyendo cuotas)
+      const financiamientosConDetalle = []
+      
+      for (const fin of listaFinanciamientos) {
+        try {
+          console.log(`🔍 Cargando detalle del financiamiento ID: ${fin.id}`)
+          
+          const detalleResponse = await facturacionStore.fetchFinanciamiento(fin.id)
+          
+          if (detalleResponse.success && detalleResponse.data) {
+            console.log(`✅ Financiamiento ${fin.id} cargado con ${detalleResponse.data.cuotas?.length || 0} cuotas`)
+            financiamientosConDetalle.push(detalleResponse.data)
+          } else {
+            console.warn(`⚠️ No se pudo cargar detalle del financiamiento ${fin.id}`)
+            financiamientosConDetalle.push(fin)
+          }
+        } catch (error) {
+          console.error(`❌ Error cargando financiamiento ${fin.id}:`, error)
+          financiamientosConDetalle.push(fin)
+        }
+      }
+      
+      financiamientos.value = financiamientosConDetalle
+      console.log('💳 Financiamientos con detalle cargados:', financiamientos.value)
     }
   } catch (error) {
     console.error('Error al cargar financiamientos:', error)
@@ -899,6 +1101,41 @@ function handleFinanciamientoCreado() {
   loadFinanciamientos()
 }
 
+function handlePagarCuota(data) {
+  // data contiene { financiamiento, cuota }
+  cuotaDataParaPagar.value = data
+  showPagarCuotaModal.value = true
+}
+
+function pagarCuotaDirecta(financiamiento, cuota) {
+  // Preparar data para el modal de pago
+  cuotaDataParaPagar.value = {
+    financiamiento: financiamiento,
+    cuota: cuota
+  }
+  showPagarCuotaModal.value = true
+}
+
+function esCuotaVencida(cuota) {
+  if (cuota.estado === 'pagada') return false
+  if (!cuota.fecha_vencimiento) return false
+  const hoy = new Date()
+  const vencimiento = new Date(cuota.fecha_vencimiento)
+  return vencimiento < hoy
+}
+
+async function handleCuotaPagada() {
+  notify.success('Cuota pagada correctamente', 'Pago exitoso')
+  
+  // Recargar financiamientos y cuentas
+  await loadFinanciamientos()
+  await loadCuentas()
+  
+  // Cerrar modal de pagar cuota
+  showPagarCuotaModal.value = false
+  cuotaDataParaPagar.value = null
+}
+
 function limpiarFormPago() {
   formPago.value = {
     cuenta_id: '',
@@ -921,10 +1158,24 @@ function calcularPorcentajePago(cuenta) {
 }
 
 function calcularProgresoCuotas(financiamiento) {
-  if (!financiamiento.cuotas_totales || financiamiento.cuotas_totales === 0) return 0
-  const pagadas = parseFloat(financiamiento.cuotas_pagadas || 0)
-  const totales = parseFloat(financiamiento.cuotas_totales || financiamiento.numero_cuotas || 0)
-  return Math.min(Math.round((pagadas / totales) * 100), 100)
+  if (!financiamiento) {
+    console.warn('⚠️ Financiamiento es null/undefined')
+    return 0
+  }
+  
+  const cuotasPagadas = parseFloat(financiamiento.cuotas_pagadas || 0)
+  const cuotasTotales = parseFloat(financiamiento.cuotas_totales || financiamiento.numero_cuotas || 0)
+  
+  if (cuotasTotales === 0) {
+    console.warn('⚠️ No hay cuotas totales para financiamiento:', financiamiento.id)
+    return 0
+  }
+  
+  const progreso = Math.min(Math.round((cuotasPagadas / cuotasTotales) * 100), 100)
+  
+  console.log(`📊 Progreso financiamiento ${financiamiento.id}: ${cuotasPagadas}/${cuotasTotales} = ${progreso}%`)
+  
+  return progreso
 }
 
 function formatMonto(monto) {
