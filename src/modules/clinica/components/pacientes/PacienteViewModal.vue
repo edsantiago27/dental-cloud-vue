@@ -179,7 +179,7 @@
           <!-- Footer Actions -->
           <div class="px-6 py-4 bg-gray-50 rounded-b-xl flex items-center justify-between border-t border-gray-200">
             
-            <!-- Botones Izquierda -->
+           <!-- Botones Izquierda -->
             <div class="flex items-center gap-3">
               <button
                 @click="handleAgendar"
@@ -187,6 +187,13 @@
               >
                 <i class="fas fa-calendar-plus mr-2"></i>
                 Agendar Cita
+              </button>
+              <button
+                @click="handleVerFinanzas"
+                class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition"
+              >
+                <i class="fas fa-dollar-sign mr-2"></i>
+                Ver Finanzas
               </button>
             </div>
 
@@ -200,8 +207,7 @@
               </button>
               <button
                 @click="handleEdit"
-                class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition"
-              >
+                class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
                 <i class="fas fa-edit mr-2"></i>
                 Editar Perfil
               </button>
@@ -212,11 +218,17 @@
       </div>
     </div>
   </transition>
+  <!-- Modal de Finanzas -->
+  <FinanzasPacienteModal
+    v-model="showFinanzasModal"
+    :paciente="paciente"
+  />
 </template>
 
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useFacturacionStore } from '@clinica/stores/facturacion'
+import FinanzasPacienteModal from './FinanzasPacienteModal.vue'
 
 const props = defineProps({
   modelValue: {
@@ -229,14 +241,14 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue', 'edit', 'agendar'])
+const emit = defineEmits(['update:modelValue', 'edit', 'agendar', 'ver-finanzas'])
 
 const facturacionStore = useFacturacionStore()
 
 // State
 const loading = ref(false)
 const cuentasPaciente = ref([])
-
+const showFinanzasModal = ref(false)
 // Computed - KPIs
 const proximasCitas = computed(() => {
   // TODO: Implementar cuando esté listo el módulo de citas
@@ -301,7 +313,9 @@ function handleAgendar() {
   // Emitir evento para abrir modal de crear cita con paciente pre-seleccionado
   emit('agendar', props.paciente)
 }
-
+function handleVerFinanzas() {
+  showFinanzasModal.value = true
+}
 function getInitials() {
   if (!props.paciente) return '?'
   const n = props.paciente.nombre?.[0] || ''

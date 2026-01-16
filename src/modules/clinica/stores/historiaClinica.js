@@ -94,6 +94,67 @@ export const useHistoriaClinicaStore = defineStore('historiaClinica', () => {
     
     return tipos
   })
+  // Cálculo de IMC
+  const imc = computed(() => {
+  if (!form.value.peso || !form.value.altura) return null
+  const alturaMetros = form.value.altura / 100
+  return (form.value.peso / (alturaMetros * alturaMetros)).toFixed(1)
+})
+  const clasificacionIMC = computed(() => {
+  if (!imc.value) return null
+  
+  const valor = imc.value
+  
+  if (valor < 18.5) {
+    return {
+      categoria: 'Bajo Peso',
+      color: 'blue',
+      bgColor: 'bg-blue-100',
+      textColor: 'text-blue-800',
+      icon: '⚠️'
+    }
+  } else if (valor < 25) {
+    return {
+      categoria: 'Normal',
+      color: 'green',
+      bgColor: 'bg-green-100',
+      textColor: 'text-green-800',
+      icon: '✅'
+    }
+  } else if (valor < 30) {
+    return {
+      categoria: 'Sobrepeso',
+      color: 'yellow',
+      bgColor: 'bg-yellow-100',
+      textColor: 'text-yellow-800',
+      icon: '⚠️'
+    }
+  } else if (valor < 35) {
+    return {
+      categoria: 'Obesidad Tipo I',
+      color: 'orange',
+      bgColor: 'bg-orange-100',
+      textColor: 'text-orange-800',
+      icon: '⚠️'
+    }
+  } else if (valor < 40) {
+    return {
+      categoria: 'Obesidad Tipo II',
+      color: 'red',
+      bgColor: 'bg-red-100',
+      textColor: 'text-red-800',
+      icon: '❌'
+    }
+  } else {
+    return {
+      categoria: 'Obesidad Tipo III',
+      color: 'red',
+      bgColor: 'bg-red-100',
+      textColor: 'text-red-800',
+      icon: '🚨'
+    }
+  }
+})
 
   // ==========================================
   // ACTIONS - FICHA MÉDICA

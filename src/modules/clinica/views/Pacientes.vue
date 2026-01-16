@@ -139,7 +139,7 @@
       @new="openNewModal"
       @agendar-cita="handleAgendarCita"
       @perfil="openPerfilModal"
-      @historial="openHistorialModal"
+     
     />
 
     <!-- Modal Formulario Nuevo Paciente -->
@@ -183,6 +183,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { usePacientesStore } from '@clinica/stores'
 import { useNotification } from '@shared/composables/useNotification'
 import PacientesList from '@clinica/components/pacientes/PacientesList.vue'
@@ -192,7 +193,7 @@ import CitaFormModal from '@clinica/components/citas/CitaFormModal.vue'
 
 const pacientesStore = usePacientesStore()
 const notify = useNotification()
-
+const router = useRouter() 
 // State
 const searchQuery = ref('')
 const showFilters = ref(false)
@@ -311,12 +312,6 @@ function handleCitaUpdated(cita) {
 function handleEditPaciente(paciente) {
   // Tu lógica existente para editar paciente
   console.log('Editar paciente:', paciente)
-}
-function openHistorialModal(paciente) {
-  router.push({ 
-    name: 'clinica-historia-clinica', 
-    params: { pacienteId: paciente.id } 
-  })
 }
 
 function handleSaved() {

@@ -118,7 +118,22 @@
           <p v-if="form.hospitalizaciones" class="text-gray-700 whitespace-pre-wrap">{{ form.hospitalizaciones }}</p>
           <p v-else class="text-gray-500 text-sm">Sin hospitalizaciones previas</p>
         </div>
-
+<!-- Signos Vitales -->
+<div class="border-b border-gray-200 pb-6">
+  <div class="flex items-center justify-between mb-3">
+    <div class="flex items-center gap-2">
+      <i class="fas fa-heartbeat text-red-600"></i>
+      <h4 class="font-semibold text-gray-900">Signos Vitales</h4>
+    </div>
+    <span v-if="form.updated_at" class="text-xs text-gray-500">
+      Última actualización: {{ formatDate(form.updated_at) }}
+    </span>
+  </div>
+  
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+    <!-- Cards de signos vitales -->
+  </div>
+</div>
         <!-- Hábitos -->
         <div class="border-b border-gray-200 pb-6">
           <div class="flex items-center gap-2 mb-3">
@@ -274,7 +289,122 @@
             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           ></textarea>
         </div>
+       <!-- Signos Vitales -->
+        <div class="mb-6">
+          <h4 class="font-semibold text-gray-900 mb-4 flex items-center">
+            <i class="fas fa-heartbeat text-red-600 mr-2"></i>
+            Signos Vitales
+          </h4>
 
+          <!-- Presión Arterial -->
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Presión Arterial</label>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs text-gray-600 mb-1">Sistólica (mmHg)</label>
+                <input
+                  v-model.number="form.presion_sistolica"
+                  type="number"
+                  min="50"
+                  max="300"
+                  step="1"
+                  placeholder="120"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                >
+                <p class="text-xs text-gray-500 mt-1">Rango: 50-300</p>
+              </div>
+              <div>
+                <label class="block text-xs text-gray-600 mb-1">Diastólica (mmHg)</label>
+                <input
+                  v-model.number="form.presion_diastolica"
+                  type="number"
+                  min="30"
+                  max="200"
+                  step="1"
+                  placeholder="80"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                >
+                <p class="text-xs text-gray-500 mt-1">Rango: 30-200</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Frecuencia Cardíaca y Temperatura -->
+          <div class="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Frecuencia Cardíaca (lpm)</label>
+              <input
+                v-model.number="form.frecuencia_cardiaca"
+                type="number"
+                min="30"
+                max="250"
+                step="1"
+                placeholder="72"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+              >
+              <p class="text-xs text-gray-500 mt-1">Rango: 30-250 lpm</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Temperatura (°C)</label>
+              <input
+                v-model.number="form.temperatura"
+                type="number"
+                min="30"
+                max="45"
+                step="0.1"
+                placeholder="36.5"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+              >
+              <p class="text-xs text-gray-500 mt-1">Rango: 30-45 °C</p>
+            </div>
+          </div>
+
+          <!-- Peso y Altura -->
+          <div class="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Peso (kg)</label>
+              <input
+                v-model.number="form.peso"
+                type="number"
+                min="1"
+                max="500"
+                step="0.1"
+                placeholder="70"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+              >
+              <p class="text-xs text-gray-500 mt-1">Rango: 1-500 kg</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Altura (cm)</label>
+              <input
+                v-model.number="form.altura"
+                type="number"
+                min="30"
+                max="300"
+                step="0.1"
+                placeholder="170"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+              >
+              <p class="text-xs text-gray-500 mt-1">Rango: 30-300 cm</p>
+            </div>
+          </div>
+
+          <!-- IMC Calculado (solo si hay peso y altura) -->
+          <div v-if="imc" :class="[clasificacionIMC.bgColor, clasificacionIMC.borderColor]" class="p-4 rounded-lg border-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-2xl">{{ clasificacionIMC.icon }}</span>
+                <div>
+                  <p :class="clasificacionIMC.textColor" class="text-sm font-medium">Índice de Masa Corporal (IMC)</p>
+                  <p :class="clasificacionIMC.textColor" class="text-2xl font-bold">{{ imc }}</p>
+                </div>
+              </div>
+              <div :class="clasificacionIMC.bgColor" class="px-4 py-2 rounded-lg">
+                <p :class="clasificacionIMC.textColor" class="text-sm font-bold">{{ clasificacionIMC.categoria }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
         <!-- Hábitos -->
         <div class="border border-gray-200 rounded-lg p-4">
           <h4 class="font-semibold text-gray-900 mb-4">Hábitos</h4>
@@ -435,7 +565,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useHistoriaClinicaStore } from '@clinica/stores/historiaClinica'
 import { useNotification } from '@shared/composables/useNotification'
 
@@ -470,7 +600,14 @@ const form = ref({
   contacto_emergencia_nombre: '',
   contacto_emergencia_telefono: '',
   contacto_emergencia_relacion: '',
-  notas_importantes: ''
+  notas_importantes: '',
+  // NUEVOS: Signos Vitales
+  presion_sistolica: null,
+  presion_diastolica: null,
+  frecuencia_cardiaca: null,
+  temperatura: null,
+  peso: null,
+  altura: null
 })
 
 const originalForm = ref(null)
@@ -503,8 +640,15 @@ async function fetchFichaMedica() {
         grupo_sanguineo: data.grupo_sanguineo || '',
         contacto_emergencia_nombre: data.contacto_emergencia_nombre || '',
         contacto_emergencia_telefono: data.contacto_emergencia_telefono || '',
-        contacto_emergencia_relacion: data.contacto_emergencia_relacion || '',
-        notas_importantes: data.notas_importantes || ''
+        contacto_emergencia_relacion: data.contacto_emergencia_relacion || '', 
+        notas_importantes: data.notas_importantes || '',
+        // Signos Vitales
+        presion_sistolica: data.presion_sistolica || null,
+        presion_diastolica: data.presion_diastolica || null,
+        frecuencia_cardiaca: data.frecuencia_cardiaca || null,
+        temperatura: data.temperatura || null,
+        peso: data.peso || null,
+        altura: data.altura || null
       }
       
       // Para los inputs de texto

@@ -15,7 +15,7 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: () => import('@shared/views/auth/Login.vue'),
+      component: () => import('@/views/auth/Login.vue'),  // ← CAMBIAR AQUÍ
       beforeEnter: guestGuard,
       meta: { title: 'Iniciar Sesión', requiresAuth: false }
     },
@@ -25,7 +25,7 @@ const router = createRouter({
     // ============================================
     {
       path: '/',
-      component: () => import('@clinica/layouts/ClinicaLayout.vue'),
+      component: () => import('@clinica/layouts/ClinicaLayout.vue'),  
       beforeEnter: authGuard,
       meta: { requiresAuth: true, module: 'clinica' },
       children: [
@@ -34,16 +34,12 @@ const router = createRouter({
           path: '',
           redirect: '/dashboard'
         },
-        
-        // Dashboard
         {
           path: 'dashboard',
           name: 'clinica-dashboard',
           component: () => import('@clinica/views/Dashboard.vue'),
           meta: { title: 'Dashboard' }
         },
-
-        // Gestión de Pacientes
         {
           path: 'pacientes',
           name: 'clinica-pacientes',
@@ -57,38 +53,30 @@ const router = createRouter({
           meta: { title: 'Historia Clínica' },
           props: true
         },
-
-        // Gestión de Profesionales
         {
           path: 'profesionales',
           name: 'clinica-profesionales',
           component: () => import('@clinica/views/Profesionales.vue'),
           meta: { title: 'Profesionales' }
         },
-
-        // Gestión de Citas
         {
           path: 'citas',
           name: 'clinica-citas',
           component: () => import('@clinica/views/CitasLista.vue'),
-          meta: { title: 'Citas - Lista' }
+          meta: { title: 'Citas' }
         },
         {
           path: 'calendario',
           name: 'clinica-calendario',
           component: () => import('@clinica/views/Citas.vue'),
-          meta: { title: 'Calendario de Citas' }
+          meta: { title: 'Calendario' }
         },
-
-        // Tratamientos
         {
           path: 'tratamientos',
           name: 'clinica-tratamientos',
           component: () => import('@clinica/views/Tratamientos.vue'),
           meta: { title: 'Tratamientos' }
         },
-
-        // Facturación
         {
           path: 'facturacion',
           name: 'clinica-facturacion',
@@ -107,8 +95,7 @@ const router = createRouter({
           component: () => import('@clinica/views/Pagos.vue'),
           meta: { title: 'Registro de Pagos' }
         },
-
-        // Reportes
+         // Reportes
         {
           path: 'reportes',
           name: 'clinica-reportes',
@@ -138,7 +125,7 @@ const router = createRouter({
       ]
     },
 
-    // ============================================
+   // ============================================
     // 👤 MÓDULO PACIENTE (PORTAL)
     // ============================================
     ...pacienteRoutes,
@@ -151,6 +138,8 @@ const router = createRouter({
     // ============================================
     // 🔀 REDIRECCIONES
     // ============================================
+
+    // Redirección raíz
     {
       path: '/',
       redirect: () => {
@@ -160,15 +149,12 @@ const router = createRouter({
           return '/login'
         }
         
-        // Redirección según tipo de usuario
         if (authStore.isPacienteUser) {
           return '/paciente/portal'
         }
-        
         if (authStore.isSuperAdmin) {
           return '/superadmin/dashboard'
         }
-        
         return '/dashboard'
       }
     },
@@ -179,7 +165,7 @@ const router = createRouter({
     {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
-      component: () => import('@shared/views/NotFound.vue'),
+      component: () => import('@/views/NotFound.vue'),  // ← CAMBIAR AQUÍ
       meta: { title: 'Página No Encontrada' }
     }
   ]
@@ -189,11 +175,9 @@ const router = createRouter({
 // 🛡️ GLOBAL NAVIGATION GUARDS
 // ============================================
 router.beforeEach((to, from, next) => {
-  // Actualizar título de página
   document.title = to.meta.title 
     ? `${to.meta.title} - DentalCloud` 
     : 'DentalCloud'
-  
   next()
 })
 

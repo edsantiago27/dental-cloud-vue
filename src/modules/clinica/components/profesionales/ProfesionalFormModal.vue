@@ -344,13 +344,21 @@ watch(() => props.modelValue, (isOpen) => {
 
 async function handleSubmit() {
   loading.value = true
-
   try {
+    // 🔧 FORMATEAR HORARIOS: Remover segundos (HH:mm:ss → HH:mm)
+    const formattedData = {
+      ...form.value,
+      horarios: form.value.horarios.map(horario => ({
+        ...horario,
+        hora_inicio: horario.hora_inicio?.substring(0, 5) || horario.hora_inicio,
+        hora_fin: horario.hora_fin?.substring(0, 5) || horario.hora_fin
+      }))
+    }
+    
     let result
-
     if (isEdit.value) {
-      // Actualizar
-      result = await profesionalesStore.updateProfesional(props.profesional.id, form.value)
+      // ✅ Enviar datos formateados
+      result = await profesionalesStore.updateProfesional(props.profesional.id, formattedData)
       
       if (result.success) {
         notify.success('Profesional actualizado correctamente', 'Actualizado')
@@ -360,8 +368,8 @@ async function handleSubmit() {
         notify.error(result.message || 'Error al actualizar profesional')
       }
     } else {
-      // Crear
-      result = await profesionalesStore.createProfesional(form.value)
+      // ✅ Enviar datos formateados
+      result = await profesionalesStore.createProfesional(formattedData)
       
       if (result.success) {
         notify.success('Profesional creado correctamente', 'Creado')
@@ -386,6 +394,7 @@ async function handleSubmit() {
     loading.value = false
   }
 }
+
 
 function handleClose() {
   emit('update:modelValue', false)

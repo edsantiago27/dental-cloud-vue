@@ -22,7 +22,7 @@
           </div>
           <!-- Botón Volver -->
           <router-link
-            :to="{ name: 'pacientes' }"
+            :to="{ name: 'clinica-pacientes' }"
             class="px-4 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white rounded-lg transition"
           >
             <i class="fas fa-arrow-left mr-2"></i>
@@ -221,7 +221,7 @@ const stats = computed(() => {
 
 // Computed
 const pacienteId = computed(() => {
-  return parseInt(route.params.id)
+  return parseInt(route.params.pacienteId)
 })
 
 // Methods

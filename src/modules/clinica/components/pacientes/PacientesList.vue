@@ -126,7 +126,6 @@
 <HistoriaClinicaButton 
   :paciente-id="paciente.id"
   variant="icon"
-  @click="$emit('historial', paciente)"
 />
 
                 </div>
