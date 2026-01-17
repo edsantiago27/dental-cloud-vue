@@ -358,7 +358,7 @@ Este proyecto es privado y está protegido por derechos de autor.
 
 ## 👥 Autores
 
-- **Eduardo Santiago** - [edsantiago27](https://github.com/edsantiago27)
+- **Estefania Santiago** - [edsantiago27](https://github.com/edsantiago27)
 
 ---
 
@@ -373,7 +373,7 @@ Este proyecto es privado y está protegido por derechos de autor.
 ## 📞 Soporte
 
 Para soporte técnico o consultas:
-- 📧 Email: [tu-email@ejemplo.com]
+- 📧 Email: [estefaniadsantiago@gmail.com]
 - 💬 Issues: [GitHub Issues](https://github.com/edsantiago27/dental-cloud-vue/issues)
 
 ---
