@@ -1,54 +1,63 @@
 // router/guards.js
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '@shared/stores/auth'
 
 /**
  * Guard para rutas que requieren autenticación
  */
-export function authGuard(to, from, next) {
+export const authGuard = (to, from, next) => {
   const authStore = useAuthStore()
   
-  console.log('🔐 authGuard:', {
-    to: to.path,
-    from: from.path,
-    isAuthenticated: authStore.isAuthenticated
-  })
-
   if (!authStore.isAuthenticated) {
-    console.log('❌ No autenticado, redirigiendo a /login')
-    next({
-      path: '/login',
-      query: { redirect: to.fullPath } // Guardar ruta destino
-    })
-  } else {
-    console.log('✅ Autenticado, permitir acceso')
-    next()
+    return next({ name: 'login', query: { redirect: to.fullPath } })
   }
+  
+  // Validar acceso por módulo según userType
+  const module = to.meta.module
+  const userType = authStore.userType
+  
+  // SuperAdmin solo puede acceder a rutas superadmin
+  if (module === 'superadmin' && userType !== 'superadmin') {
+    return next({ name: 'not-found' })
+  }
+  
+  // Paciente solo puede acceder a rutas paciente
+  if (module === 'paciente' && userType !== 'paciente') {
+    return next({ name: 'not-found' })
+  }
+  
+  // Usuario de clínica solo puede acceder a rutas de clínica
+  if (module === 'clinica' && userType !== 'clinica') {
+    return next({ name: 'not-found' })
+  }
+  
+  next()
 }
 
 /**
  * Guard para rutas de invitados (login, registro, etc.)
- * Si ya está autenticado, redirige al dashboard
+ * Si ya está autenticado, redirige según el tipo de usuario
  */
-export function guestGuard(to, from, next) {
+export const guestGuard = (to, from, next) => {
   const authStore = useAuthStore()
   
-  console.log('👤 guestGuard:', {
-    to: to.path,
-    from: from.path,
-    isAuthenticated: authStore.isAuthenticated
-  })
-
   if (authStore.isAuthenticated) {
-    console.log('✅ Ya autenticado, redirigiendo a /dashboard')
-    next('/dashboard')
-  } else {
-    console.log('👤 No autenticado, permitir acceso a', to.path)
-    next()
+    // Redirigir según el tipo de usuario
+    switch (authStore.userType) {
+      case 'superadmin':
+        return next({ name: 'superadmin-dashboard' })
+      case 'paciente':
+        return next({ name: 'paciente-portal' })
+      case 'clinica':
+      default:
+        return next({ name: 'clinica-dashboard' })
+    }
   }
+  
+  next()
 }
 
 /**
- * Guard para rutas que requieren rol específico
+ * Guard para rutas que requieren rol específico dentro de una clínica
  */
 export function roleGuard(allowedRoles) {
   return (to, from, next) => {
