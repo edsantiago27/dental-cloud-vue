@@ -100,7 +100,10 @@ const router = createRouter({
           path: 'reportes',
           name: 'clinica-reportes',
           component: () => import('@clinica/views/Reportes.vue'),
-          meta: { title: 'Reportes' }
+          meta: { title: 'Reportes',
+            requiresAuth: true,
+      roles: ['super_admin', 'admin_clinica']
+           }
         },
 
         // Usuarios y Configuración
