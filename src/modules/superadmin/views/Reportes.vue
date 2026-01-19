@@ -176,7 +176,7 @@
 
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
-import { useSuperAdminReportesStore } from '@superadmin/stores/superadmin/reportes'
+import { useSuperAdminReportesStore } from '@superadmin/stores/reportes'
 import Chart from 'chart.js/auto'
 
 const reportesStore = useSuperAdminReportesStore()

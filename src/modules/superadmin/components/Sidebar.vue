@@ -56,8 +56,8 @@
 <script setup>
 import { computed } from 'vue'
 import SAMenuItem from './SAMenuItem.vue'
-import { useSuperAdminDashboardStore } from '@superadmin/stores/superadmin/dashboard'
-import { useSuperAdminAuthStore } from '@superadmin/stores/superadmin/auth'
+import { useSuperAdminDashboardStore } from '@superadmin/stores/dashboard'
+import { useSuperAdminAuthStore } from '@superadmin/stores/auth'
 
 const dashboardStore = useSuperAdminDashboardStore()
 const authStore = useSuperAdminAuthStore()

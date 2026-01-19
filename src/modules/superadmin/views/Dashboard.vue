@@ -275,7 +275,7 @@
 
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
-import { useSuperAdminDashboardStore } from '@superadmin/stores/superadmin/dashboard'
+import { useSuperAdminDashboardStore } from '@superadmin/stores/dashboard'
 import Chart from 'chart.js/auto'
 
 const dashboardStore = useSuperAdminDashboardStore()

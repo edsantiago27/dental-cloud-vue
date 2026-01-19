@@ -374,7 +374,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useSuperAdminFacturacionStore } from '@superadmin/stores/superadmin/facturacion'
+import { useSuperAdminFacturacionStore } from '@superadmin/stores/facturacion'
 import GenerarFacturaModal from '@superadmin/components/GenerarFacturaModal.vue'
 import RegistrarPagoModal from '@superadmin/components/RegistrarPagoModal.vue'
 import GenerarMasivoModal from '@superadmin/components/GenerarMasivoModal.vue'

@@ -16,44 +16,53 @@ export const usePacienteCitasStore = defineStore('pacienteCitas', () => {
 
   // Getters
   const citasProximas = computed(() => {
+    // Usar fecha actual sin horas para comparar solo días si es necesario,
+    // o incluir hora actual.
     const ahora = new Date()
-    console.log('🔮 Calculating citasProximas. Total citas:', citas.value.length)
     
     return citas.value.filter(c => {
-      if (!c.fecha || !c.hora) {
-          console.log(`⚠️ Cita ${c.id} rechazada: faltan datos`, { fecha: c.fecha, hora: c.hora })
-          return false
-      }
+      if (!c.fecha || !c.hora) return false
       
-      const fechaStr = `${c.fecha}T${c.hora}`
-      const fechaCita = new Date(fechaStr)
+      // Parsear fecha manualmente. La fecha viene como ISO (2026-01-20T00:00:00...)
+      // Tomamos solo los primeros 10 caracteres (YYYY-MM-DD)
+      const [year, month, day] = c.fecha.substring(0, 10).split('-').map(Number)
+      const [hours, minutes] = c.hora.split(':').map(Number)
       
-      if (isNaN(fechaCita.getTime())) {
-          console.log(`⚠️ Cita ${c.id} rechazada: fecha inválida`, fechaStr)
-          return false
-      }
+      // Crear fecha local usando los componentes
+      const fechaCita = new Date(year, month - 1, day, hours, minutes)
       
-      const esFutura = fechaCita >= ahora
-      const estadoValido = !['cancelada', 'completada', 'no_asistio'].includes(c.estado)
+      if (isNaN(fechaCita.getTime())) return false
       
-      if (!esFutura || !estadoValido) {
-          console.log(`🚫 Cita ${c.id} filtrada. EsFutura: ${esFutura}, Estado: ${c.estado}, Fecha: ${fechaStr}, Ahora: ${ahora.toISOString()}`)
-      }
-      
-      return esFutura && estadoValido
-    }).sort((a, b) => new Date(`${a.fecha}T${a.hora}`) - new Date(`${b.fecha}T${b.hora}`))
+      return fechaCita >= ahora && !['cancelada', 'completada', 'no_asistio'].includes(c.estado)
+    }).sort((a, b) => {
+        // Orden ascendente (la más cercana primero)
+        const da = new Date(a.fecha + 'T' + a.hora)
+        const db = new Date(b.fecha + 'T' + b.hora)
+        return da - db
+    })
   })
 
   const citasPasadas = computed(() => {
     const ahora = new Date()
     return citas.value.filter(c => {
       if (!c.fecha || !c.hora) return false
-      const fechaStr = `${c.fecha}T${c.hora}`
-      const fechaCita = new Date(fechaStr)
+      
+      // Parsear fecha manualmente
+      const [year, month, day] = c.fecha.substring(0, 10).split('-').map(Number)
+      const [hours, minutes] = c.hora.split(':').map(Number)
+      
+      // Crear fecha local
+      const fechaCita = new Date(year, month - 1, day, hours, minutes)
+
       if (isNaN(fechaCita.getTime())) return false
       
       return fechaCita < ahora || ['cancelada', 'completada', 'no_asistio'].includes(c.estado)
-    }).sort((a, b) => new Date(`${b.fecha}T${b.hora}`) - new Date(`${a.fecha}T${a.hora}`))
+    }).sort((a, b) => {
+        // Orden descendente (la más reciente primero)
+        const da = new Date(a.fecha + 'T' + a.hora)
+        const db = new Date(b.fecha + 'T' + b.hora)
+        return db - da
+    })
   })
 
   const proximaCita = computed(() => {
@@ -93,6 +102,7 @@ export const usePacienteCitasStore = defineStore('pacienteCitas', () => {
         }
         
         citas.value = citasArray
+        
         console.log('✅ Final citas stored:', citas.value)
         return { success: true }
       }

@@ -269,12 +269,18 @@ const citaSeleccionada = ref(null)
 
 // Methods
 function formatDia(fecha) {
-  return new Date(fecha).getDate()
+  // Parseo manual
+  const [year, month, day] = fecha.substring(0, 10).split('-').map(Number)
+  const date = new Date(year, month - 1, day)
+  return date.getDate()
 }
 
 function formatMes(fecha) {
   const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
-  return meses[new Date(fecha).getMonth()]
+  // Parseo manual
+  const [year, month, day] = fecha.substring(0, 10).split('-').map(Number)
+  const date = new Date(year, month - 1, day)
+  return meses[date.getMonth()]
 }
 
 function formatHora(hora) {
@@ -307,7 +313,11 @@ function puedeCancelar(cita) {
   if (!['programada', 'confirmada'].includes(cita.estado)) return false
   
   // Verificar que falten más de 24 horas
-  const fechaCita = new Date(cita.fecha + ' ' + cita.hora)
+  // Parseo manual para fecha local exacta
+  const [year, month, day] = cita.fecha.substring(0, 10).split('-').map(Number)
+  const [hours, minutes] = cita.hora.split(':').map(Number)
+  
+  const fechaCita = new Date(year, month - 1, day, hours, minutes)
   const ahora = new Date()
   const horasHasta = (fechaCita - ahora) / (1000 * 60 * 60)
   

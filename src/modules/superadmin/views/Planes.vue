@@ -223,7 +223,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useSuperAdminPlanesStore } from '@superadmin/stores/superadmin/planes'
+import { useSuperAdminPlanesStore } from '@superadmin/stores/planes'
 import PlanFormModal from '@superadmin/components/PlanFormModal.vue'
 import ConfirmModal from '@superadmin/components/ConfirmModal.vue'
 

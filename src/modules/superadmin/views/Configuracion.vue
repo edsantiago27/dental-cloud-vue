@@ -331,7 +331,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useSuperAdminConfiguracionStore } from '@superadmin/stores/superadmin/configuracion'
+import { useSuperAdminConfiguracionStore } from '@superadmin/stores/configuracion'
 
 const configuracionStore = useSuperAdminConfiguracionStore()
 

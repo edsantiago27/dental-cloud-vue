@@ -22,7 +22,7 @@ export const useSuperAdminAuthStore = defineStore('superadminAuth', () => {
       if (response.success && response.data) {
         user.value = response.data.user
         token.value = response.data.token       // <- viene de SuperAdminAuthController [file:23]
-        localStorage.setItem('superadmintoken', token.value)
+        localStorage.setItem('sa_token', token.value)
         localStorage.setItem('superadminuser', JSON.stringify(user.value))
         return { success: true }
       } else {
@@ -44,13 +44,13 @@ export const useSuperAdminAuthStore = defineStore('superadminAuth', () => {
     } finally {
       user.value = null
       token.value = null
-      localStorage.removeItem('superadmintoken')
+      localStorage.removeItem('sa_token')
       localStorage.removeItem('superadminuser')
     }
   }
 
   function checkAuth() {
-    const savedToken = localStorage.getItem('superadmintoken')
+    const savedToken = localStorage.getItem('sa_token')
     const savedUser = localStorage.getItem('superadminuser')
 
     if (savedToken && savedUser) {

@@ -143,8 +143,8 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useSuperAdminFacturacionStore } from '@superadmin/stores/superadmin/facturacion'
-import { suscripcionesService } from '@superadmin/services/superadmin'
+import { useSuperAdminFacturacionStore } from '@superadmin/stores/facturacion'
+import { suscripcionesService } from '@superadmin/services'
 
 const emit = defineEmits(['close', 'saved'])
 

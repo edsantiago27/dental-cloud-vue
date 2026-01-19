@@ -17,12 +17,18 @@ export const clinicaRoutes = [
         meta: { title: 'Pacientes' }
       },
       {
-  path: 'historia-clinica/:pacienteId',
-  name: 'clinica-historia-clinica',
-  component: () => import('../views/HistoriaClinica.vue'),
-  meta: { title: 'Historia Clínica' },
-  props: true
-}
+        path: 'historia-clinica/:pacienteId',
+        name: 'clinica-historia-clinica',
+        component: () => import('../views/HistoriaClinica.vue'),
+        meta: { title: 'Historia Clínica' },
+        props: true
+      },
+      {
+        path: 'usuarios',
+        name: 'clinica-usuarios',
+        component: () => import('../views/Usuarios.vue'),
+        meta: { title: 'Equipo y Usuarios' }
+      }
       // ... más rutas
     ]
   }

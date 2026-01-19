@@ -364,7 +364,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useSuperAdminSuscripcionesStore } from '@superadmin/stores/superadmin/suscripciones'
+import { useSuperAdminSuscripcionesStore } from '@superadmin/stores/suscripciones'
 import ExtenderTrialModal from '@superadmin/components/ExtenderTrialModal.vue'
 import ConfirmModal from '@superadmin/components/ConfirmModal.vue'
 

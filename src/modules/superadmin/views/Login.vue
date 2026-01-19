@@ -81,7 +81,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useSuperAdminAuthStore } from '@superadmin/stores/superadmin/auth'
+import { useSuperAdminAuthStore } from '@superadmin/stores/auth'
 
 const router = useRouter()
 const authStore = useSuperAdminAuthStore()

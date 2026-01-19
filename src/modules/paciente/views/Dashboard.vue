@@ -368,34 +368,41 @@ function formatMonto(monto) {
 
 function formatFechaCorta(fecha) {
   if (!fecha) return 'N/A'
-  try {
-    const date = new Date(fecha)
-    return date.toLocaleDateString('es-ES', {
-      day: 'numeric',
-      month: 'short'
-    })
-  } catch (e) {
-    return 'N/A'
-  }
+  // Parseo manual YYYY-MM-DD
+  const [year, month, day] = fecha.substring(0, 10).split('-').map(Number)
+  const date = new Date(year, month - 1, day)
+  return date.toLocaleDateString('es-ES', {
+    day: 'numeric',
+    month: 'short'
+  })
 }
 
 function formatDia(fecha) {
   if (!fecha) return ''
-  return new Date(fecha).getDate()
+  // Parseo manual YYYY-MM-DD
+  const [year, month, day] = fecha.substring(0, 10).split('-').map(Number)
+  const date = new Date(year, month - 1, day)
+  return date.getDate()
 }
 
 function formatMes(fecha) {
   if (!fecha) return ''
   const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
-  return meses[new Date(fecha).getMonth()]
+  // Parseo manual YYYY-MM-DD
+  const [year, month, day] = fecha.substring(0, 10).split('-').map(Number)
+  const date = new Date(year, month - 1, day)
+  return meses[date.getMonth()]
 }
 
 function diasHastaCita(fecha) {
   if (!fecha) return ''
   const hoy = new Date()
   hoy.setHours(0, 0, 0, 0)
-  const fechaCita = new Date(fecha)
-  fechaCita.setHours(0, 0, 0, 0)
+  
+  // Parseo manual para obtener fecha local
+  const [year, month, day] = fecha.substring(0, 10).split('-').map(Number)
+  const fechaCita = new Date(year, month - 1, day)
+  
   const dias = Math.ceil((fechaCita - hoy) / (1000 * 60 * 60 * 24))
   
   if (dias === 0) return 'Hoy'
