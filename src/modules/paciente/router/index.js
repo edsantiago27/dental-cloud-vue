@@ -24,8 +24,10 @@ function redirectIfAuthenticated(to, from, next) {
   }
 }
 
-export const pacienteRoutes = [  // ⭐ CAMBIO PRINCIPAL: export const
-  // Rutas públicas
+export const pacienteRoutes = [
+  // ============================================
+  // 🔓 RUTAS PÚBLICAS DE PACIENTE
+  // ============================================
   {
     path: '/paciente/login',
     name: 'paciente-login',
@@ -48,7 +50,9 @@ export const pacienteRoutes = [  // ⭐ CAMBIO PRINCIPAL: export const
     meta: { title: 'Recuperar Contraseña', requiresAuth: false }
   },
   
-  // Rutas protegidas
+  // ============================================
+  // 🔐 RUTAS PROTEGIDAS DE PACIENTE
+  // ============================================
   {
     path: '/paciente',
     component: () => import('../layouts/PacienteLayout.vue'),
@@ -70,6 +74,13 @@ export const pacienteRoutes = [  // ⭐ CAMBIO PRINCIPAL: export const
         name: 'paciente-citas',
         component: () => import('../views/Citas.vue'),
         meta: { title: 'Mis Citas' }
+      },
+      {
+        path: 'citas/:id',
+        name: 'paciente-cita-detalle',
+        component: () => import('../views/CitaDetalle.vue'),
+        meta: { title: 'Detalle de Cita' },
+        props: true
       },
       {
         path: 'historia-clinica',
