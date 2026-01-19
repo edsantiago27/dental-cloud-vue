@@ -27,97 +27,123 @@ export const usePacienteAuthStore = defineStore('pacienteAuth', () => {
   })
 
   // Actions
-  async function login(clinicaSlug, email, password) {
-    loading.value = true
-    error.value = null
+ async function login(clinicaSlug, email, password) {
+  loading.value = true
+  error.value = null
 
-    try {
-      const response = await authService.login(clinicaSlug, email, password)
+  try {
+    const response = await authService.login(clinicaSlug, email, password)
 
-      if (response.success) {
-        // Guardar datos en el store
-        token.value = response.token || response.data?.token
-        paciente.value = response.user || response.data?.user
-        clinica.value = response.clinica || response.data?.clinica
+    if (response.success) {
+      // ✅ CORREGIR: El token viene en response.data.token
+      const authData = response.data || response
+      
+      token.value = authData.token
+      paciente.value = authData.user
+      clinica.value = authData.clinica
 
-        // Guardar en localStorage
+      console.log('✅ Token extraído:', token.value)
+      console.log('✅ Paciente extraído:', paciente.value)
+      console.log('✅ Clínica extraída:', clinica.value)
+
+      // Guardar en localStorage
+      if (token.value) {
         localStorage.setItem('paciente_token', token.value)
+        console.log('💾 Token guardado en localStorage')
+      } else {
+        console.error('❌ No se pudo extraer el token')
+      }
+      
+      if (paciente.value) {
         localStorage.setItem('paciente_user', JSON.stringify(paciente.value))
+      }
+      
+      if (clinica.value) {
         localStorage.setItem('paciente_clinica', JSON.stringify(clinica.value))
-        localStorage.setItem('clinica_slug', clinicaSlug)
-
-        return { success: true }
       }
-
-      throw new Error(response.message || 'Error al iniciar sesión')
-    } catch (err) {
-      console.error('❌ Error login:', err)
       
-      let message = 'Error al iniciar sesión'
-      
-      if (err.response?.status === 401) {
-        message = 'Email o contraseña incorrectos'
-      } else if (err.response?.status === 404) {
-        message = 'Clínica no encontrada'
-      } else if (err.response?.data?.message) {
-        message = err.response.data.message
-      }
+      localStorage.setItem('clinica_slug', clinicaSlug)
 
-      error.value = message
-      return { success: false, message }
-    } finally {
-      loading.value = false
+      return { success: true }
     }
+
+    throw new Error(response.message || 'Error al iniciar sesión')
+  } catch (err) {
+    console.error('❌ Error login:', err)
+    
+    let message = 'Error al iniciar sesión'
+    
+    if (err.response?.status === 401) {
+      message = 'Email o contraseña incorrectos'
+    } else if (err.response?.status === 404) {
+      message = 'Clínica no encontrada'
+    } else if (err.response?.data?.message) {
+      message = err.response.data.message
+    }
+
+    error.value = message
+    return { success: false, message }
+  } finally {
+    loading.value = false
   }
+}
 
   async function registro(clinicaSlug, datos) {
-    loading.value = true
-    error.value = null
+  loading.value = true
+  error.value = null
 
-    try {
-      const datosRegistro = {
-        ...datos,
-        clinica_slug: clinicaSlug
-      }
-
-      const response = await authService.registro(datosRegistro)
-
-      if (response.success) {
-        // Auto-login después del registro
-        token.value = response.token || response.data?.token
-        paciente.value = response.user || response.data?.user
-        clinica.value = response.clinica || response.data?.clinica
-
-        // Guardar en localStorage
-        localStorage.setItem('paciente_token', token.value)
-        localStorage.setItem('paciente_user', JSON.stringify(paciente.value))
-        localStorage.setItem('paciente_clinica', JSON.stringify(clinica.value))
-        localStorage.setItem('clinica_slug', clinicaSlug)
-
-        return { success: true }
-      }
-
-      throw new Error(response.message || 'Error al registrarse')
-    } catch (err) {
-      console.error('❌ Error registro:', err)
-      
-      let message = 'Error al registrarse'
-      
-      if (err.response?.status === 422) {
-        const errors = err.response.data.errors
-        if (errors) {
-          message = Object.values(errors).flat().join(', ')
-        } else if (err.response.data.message) {
-          message = err.response.data.message
-        }
-      }
-
-      error.value = message
-      return { success: false, message }
-    } finally {
-      loading.value = false
+  try {
+    const datosRegistro = {
+      ...datos,
+      clinica_slug: clinicaSlug
     }
+
+    const response = await authService.registro(datosRegistro)
+
+    if (response.success) {
+      // ✅ CORREGIR: El token viene en response.data.token
+      const authData = response.data || response
+      
+      token.value = authData.token
+      paciente.value = authData.user
+      clinica.value = authData.clinica
+
+      // Guardar en localStorage
+      if (token.value) {
+        localStorage.setItem('paciente_token', token.value)
+      }
+      if (paciente.value) {
+        localStorage.setItem('paciente_user', JSON.stringify(paciente.value))
+      }
+      if (clinica.value) {
+        localStorage.setItem('paciente_clinica', JSON.stringify(clinica.value))
+      }
+      localStorage.setItem('clinica_slug', clinicaSlug)
+
+      return { success: true }
+    }
+
+    throw new Error(response.message || 'Error al registrarse')
+  } catch (err) {
+    console.error('❌ Error registro:', err)
+    
+    let message = 'Error al registrarse'
+    
+    if (err.response?.status === 422) {
+      const errors = err.response.data.errors
+      if (errors) {
+        message = Object.values(errors).flat().join(', ')
+      } else if (err.response.data.message) {
+        message = err.response.data.message
+      }
+    }
+
+    error.value = message
+    return { success: false, message }
+  } finally {
+    loading.value = false
   }
+}
 
   async function logout() {
     try {
