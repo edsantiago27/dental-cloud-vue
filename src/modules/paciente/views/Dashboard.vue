@@ -333,14 +333,13 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { usePacienteAuthStore } from '@paciente/stores/auth'
-import { citasService, pagosService } from '../services'
+import { usePacienteCitasStore } from '@paciente/stores/citas' // ✅ Importar store de citas
+import { pagosService } from '../services'
 
-// ✅ USAR EL STORE CORRECTO DE PACIENTE
 const authStore = usePacienteAuthStore()
+const citasStore = usePacienteCitasStore() // ✅ Inicializar store
 
 // State
-const loading = ref(false)
-const citas = ref([])
 const resumenPagos = ref({
   total_pendiente: 0,
   total_pagado: 0,
@@ -349,39 +348,13 @@ const resumenPagos = ref({
 const cuentasPendientes = ref([])
 
 // Computed
-const proximasCitas = computed(() => {
-  const ahora = new Date()
-  return citas.value
-    .filter(c => {
-      if (!c.fecha || !c.hora) return false
-      const fechaCita = new Date(c.fecha + 'T' + c.hora)
-      return fechaCita >= ahora && !['cancelada', 'completada'].includes(c.estado)
-    })
-    .sort((a, b) => {
-      const fechaA = new Date(a.fecha + 'T' + a.hora)
-      const fechaB = new Date(b.fecha + 'T' + b.hora)
-      return fechaA - fechaB
-    })
-})
+// ✅ Usar getters del store en lugar de lógica local
+const proximasCitas = computed(() => citasStore.citasProximas)
+const proximaCita = computed(() => citasStore.proximaCita)
+const citas = computed(() => citasStore.citas)
+const loading = computed(() => citasStore.loading) // Ojo: esto solo cubre carga de citas, si quieres global puedes combinarlo
 
-const proximaCita = computed(() => proximasCitas.value[0] || null)
-
-const ultimaCita = computed(() => {
-  const ahora = new Date()
-  const citasPasadas = citas.value
-    .filter(c => {
-      if (!c.fecha || !c.hora) return false
-      const fechaCita = new Date(c.fecha + 'T' + c.hora)
-      return fechaCita < ahora && c.estado === 'completada'
-    })
-    .sort((a, b) => {
-      const fechaA = new Date(a.fecha + 'T' + a.hora)
-      const fechaB = new Date(b.fecha + 'T' + b.hora)
-      return fechaB - fechaA
-    })
-  
-  return citasPasadas[0] || null
-})
+const ultimaCita = computed(() => citasStore.citasPasadas[0] || null)
 
 const totalCitasCompletadas = computed(() => {
   return citas.value.filter(c => c.estado === 'completada').length
@@ -431,30 +404,18 @@ function diasHastaCita(fecha) {
 }
 
 async function cargarDatos() {
-  loading.value = true
-
   try {
     console.log('🔄 Cargando datos del dashboard...')
     
-    // Cargar citas
-    const citasResponse = await citasService.getMisCitas()
-    console.log('📅 Respuesta citas:', citasResponse)
+    // ✅ Cargar citas usando el store
+    await citasStore.fetchCitas()
     
-    if (citasResponse.success) {
-      citas.value = citasResponse.data?.data || citasResponse.data || []
-      console.log('✅ Citas cargadas:', citas.value.length)
-    } else {
-      console.warn('⚠️ No se pudieron cargar las citas')
-      citas.value = []
-    }
-
     // Cargar resumen de pagos
     try {
       const pagosResponse = await pagosService.getResumen()
-      console.log('💰 Respuesta pagos:', pagosResponse)
       
-      if (pagosResponse.success) {
-        resumenPagos.value = pagosResponse.data || resumenPagos.value
+      if (pagosResponse.success !== false) {
+        resumenPagos.value = pagosResponse.data || pagosResponse || resumenPagos.value
       }
     } catch (errPagos) {
       console.warn('⚠️ Error al cargar pagos:', errPagos.message)
@@ -463,26 +424,17 @@ async function cargarDatos() {
     // Cargar cuentas pendientes
     try {
       const cuentasResponse = await pagosService.getCuentas('pendiente')
-      console.log('📋 Respuesta cuentas:', cuentasResponse)
       
-      if (cuentasResponse.success) {
-        cuentasPendientes.value = cuentasResponse.data || []
+      if (cuentasResponse.success !== false) {
+        cuentasPendientes.value = cuentasResponse.data || cuentasResponse || []
       }
     } catch (errCuentas) {
       console.warn('⚠️ Error al cargar cuentas:', errCuentas.message)
     }
 
   } catch (err) {
-    console.error('❌ Error cargar datos dashboard:', err)
-    citas.value = []
-    resumenPagos.value = {
-      total_pendiente: 0,
-      total_pagado: 0,
-      cuentas_pendientes: 0
-    }
-    cuentasPendientes.value = []
+    console.error('❌ Error general cargar datos dashboard:', err)
   } finally {
-    loading.value = false
     console.log('✅ Carga de datos completada')
   }
 }
@@ -490,8 +442,6 @@ async function cargarDatos() {
 // Lifecycle
 onMounted(async () => {
   console.log('🚀 Dashboard montado')
-  console.log('👤 Paciente:', authStore.paciente)
-  console.log('🏥 Clínica:', authStore.clinica)
   
   // Asegurarse de que tenemos los datos del paciente
   if (!authStore.paciente || !authStore.clinica) {

@@ -100,12 +100,13 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useAuthStore } from '@shared/stores/auth'
+import { usePacienteAuthStore } from '@paciente/stores/auth' // ✅ Usar store correcto
 import { useToast } from 'vue-toastification'
 import ClinicaSelector from '@paciente/components/ClinicaSelector.vue'
 
 const router = useRouter()
-const authStore = useAuthStore()
+const route = useRoute()
+const authStore = usePacienteAuthStore()
 const toast = useToast()
 
 const email = ref('')
@@ -115,8 +116,14 @@ const showClinicaSelector = ref(false)
 const availableClinics = ref([])
 
 // Computed
-const clinicaSlug = computed(() => route.params.clinicaSlug || 'demo')
-const clinicaInfo = computed(() => authStore.clinica)
+// Obtener slug de la URL o usar uno por defecto (esto debería venir de la configuración del dominio o subdominio)
+const clinicaSlug = computed(() => {
+  // Si estamos en un subdominio, usarlo
+  // Si estamos en ruta /:clinicaSlug/login, usarlo
+  // Por ahora hardcodeamos 'demo' o lo sacamos del route query
+  return route.query.clinica || 'demo'
+})
+
 const canSubmit = computed(() => {
   return email.value && password.value && !authStore.loading
 })
@@ -125,22 +132,24 @@ const canSubmit = computed(() => {
 async function handleLogin() {
   if (!canSubmit.value) return
 
-  const result = await authStore.loginPaciente({
-    email: email.value,
-    password: password.value
-  })
+  // Usar la acción login del store de paciente
+  // Nota: El store espera (clinicaSlug, email, password)
+  const result = await authStore.login(
+    clinicaSlug.value, 
+    email.value, 
+    password.value
+  )
 
   if (result.success) {
-    if (result.requiresSelection) {
-      // Mostrar selector de clínica
-      availableClinics.value = result.clinicas
-      showClinicaSelector.value = true
-    } else if (result.noClinicas) {
-      toast.warning('No tienes clínicas asignadas. Contacta al administrador.')
+    toast.success('¡Bienvenido!')
+    
+    // Verificar si hay una ruta intencionada guardada
+    const intendedRoute = sessionStorage.getItem('intended_route')
+    if (intendedRoute) {
+      router.push(intendedRoute)
+      sessionStorage.removeItem('intended_route')
     } else {
-      // Login exitoso con una sola clínica
-      toast.success('¡Bienvenido!')
-      router.push('/paciente/portal')
+      router.push({ name: 'paciente-portal' })
     }
   } else {
     toast.error(result.message || 'Error al iniciar sesión')

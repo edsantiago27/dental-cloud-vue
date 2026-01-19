@@ -34,24 +34,21 @@ export const usePacienteAuthStore = defineStore('pacienteAuth', () => {
   try {
     const response = await authService.login(clinicaSlug, email, password)
 
-    if (response.success) {
-      // ✅ CORREGIR: El token viene en response.data.token
-      const authData = response.data || response
+    // Aceptar respuestas exitosas implícitas
+    if (response.success !== false) {
+      // El token puede venir directo o en data
+      const authData = response.data || response // Fallback si la respuesta raíz tiene los datos
       
-      token.value = authData.token
-      paciente.value = authData.user
+      // Token priority: authData.token > authData.access_token
+      token.value = authData.token || authData.access_token
+      paciente.value = authData.user || authData.paciente
       clinica.value = authData.clinica
 
-      console.log('✅ Token extraído:', token.value)
-      console.log('✅ Paciente extraído:', paciente.value)
-      console.log('✅ Clínica extraída:', clinica.value)
-
-      // Guardar en localStorage
       if (token.value) {
         localStorage.setItem('paciente_token', token.value)
         console.log('💾 Token guardado en localStorage')
       } else {
-        console.error('❌ No se pudo extraer el token')
+        console.warn('⚠️ Login exitoso pero no se encontró token en la respuesta')
       }
       
       if (paciente.value) {
@@ -100,12 +97,11 @@ export const usePacienteAuthStore = defineStore('pacienteAuth', () => {
 
     const response = await authService.registro(datosRegistro)
 
-    if (response.success) {
-      // ✅ CORREGIR: El token viene en response.data.token
+    if (response.success !== false) {
       const authData = response.data || response
       
-      token.value = authData.token
-      paciente.value = authData.user
+      token.value = authData.token || authData.access_token
+      paciente.value = authData.user || authData.paciente
       clinica.value = authData.clinica
 
       // Guardar en localStorage

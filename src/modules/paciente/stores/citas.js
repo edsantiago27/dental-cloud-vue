@@ -16,17 +16,44 @@ export const usePacienteCitasStore = defineStore('pacienteCitas', () => {
 
   // Getters
   const citasProximas = computed(() => {
+    const ahora = new Date()
+    console.log('🔮 Calculating citasProximas. Total citas:', citas.value.length)
+    
     return citas.value.filter(c => {
-      const fechaCita = new Date(c.fecha + ' ' + c.hora)
-      return fechaCita >= new Date() && !['cancelada', 'completada', 'no_asistio'].includes(c.estado)
-    }).sort((a, b) => new Date(a.fecha + ' ' + a.hora) - new Date(b.fecha + ' ' + b.hora))
+      if (!c.fecha || !c.hora) {
+          console.log(`⚠️ Cita ${c.id} rechazada: faltan datos`, { fecha: c.fecha, hora: c.hora })
+          return false
+      }
+      
+      const fechaStr = `${c.fecha}T${c.hora}`
+      const fechaCita = new Date(fechaStr)
+      
+      if (isNaN(fechaCita.getTime())) {
+          console.log(`⚠️ Cita ${c.id} rechazada: fecha inválida`, fechaStr)
+          return false
+      }
+      
+      const esFutura = fechaCita >= ahora
+      const estadoValido = !['cancelada', 'completada', 'no_asistio'].includes(c.estado)
+      
+      if (!esFutura || !estadoValido) {
+          console.log(`🚫 Cita ${c.id} filtrada. EsFutura: ${esFutura}, Estado: ${c.estado}, Fecha: ${fechaStr}, Ahora: ${ahora.toISOString()}`)
+      }
+      
+      return esFutura && estadoValido
+    }).sort((a, b) => new Date(`${a.fecha}T${a.hora}`) - new Date(`${b.fecha}T${b.hora}`))
   })
 
   const citasPasadas = computed(() => {
+    const ahora = new Date()
     return citas.value.filter(c => {
-      const fechaCita = new Date(c.fecha + ' ' + c.hora)
-      return fechaCita < new Date() || ['cancelada', 'completada', 'no_asistio'].includes(c.estado)
-    }).sort((a, b) => new Date(b.fecha + ' ' + b.hora) - new Date(a.fecha + ' ' + a.hora))
+      if (!c.fecha || !c.hora) return false
+      const fechaStr = `${c.fecha}T${c.hora}`
+      const fechaCita = new Date(fechaStr)
+      if (isNaN(fechaCita.getTime())) return false
+      
+      return fechaCita < ahora || ['cancelada', 'completada', 'no_asistio'].includes(c.estado)
+    }).sort((a, b) => new Date(`${b.fecha}T${b.hora}`) - new Date(`${a.fecha}T${a.hora}`))
   })
 
   const proximaCita = computed(() => {
@@ -39,15 +66,34 @@ export const usePacienteCitasStore = defineStore('pacienteCitas', () => {
     error.value = null
 
     try {
+      console.log('🔄 Fetching citas with filters:', filtros)
       const response = await citasService.getMisCitas(filtros)
+      console.log('📦 Raw citas response:', response)
       
-      if (response.success) {
-        // Si es paginado, extraer los datos
-        if (response.data.data) {
-          citas.value = response.data.data
+      // Aceptar respuestas que tengan éxito explícito O datos válidos
+      if (response.success !== false) {
+        // Manejar estructura paginada o lista directa
+        const data = response.data || response
+
+        console.log('🔍 Data extracted:', data)
+        let citasArray = []
+        
+        if (data && data.data && Array.isArray(data.data)) {
+            console.log('👉 Found paginated data.data')
+            citasArray = data.data
+        } else if (Array.isArray(data)) {
+            console.log('👉 Found direct array in data')
+            citasArray = data
+        } else if (Array.isArray(response)) {
+             console.log('👉 Found direct array in response')
+             citasArray = response
         } else {
-          citas.value = response.data
+             console.warn('⚠️ Could not find array in response, defaulting to empty')
+             citasArray = []
         }
+        
+        citas.value = citasArray
+        console.log('✅ Final citas stored:', citas.value)
         return { success: true }
       }
 

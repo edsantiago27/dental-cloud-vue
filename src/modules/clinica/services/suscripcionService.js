@@ -1,20 +1,20 @@
-import { apiBase } from '@/services/apiBase'
+import api from './api'
 
 export const suscripcionService = {
   /**
    * Obtener información completa de suscripción
    */
   async getSuscripcion() {
-    const response = await apiBase.get('/mi-clinica/suscripcion')
-    return response.data
+    const { data } = await api.get('/mi-clinica/suscripcion')
+    return data.data
   },
 
   /**
    * Obtener solo estadísticas de uso
    */
   async getUso() {
-    const response = await apiBase.get('/mi-clinica/uso')
-    return response.data
+    const { data } = await api.get('/mi-clinica/uso')
+    return data.data
   },
 
   /**
@@ -22,8 +22,8 @@ export const suscripcionService = {
    * @param {string} tipo - 'usuario' | 'profesional' | 'paciente'
    */
   async puedeAgregar(tipo) {
-    const response = await apiBase.get(`/mi-clinica/puede-agregar/${tipo}`)
-    return response.data
+    const { data } = await api.get(`/mi-clinica/puede-agregar/${tipo}`)
+    return data.data
   },
 
   /**
@@ -31,21 +31,16 @@ export const suscripcionService = {
    * @param {number} planId - ID del nuevo plan
    */
   async upgrade(planId) {
-    const response = await apiBase.post('/mi-clinica/upgrade', { planid: planId })
-    return response
+    const { data } = await api.post('/mi-clinica/upgrade', { planid: planId })
+    return data
   },
 
   /**
    * Obtener facturas
    */
   async getFacturas(params = {}) {
-    let endpoint = '/mi-clinica/facturas'
-    if (Object.keys(params).length > 0) {
-      const queryString = new URLSearchParams(params).toString()
-      endpoint += `?${queryString}`
-    }
-    
-    const response = await apiBase.get(endpoint)
-    return response.data
+    // Axios maneja query params automáticamente con 'params'
+    const { data } = await api.get('/mi-clinica/facturas', { params })
+    return data.data
   }
 }

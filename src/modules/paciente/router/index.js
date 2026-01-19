@@ -1,13 +1,18 @@
 // src/modules/paciente/router/index.js
-import { useAuthStore } from '@shared/stores/auth'
+import { usePacienteAuthStore } from '../stores/auth'
 
 // Middleware de autenticación
 function requireAuth(to, from, next) {
-  const authStore = useAuthStore()
+  const authStore = usePacienteAuthStore()
   
-  if (!authStore.isAuthenticated || !authStore.isPacienteUser) {
+  // Verificar sesión si no está cargada
+  if (!authStore.isAuthenticated) {
+    authStore.checkAuth()
+  }
+  
+  if (!authStore.isAuthenticated) {
     sessionStorage.setItem('intended_route', to.fullPath)
-    next('/paciente/login')
+    next({ name: 'paciente-login' })
   } else {
     next()
   }
@@ -15,10 +20,14 @@ function requireAuth(to, from, next) {
 
 // Middleware para redirigir si ya está autenticado
 function redirectIfAuthenticated(to, from, next) {
-  const authStore = useAuthStore()
+  const authStore = usePacienteAuthStore()
   
-  if (authStore.isAuthenticated && authStore.isPacienteUser) {
-    next('/paciente/portal')
+  if (!authStore.isAuthenticated) {
+    authStore.checkAuth()
+  }
+  
+  if (authStore.isAuthenticated) {
+    next({ name: 'paciente-portal' })
   } else {
     next()
   }
