@@ -1,7 +1,6 @@
 // shared/stores/auth.js
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-//import api from '@shared/services/api'
 
 export const useAuthStore = defineStore('auth', () => {
   // ==========================================
@@ -24,14 +23,14 @@ export const useAuthStore = defineStore('auth', () => {
   
   const userName = computed(() => {
     if (!user.value) return ''
-    return `${user.value.nombre} ${user.value.apellido}`
+    return `${user.value.nombre || ''} ${user.value.apellido || ''}`.trim()
   })
   
   const userInitials = computed(() => {
     if (!user.value) return '?'
     const n = user.value.nombre?.[0] || ''
     const a = user.value.apellido?.[0] || ''
-    return (n + a).toUpperCase()
+    return (n + a).toUpperCase() || '?'
   })
   
   // Roles de CLÍNICA
@@ -63,37 +62,37 @@ export const useAuthStore = defineStore('auth', () => {
         email: credentials.email
       })
 
-      const { default: api } = await import('@clinica/services/api')
-     const response = await api.post('/auth/login/usuario', {
-  clinica_slug: credentials.clinica_slug,
-  email: credentials.email,
-  password: credentials.password
-})
+      // Importar API de clínica dinámicamente
+      const { default: clinicaApi } = await import('@clinica/services/api')
+      
+      const response = await clinicaApi.post('/auth/login/usuario', {
+        clinica_slug: credentials.clinica_slug,
+        email: credentials.email,
+        password: credentials.password
+      })
 
-console.log('📦 Respuesta completa del servidor:', response)
+      console.log('📦 Respuesta completa del servidor:', response)
 
-// Laravel envuelve la respuesta en { success, message, data }
-// Extraer el objeto data que contiene { token, user, clinica }
-let authData = response.data || response
+      // Laravel envuelve la respuesta en { success, message, data }
+      let authData = response.data
 
-// Si la respuesta tiene un campo "data" anidado, usarlo
-if (authData.data && authData.data.token) {
-  authData = authData.data
-}
+      // Si la respuesta tiene un campo "data" anidado, usarlo
+      if (authData.data && authData.data.token) {
+        authData = authData.data
+      }
 
-console.log('🔑 Datos de autenticación:', authData)
+      console.log('🔑 Datos de autenticación:', authData)
 
-if (!authData.token) {
-  throw new Error('Token no recibido del servidor')
-}
+      if (!authData.token) {
+        throw new Error('Token no recibido del servidor')
+      }
 
-// Guardar en state
-token.value = authData.token
-user.value = authData.user
-clinica.value = authData.clinica
-userType.value = 'clinica'
-clinicas.value = []
-
+      // Guardar en state
+      token.value = authData.token
+      user.value = authData.user
+      clinica.value = authData.clinica
+      userType.value = 'clinica'
+      clinicas.value = []
 
       // Persistir en localStorage
       localStorage.setItem('token', token.value)
@@ -120,91 +119,93 @@ clinicas.value = []
   // ==========================================
   
   async function loginPaciente(credentials) {
-  loading.value = true
-  error.value = null
+    loading.value = true
+    error.value = null
 
-  try {
-    console.log('🔐 Login Paciente...', {
-      email: credentials.email
-    })
+    try {
+      console.log('🔐 Login Paciente...', {
+        email: credentials.email
+      })
 
-    const response = await api.post('/auth/login/paciente', {
-      email: credentials.email,
-      password: credentials.password
-    })
+      // Importar API de paciente dinámicamente
+      const { default: pacienteApi } = await import('@paciente/services/api')
 
-    console.log('📦 Respuesta completa del servidor:', response)
+      const response = await pacienteApi.post('/auth/login/paciente', {
+        email: credentials.email,
+        password: credentials.password
+      })
 
-    // Laravel envuelve la respuesta en { success, message, data }
-    let authData = response.data || response
+      console.log('📦 Respuesta completa del servidor:', response)
 
-    // Si la respuesta tiene un campo "data" anidado, usarlo
-    if (authData.data && authData.data.token) {
-      authData = authData.data
-    }
+      // Laravel envuelve la respuesta en { success, message, data }
+      let authData = response.data
 
-    console.log('🔑 Datos de autenticación:', authData)
-
-    if (!authData.token) {
-      throw new Error('Token no recibido del servidor')
-    }
-
-    // Guardar token y usuario
-    token.value = authData.token
-    user.value = authData.user
-    userType.value = 'paciente'
-
-    // Persistir básico (sin clínica aún)
-    localStorage.setItem('token', token.value)
-    localStorage.setItem('user', JSON.stringify(user.value))
-    localStorage.setItem('userType', 'paciente')
-
-    // Verificar si tiene clínicas
-    if (authData.clinicas && Array.isArray(authData.clinicas)) {
-      clinicas.value = authData.clinicas
-      localStorage.setItem('clinicas', JSON.stringify(clinicas.value))
-
-      console.log(`✅ Login Paciente exitoso - ${clinicas.value.length} clínica(s)`)
-
-      // Si tiene múltiples clínicas, requiere selección
-      if (clinicas.value.length > 1) {
-        return { 
-          success: true, 
-          requiresSelection: true,
-          clinicas: clinicas.value
-        }
+      // Si la respuesta tiene un campo "data" anidado, usarlo
+      if (authData.data && authData.data.token) {
+        authData = authData.data
       }
-      
-      // Si tiene solo una, seleccionarla automáticamente
-      if (clinicas.value.length === 1) {
-        clinica.value = clinicas.value[0]
-        localStorage.setItem('clinica', JSON.stringify(clinica.value))
+
+      console.log('🔑 Datos de autenticación:', authData)
+
+      if (!authData.token) {
+        throw new Error('Token no recibido del servidor')
+      }
+
+      // Guardar token y usuario
+      token.value = authData.token
+      user.value = authData.user
+      userType.value = 'paciente'
+
+      // Persistir básico (sin clínica aún)
+      localStorage.setItem('token', token.value)
+      localStorage.setItem('user', JSON.stringify(user.value))
+      localStorage.setItem('userType', 'paciente')
+
+      // Verificar si tiene clínicas
+      if (authData.clinicas && Array.isArray(authData.clinicas)) {
+        clinicas.value = authData.clinicas
+        localStorage.setItem('clinicas', JSON.stringify(clinicas.value))
+
+        console.log(`✅ Login Paciente exitoso - ${clinicas.value.length} clínica(s)`)
+
+        // Si tiene múltiples clínicas, requiere selección
+        if (clinicas.value.length > 1) {
+          return { 
+            success: true, 
+            requiresSelection: true,
+            clinicas: clinicas.value
+          }
+        }
         
-        return { 
-          success: true, 
-          requiresSelection: false
+        // Si tiene solo una, seleccionarla automáticamente
+        if (clinicas.value.length === 1) {
+          clinica.value = clinicas.value[0]
+          localStorage.setItem('clinica', JSON.stringify(clinica.value))
+          
+          return { 
+            success: true, 
+            requiresSelection: false
+          }
         }
       }
-    }
 
-    // Sin clínicas asignadas
-    console.log('⚠️ Paciente sin clínicas asignadas')
-    return { 
-      success: true, 
-      requiresSelection: false,
-      noClinicas: true
-    }
+      // Sin clínicas asignadas
+      console.log('⚠️ Paciente sin clínicas asignadas')
+      return { 
+        success: true, 
+        requiresSelection: false,
+        noClinicas: true
+      }
 
-  } catch (err) {
-    console.error('❌ Error en login paciente:', err)
-    logout()
-    error.value = parseError(err)
-    return { success: false, message: error.value }
-  } finally {
-    loading.value = false
+    } catch (err) {
+      console.error('❌ Error en login paciente:', err)
+      logout()
+      error.value = parseError(err)
+      return { success: false, message: error.value }
+    } finally {
+      loading.value = false
+    }
   }
-}
-
 
   // ==========================================
   // ACTIONS - SELECCIONAR CLÍNICA (PACIENTE)
@@ -229,15 +230,24 @@ clinicas.value = []
         throw new Error('Clínica no encontrada en tu lista')
       }
 
+      // Importar API de paciente
+      const { default: pacienteApi } = await import('@paciente/services/api')
+
       // Opcional: Hacer llamada al backend para obtener datos adicionales
-      const response = await api.post('/paciente/select-clinica', {
-        clinica_id: clinicaId
-      })
+      try {
+        const response = await pacienteApi.post('/paciente/select-clinica', {
+          clinica_id: clinicaId
+        })
 
-      const data = response.data || response
+        const data = response.data || response
 
-      // Actualizar clínica seleccionada
-      clinica.value = data.clinica || selectedClinica
+        // Actualizar clínica seleccionada con datos del servidor
+        clinica.value = data.clinica || selectedClinica
+      } catch (apiError) {
+        // Si el endpoint no existe, usar la clínica de la lista
+        console.log('⚠️ Endpoint select-clinica no disponible, usando datos locales')
+        clinica.value = selectedClinica
+      }
       
       // Guardar en localStorage
       localStorage.setItem('clinica', JSON.stringify(clinica.value))
@@ -266,15 +276,70 @@ clinicas.value = []
   }
 
   // ==========================================
+  // ACTIONS - FETCH ME (REFRESCAR USUARIO)
+  // ==========================================
+  
+  async function fetchMe() {
+    if (!token.value) {
+      console.log('⚠️ No hay token para fetchMe')
+      return { success: false }
+    }
+
+    try {
+      let api
+      
+      // Importar API según tipo de usuario
+      if (isPacienteUser.value) {
+        const module = await import('@paciente/services/api')
+        api = module.default
+      } else if (isClinicaUser.value) {
+        const module = await import('@clinica/services/api')
+        api = module.default
+      } else {
+        console.log('⚠️ Tipo de usuario desconocido')
+        return { success: false }
+      }
+
+      const response = await api.get('/me')
+      const data = response.data
+
+      // Actualizar usuario
+      if (data.user || data.data) {
+        user.value = data.user || data.data
+        localStorage.setItem('user', JSON.stringify(user.value))
+      }
+
+      console.log('✅ Usuario actualizado')
+      return { success: true }
+
+    } catch (err) {
+      console.error('❌ Error al obtener perfil:', err)
+      return { success: false }
+    }
+  }
+
+  // ==========================================
   // ACTIONS - COMPARTIDAS
   // ==========================================
   
   async function logout() {
     try {
       if (token.value) {
-        await api.post('/logout').catch(() => {
-          console.log('⚠️ Error al hacer logout en servidor')
-        })
+        // Importar API según tipo de usuario
+        let api
+        if (isPacienteUser.value) {
+          const module = await import('@paciente/services/api')
+          api = module.default
+        } else if (isClinicaUser.value) {
+          const module = await import('@clinica/services/api')
+          api = module.default
+        }
+
+        if (api) {
+          await api.post('/logout').catch(() => {
+            console.log('⚠️ Error al hacer logout en servidor')
+          })
+        }
       }
     } finally {
       // Limpiar state
@@ -393,6 +458,7 @@ clinicas.value = []
     loginPaciente,
     selectClinica,
     switchClinica,
+    fetchMe,
     logout,
     checkAuth,
     clearError

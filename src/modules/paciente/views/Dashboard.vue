@@ -1,11 +1,10 @@
-<!-- src/views/paciente/Dashboard.vue - VERSIÓN CON DATOS REALES -->
 <template>
   <div class="space-y-6">
     
     <!-- Header con Saludo -->
     <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg shadow-lg p-8 text-white">
       <h1 class="text-3xl font-bold mb-2">
-        ¡Hola, {{ authStore.paciente?.nombre }}! 👋
+        ¡Hola, {{ authStore.userName }}! 👋
       </h1>
       <p class="text-blue-100">
         Bienvenido a tu portal de paciente de {{ authStore.clinica?.nombre }}
@@ -100,7 +99,7 @@
             Próximas Citas
           </h2>
           <router-link
-            :to="`/${clinicaSlug}/paciente/citas`"
+            to="/paciente/citas"
             class="text-blue-600 hover:text-blue-700 text-sm font-medium"
           >
             Ver todas →
@@ -111,7 +110,7 @@
           <i class="fas fa-calendar-times text-4xl text-gray-300 mb-3"></i>
           <p class="text-gray-600 mb-4">No tienes citas próximas</p>
           <router-link
-            :to="`/${clinicaSlug}/paciente/citas`"
+            to="/paciente/citas"
             class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
           >
             <i class="fas fa-plus"></i>
@@ -153,7 +152,7 @@
             </div>
 
             <router-link
-              :to="`/${clinicaSlug}/paciente/citas`"
+              to="/paciente/citas"
               class="px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition text-sm"
             >
               Ver detalle
@@ -173,7 +172,7 @@
               Cuentas por Pagar
             </h2>
             <router-link
-              :to="`/${clinicaSlug}/paciente/pagos`"
+              to="/paciente/pagos"
               class="text-blue-600 hover:text-blue-700 text-sm font-medium"
             >
               Ver todas →
@@ -255,7 +254,7 @@
               <div>
                 <h3 class="font-medium text-gray-900">Horario de Atención</h3>
                 <p class="text-sm text-gray-600 mt-1">
-                  {{ authStore.clinica?.horario_atencion || 'Lunes a Viernes 9:00 - 18:00' }}
+                  Lunes a Viernes 9:00 - 18:00
                 </p>
               </div>
             </div>
@@ -267,7 +266,7 @@
       <!-- Accesos Rápidos -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <router-link
-          :to="`/${clinicaSlug}/paciente/citas`"
+          to="/paciente/citas"
           class="bg-white rounded-lg shadow-sm p-6 text-center hover:shadow-md transition group"
         >
           <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition">
@@ -277,7 +276,7 @@
         </router-link>
 
         <router-link
-          :to="`/${clinicaSlug}/paciente/historia-clinica`"
+          to="/paciente/historia-clinica"
           class="bg-white rounded-lg shadow-sm p-6 text-center hover:shadow-md transition group"
         >
           <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition">
@@ -287,7 +286,7 @@
         </router-link>
 
         <router-link
-          :to="`/${clinicaSlug}/paciente/pagos`"
+          to="/paciente/pagos"
           class="bg-white rounded-lg shadow-sm p-6 text-center hover:shadow-md transition group"
         >
           <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition">
@@ -297,7 +296,7 @@
         </router-link>
 
         <router-link
-          :to="`/${clinicaSlug}/paciente/documentos`"
+          to="/paciente/documentos"
           class="bg-white rounded-lg shadow-sm p-6 text-center hover:shadow-md transition group"
         >
           <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition">
@@ -314,12 +313,10 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
-import { usePacienteAuthStore } from '@paciente/stores/auth'
-import { citasService, pagosService } from '../services'
+import { useAuthStore } from '@shared/stores/auth'
+import { citasService, pagosService } from '@paciente/services'
 
-const route = useRoute()
-const authStore = usePacienteAuthStore()
+const authStore = useAuthStore()
 
 // State
 const loading = ref(false)
@@ -332,8 +329,6 @@ const resumenPagos = ref({
 const cuentasPendientes = ref([])
 
 // Computed
-const clinicaSlug = computed(() => route.params.clinicaSlug || 'demo')
-
 const proximasCitas = computed(() => {
   return citas.value
     .filter(c => {
@@ -362,7 +357,7 @@ const totalCitasCompletadas = computed(() => {
 
 // Methods
 function formatMonto(monto) {
-  return new Intl.NumberFormat('es-CL').format(monto)
+  return new Intl.NumberFormat('es-CL').format(monto || 0)
 }
 
 function formatFechaCorta(fecha) {
@@ -401,23 +396,29 @@ async function cargarDatos() {
   try {
     // Cargar citas
     const citasResponse = await citasService.getMisCitas()
+    console.log('📅 Citas recibidas:', citasResponse)
+    
     if (citasResponse.success) {
       citas.value = citasResponse.data?.data || citasResponse.data || []
     }
 
     // Cargar resumen de pagos
     const pagosResponse = await pagosService.getResumen()
+    console.log('💰 Pagos recibidos:', pagosResponse)
+    
     if (pagosResponse.success) {
       resumenPagos.value = pagosResponse.data
     }
 
     // Cargar cuentas pendientes
     const cuentasResponse = await pagosService.getCuentas('pendiente')
+    console.log('📋 Cuentas recibidas:', cuentasResponse)
+    
     if (cuentasResponse.success) {
-      cuentasPendientes.value = cuentasResponse.data
+      cuentasPendientes.value = cuentasResponse.data?.data || cuentasResponse.data || []
     }
   } catch (err) {
-    console.error('Error cargar datos dashboard:', err)
+    console.error('❌ Error cargar datos dashboard:', err)
   } finally {
     loading.value = false
   }

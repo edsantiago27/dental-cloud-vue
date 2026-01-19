@@ -1,4 +1,3 @@
-<!-- src/layouts/PacienteLayout.vue -->
 <template>
   <div class="min-h-screen bg-gray-50">
     
@@ -17,15 +16,12 @@
             </button>
             
             <div class="flex items-center gap-3">
-              <img
-                v-if="authStore.clinica?.logo"
-                :src="authStore.clinica.logo"
-                :alt="authStore.clinica.nombre"
-                class="h-10 w-auto"
-              >
+              <div class="h-10 w-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
+                <i class="fas fa-tooth"></i>
+              </div>
               <div>
                 <h1 class="text-lg font-semibold text-gray-900">
-                  {{ authStore.clinica?.nombre }}
+                  {{ authStore.clinica?.nombre || 'DentalCloud' }}
                 </h1>
                 <p class="text-xs text-gray-500">Portal del Paciente</p>
               </div>
@@ -35,34 +31,33 @@
           <!-- User Menu -->
           <div class="flex items-center gap-4">
             
-            <!-- Notificaciones -->
+            <!-- Notificaciones (Futuro) -->
             <button class="relative text-gray-600 hover:text-gray-900 p-2">
               <i class="fas fa-bell text-xl"></i>
-              <span class="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
             </button>
 
             <!-- Dropdown Usuario -->
             <div class="relative">
               <button
                 @click="dropdownOpen = !dropdownOpen"
-                class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition"
+                class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100"
               >
                 <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-medium">
-                  {{ authStore.iniciales }}
+                  {{ authStore.userInitials }}
                 </div>
                 <div class="hidden md:block text-left">
-                  <p class="text-sm font-medium text-gray-900">{{ authStore.nombreCompleto }}</p>
-                  <p class="text-xs text-gray-500">{{ authStore.paciente?.email }}</p>
+                  <p class="text-sm font-medium text-gray-900">{{ authStore.userName }}</p>
+                  <p class="text-xs text-gray-500">{{ authStore.user?.email }}</p>
                 </div>
                 <i class="fas fa-chevron-down text-gray-400 text-sm"></i>
               </button>
 
               <!-- Dropdown Menu -->
               <transition
-                enter-active-class="transition ease-out duration-100"
+                enter-active-class="transition ease-out duration-5000"
                 enter-from-class="transform opacity-0 scale-95"
                 enter-to-class="transform opacity-100 scale-100"
-                leave-active-class="transition ease-in duration-75"
+                leave-active-class="transition ease-in duration-1500"
                 leave-from-class="transform opacity-100 scale-100"
                 leave-to-class="transform opacity-0 scale-95"
               >
@@ -72,7 +67,7 @@
                   class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1"
                 >
                   <router-link
-                    :to="`/${clinicaSlug}/paciente/perfil`"
+                    to="/paciente/perfil"
                     class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     @click="dropdownOpen = false"
                   >
@@ -81,7 +76,7 @@
                   </router-link>
                   
                   <router-link
-                    :to="`/${clinicaSlug}/paciente/configuracion`"
+                    to="/paciente/configuracion"
                     class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     @click="dropdownOpen = false"
                   >
@@ -116,7 +111,7 @@
           <router-link
             v-for="item in menuItems"
             :key="item.path"
-            :to="`/${clinicaSlug}${item.path}`"
+            :to="item.path"
             class="flex items-center gap-3 px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition"
             active-class="bg-blue-50 text-blue-600 font-medium"
           >
@@ -157,7 +152,7 @@
               <router-link
                 v-for="item in menuItems"
                 :key="item.path"
-                :to="`/${clinicaSlug}${item.path}`"
+                :to="item.path"
                 class="flex items-center gap-3 px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition"
                 active-class="bg-blue-50 text-blue-600 font-medium"
                 @click="sidebarOpen = false"
@@ -181,24 +176,21 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { usePacienteAuthStore } from '@paciente/stores/auth'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@shared/stores/auth'
 
 const router = useRouter()
-const route = useRoute()
-const authStore = usePacienteAuthStore()
+const authStore = useAuthStore()
 
 // State
 const sidebarOpen = ref(false)
 const dropdownOpen = ref(false)
-
-// Computed
-const clinicaSlug = computed(() => route.params.clinicaSlug || 'demo')
+const dropdownRef = ref(null)
 
 // Menu Items
 const menuItems = [
-  { path: '/paciente/dashboard', icon: 'fas fa-home', label: 'Inicio' },
+  { path: '/paciente/portal', icon: 'fas fa-home', label: 'Inicio' },
   { path: '/paciente/citas', icon: 'fas fa-calendar-alt', label: 'Mis Citas' },
   { path: '/paciente/historia-clinica', icon: 'fas fa-file-medical', label: 'Historia Clínica' },
   { path: '/paciente/documentos', icon: 'fas fa-folder-open', label: 'Documentos' },
@@ -207,26 +199,41 @@ const menuItems = [
 ]
 
 // Methods
-async function handleLogout() {
-  dropdownOpen.value = false
-  
-  await authStore.logout()
-  
-  router.push(`/${clinicaSlug.value}/paciente/login`)
+function toggleSidebar() {
+  sidebarOpen.value = !sidebarOpen.value
 }
 
-// Click Outside Directive
-const vClickOutside = {
-  mounted(el, binding) {
-    el.clickOutsideEvent = (event) => {
-      if (!(el === event.target || el.contains(event.target))) {
-        binding.value()
-      }
-    }
-    document.addEventListener('click', el.clickOutsideEvent)
-  },
-  unmounted(el) {
-    document.removeEventListener('click', el.clickOutsideEvent)
+function closeSidebar() {
+  sidebarOpen.value = false
+}
+
+function toggleDropdown() {
+  dropdownOpen.value = !dropdownOpen.value
+}
+
+function closeDropdown() {
+  dropdownOpen.value = false
+}
+
+async function handleLogout() {
+  closeDropdown()
+  await authStore.logout()
+  router.push('/paciente/login')
+}
+
+// Click outside handler
+function handleClickOutside(event) {
+  if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
+    closeDropdown()
   }
 }
+
+// Lifecycle
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
 </script>

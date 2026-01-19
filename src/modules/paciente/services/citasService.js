@@ -3,6 +3,20 @@
 import api from './api'
 
 /**
+ * Obtener PRÓXIMAS citas del paciente (para el dashboard)
+ */
+export async function getProximasCitas(limit = 5) {
+  const response = await api.get('/paciente/mis-citas', {
+    params: {
+      tipo: 'proximas',  // ← ESTE ES EL FILTRO CLAVE
+      per_page: limit
+    }
+  })
+  return response.data
+}
+
+
+/**
  * Obtener citas del paciente
  * Ruta: GET /paciente/mis-citas
  */
@@ -117,6 +131,7 @@ export async function agendarCita(data) {
 
 export default {
   getMisCitas,
+  getProximasCitas,
   getCita,
   cancelarCita,
   reagendarCita,

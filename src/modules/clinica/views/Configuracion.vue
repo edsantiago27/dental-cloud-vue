@@ -1,4 +1,4 @@
-<!-- views/Configuracion-View.vue -->
+<!-- views/Configuracion.vue -->
 <template>
   <div class="min-h-screen bg-gray-50 p-6">
     
@@ -14,13 +14,13 @@
     <!-- Tabs Navigation -->
     <div class="bg-white rounded-xl shadow-md mb-6">
       <div class="border-b border-gray-200">
-        <nav class="-mb-px flex space-x-8 px-6" aria-label="Tabs">
+        <nav class="-mb-px flex space-x-8 px-6 overflow-x-auto" aria-label="Tabs">
           <button
             v-for="tab in tabs"
             :key="tab.id"
             @click="activeTab = tab.id"
             :class="[
-              'py-4 px-1 border-b-2 font-medium text-sm transition',
+              'py-4 px-1 border-b-2 font-medium text-sm transition whitespace-nowrap',
               activeTab === tab.id
                 ? 'border-blue-600 text-blue-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -54,6 +54,9 @@
       <!-- Datos Fiscales -->
       <DatosFiscalesTab v-show="activeTab === 'fiscales'" />
 
+      <!-- 🆕 Plan y Suscripción -->
+      <PlanSuscripcionTab v-show="activeTab === 'plan'" />
+
     </div>
 
   </div>
@@ -66,6 +69,7 @@ import DatosGeneralesTab from '@clinica/components/configuracion/DatosGeneralesT
 import LogoBrandingTab from '@clinica/components/configuracion/LogoBrandingTab.vue'
 import HorariosPreferenciasTab from '@clinica/components/configuracion/HorariosPreferenciasTab.vue'
 import DatosFiscalesTab from '@clinica/components/configuracion/DatosFiscalesTab.vue'
+import PlanSuscripcionTab from '@clinica/components/configuracion/PlanSuscripcionTab.vue'
 
 const configuracionStore = useConfiguracionStore()
 
@@ -75,7 +79,8 @@ const tabs = [
   { id: 'general', label: 'Datos Generales', icon: 'fas fa-building' },
   { id: 'branding', label: 'Logo y Branding', icon: 'fas fa-palette' },
   { id: 'horarios', label: 'Horarios y Preferencias', icon: 'fas fa-clock' },
-  { id: 'fiscales', label: 'Datos Fiscales', icon: 'fas fa-file-invoice' }
+  { id: 'fiscales', label: 'Datos Fiscales', icon: 'fas fa-file-invoice' },
+  { id: 'plan', label: 'Plan y Suscripción', icon: 'fas fa-crown' } // 🆕 Nuevo tab
 ]
 
 onMounted(async () => {

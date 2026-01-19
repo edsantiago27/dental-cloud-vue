@@ -32,7 +32,7 @@
         <tbody class="bg-white divide-y divide-gray-200">
           <tr 
             v-for="(prof, index) in sortedData" 
-            :key="index"
+            :key="prof.id || index"
             class="hover:bg-gray-50 transition"
           >
             <!-- Profesional -->
@@ -41,14 +41,17 @@
                 <div class="flex-shrink-0 h-10 w-10">
                   <div 
                     class="h-10 w-10 rounded-full flex items-center justify-center text-white font-bold"
-                    :style="{ backgroundColor: getColorForProfesional(prof.profesional) }"
+                    :style="{ backgroundColor: prof.color || getColorForProfesional(prof.nombre) }"
                   >
-                    {{ getInitials(prof.profesional) }}
+                    {{ getInitials(prof.nombre) }}
                   </div>
                 </div>
                 <div class="ml-4">
                   <div class="text-sm font-medium text-gray-900">
-                    {{ prof.profesional }}
+                    {{ prof.nombre }}
+                  </div>
+                  <div v-if="prof.especialidad" class="text-xs text-gray-500">
+                    {{ prof.especialidad }}
                   </div>
                 </div>
               </div>
@@ -58,7 +61,7 @@
             <td class="px-6 py-4 whitespace-nowrap text-center">
               <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
                 <i class="fas fa-check-circle mr-1"></i>
-                {{ prof.citas_completadas }}
+                {{ prof.completadas || 0 }}
               </span>
             </td>
 
@@ -66,7 +69,7 @@
             <td class="px-6 py-4 whitespace-nowrap text-center">
               <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
                 <i class="fas fa-times-circle mr-1"></i>
-                {{ prof.citas_canceladas }}
+                {{ prof.canceladas || 0 }}
               </span>
             </td>
 
@@ -77,11 +80,11 @@
                   <div 
                     class="h-2 rounded-full transition-all"
                     :class="getTasaColor(prof.tasa_completacion)"
-                    :style="{ width: `${prof.tasa_completacion}%` }"
+                    :style="{ width: `${prof.tasa_completacion || 0}%` }"
                   ></div>
                 </div>
                 <span class="text-sm font-medium text-gray-700">
-                  {{ prof.tasa_completacion }}%
+                  {{ prof.tasa_completacion || 0 }}%
                 </span>
               </div>
             </td>
@@ -89,7 +92,7 @@
             <!-- Ingresos -->
             <td class="px-6 py-4 whitespace-nowrap text-right">
               <div class="text-sm font-bold text-gray-900">
-                {{ formatCurrency(prof.total_ingresos) }}
+                {{ formatCurrency(prof.ingresos || 0) }}
               </div>
             </td>
           </tr>
@@ -119,32 +122,43 @@ const props = defineProps({
 
 // Computed
 const hasData = computed(() => {
-  return props.data.length > 0
+  return Array.isArray(props.data) && props.data.length > 0
 })
 
 const sortedData = computed(() => {
+  if (!Array.isArray(props.data)) return []
+  
   // Ordenar por ingresos (de mayor a menor)
-  return [...props.data].sort((a, b) => b.total_ingresos - a.total_ingresos)
+  return [...props.data].sort((a, b) => {
+    const ingresosA = a.ingresos || 0
+    const ingresosB = b.ingresos || 0
+    return ingresosB - ingresosA
+  })
 })
 
 // Methods
 function formatCurrency(value) {
   return new Intl.NumberFormat('es-CL', {
     style: 'currency',
-    currency: 'CLP'
-  }).format(value)
+    currency: 'CLP',
+    minimumFractionDigits: 0
+  }).format(value || 0)
 }
 
 function getInitials(name) {
   if (!name) return '?'
-  const parts = name.split(' ')
+  
+  const parts = name.trim().split(' ')
+  
   if (parts.length >= 2) {
     return (parts[0][0] + parts[1][0]).toUpperCase()
   }
+  
   return name.slice(0, 2).toUpperCase()
 }
 
 function getColorForProfesional(name) {
+  // Colores predefinidos
   const colors = [
     '#3B82F6', // blue
     '#10B981', // green
@@ -155,6 +169,12 @@ function getColorForProfesional(name) {
     '#06B6D4'  // cyan
   ]
   
+  // Validación
+  if (!name || typeof name !== 'string') {
+    return colors[0]
+  }
+  
+  // Hash simple basado en el nombre
   let hash = 0
   for (let i = 0; i < name.length; i++) {
     hash = name.charCodeAt(i) + ((hash << 5) - hash)
@@ -164,9 +184,11 @@ function getColorForProfesional(name) {
 }
 
 function getTasaColor(tasa) {
-  if (tasa >= 90) return 'bg-green-600'
-  if (tasa >= 75) return 'bg-blue-600'
-  if (tasa >= 60) return 'bg-yellow-600'
+  const tasaNum = Number(tasa) || 0
+  
+  if (tasaNum >= 90) return 'bg-green-600'
+  if (tasaNum >= 75) return 'bg-blue-600'
+  if (tasaNum >= 60) return 'bg-yellow-600'
   return 'bg-red-600'
 }
 </script>

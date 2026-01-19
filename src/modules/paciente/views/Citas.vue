@@ -252,7 +252,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { usePacienteCitasStore } from '@paciente/stores/citas'
-import AgendarCita from '@paciente/components/paciente/AgendarCita.vue'
+import AgendarCita from '@paciente/components/AgendarCita.vue'
 import CancelarCita from '@paciente/components/CancelarCita.vue'
 import ReagendarCita from '@paciente/components/ReagendarCita.vue'
 import DetalleCita from '@paciente/components/DetalleCita.vue'

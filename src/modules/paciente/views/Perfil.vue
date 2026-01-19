@@ -1,4 +1,3 @@
-<!-- src/views/paciente/Perfil.vue -->
 <template>
   <div class="space-y-6">
     
@@ -24,21 +23,29 @@
       </div>
     </div>
 
+    <!-- Loading -->
+    <div v-if="loadingData" class="flex justify-center py-12">
+      <div class="text-center">
+        <i class="fas fa-spinner fa-spin text-4xl text-blue-600 mb-4"></i>
+        <p class="text-gray-600">Cargando perfil...</p>
+      </div>
+    </div>
+
     <!-- Perfil Card -->
-    <div class="bg-white rounded-lg shadow-sm p-6">
+    <div v-else class="bg-white rounded-lg shadow-sm p-6">
       
       <!-- Avatar y nombre -->
       <div class="flex items-center gap-6 pb-6 border-b border-gray-200">
         <div class="w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-3xl font-bold">
-          {{ authStore.iniciales }}
+          {{ authStore.userInitials }}
         </div>
         <div class="flex-1">
           <h2 class="text-2xl font-bold text-gray-900">
-            {{ authStore.nombreCompleto }}
+            {{ authStore.userName }}
           </h2>
-          <p class="text-gray-600 mt-1">{{ authStore.paciente?.email }}</p>
+          <p class="text-gray-600 mt-1">{{ authStore.user?.email }}</p>
           <p class="text-sm text-gray-500 mt-1">
-            Paciente desde {{ formatFecha(authStore.paciente?.created_at) }}
+            Paciente desde {{ formatFecha(authStore.user?.created_at) }}
           </p>
         </div>
       </div>
@@ -107,7 +114,7 @@
                 RUT
               </label>
               <input
-                :value="authStore.paciente?.rut"
+                :value="authStore.user?.rut || 'N/A'"
                 type="text"
                 disabled
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
@@ -121,7 +128,7 @@
                 Email
               </label>
               <input
-                :value="authStore.paciente?.email"
+                :value="authStore.user?.email"
                 type="email"
                 disabled
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
@@ -370,14 +377,16 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { usePacienteAuthStore } from '@paciente/stores/auth'
+import { useAuthStore } from '@shared/stores/auth'
+import api from '@paciente/services/api'
 
-const authStore = usePacienteAuthStore()
+const authStore = useAuthStore()
 
 // State
 const tabActivo = ref('informacion')
 const loading = ref(false)
 const loadingPassword = ref(false)
+const loadingData = ref(false)
 const error = ref(null)
 const successMessage = ref(null)
 const showPasswordActual = ref(false)
@@ -413,21 +422,31 @@ function formatFecha(fecha) {
   })
 }
 
-function cargarDatos() {
-  const paciente = authStore.paciente
-  
-  form.value = {
-    nombre: paciente.nombre || '',
-    apellido: paciente.apellido || '',
-    telefono: paciente.telefono || '',
-    fecha_nacimiento: paciente.fecha_nacimiento || '',
-    genero: paciente.genero || '',
-    direccion: paciente.direccion || '',
-    ciudad: paciente.ciudad || '',
-    comuna: paciente.comuna || '',
-    contacto_emergencia_nombre: paciente.contacto_emergencia_nombre || '',
-    contacto_emergencia_telefono: paciente.contacto_emergencia_telefono || '',
-    contacto_emergencia_relacion: paciente.contacto_emergencia_relacion || ''
+async function cargarDatos() {
+  loadingData.value = true
+  try {
+    const response = await api.get('/paciente/perfil')
+    if (response.data.success) {
+      const paciente = response.data.data
+      
+      form.value = {
+        nombre: paciente.nombre || '',
+        apellido: paciente.apellido || '',
+        telefono: paciente.telefono || '',
+        fecha_nacimiento: paciente.fecha_nacimiento || '',
+        genero: paciente.genero || '',
+        direccion: paciente.direccion || '',
+        ciudad: paciente.ciudad || '',
+        comuna: paciente.comuna || '',
+        contacto_emergencia_nombre: paciente.contacto_emergencia_nombre || '',
+        contacto_emergencia_telefono: paciente.contacto_emergencia_telefono || '',
+        contacto_emergencia_relacion: paciente.contacto_emergencia_relacion || ''
+      }
+    }
+  } catch (err) {
+    console.error('Error al cargar perfil:', err)
+  } finally {
+    loadingData.value = false
   }
 }
 
@@ -437,18 +456,18 @@ async function guardarPerfil() {
   successMessage.value = null
 
   try {
-    const response = await authStore.fetchPerfil()
-    // Actualizar con el servicio
-    await authStore.store.actualizarPerfil(form.value)
+    const response = await api.put('/paciente/perfil', form.value)
     
-    successMessage.value = 'Perfil actualizado correctamente'
-    await authStore.fetchPerfil() // Recargar datos
-    
-    setTimeout(() => {
-      successMessage.value = null
-    }, 3000)
+    if (response.data.success) {
+      successMessage.value = 'Perfil actualizado correctamente'
+      await authStore.fetchMe() // Recargar datos del usuario
+      
+      setTimeout(() => {
+        successMessage.value = null
+      }, 3000)
+    }
   } catch (err) {
-    error.value = 'Error al actualizar el perfil'
+    error.value = err.response?.data?.message || 'Error al actualizar el perfil'
   } finally {
     loading.value = false
   }
@@ -474,20 +493,18 @@ async function cambiarPassword() {
   successMessage.value = null
 
   try {
-    await authStore.cambiarPassword(
-      passwordForm.value.password_actual,
-      passwordForm.value.password,
-      passwordForm.value.password_confirmation
-    )
+    const response = await api.put('/paciente/cambiar-password', passwordForm.value)
     
-    successMessage.value = 'Contraseña actualizada correctamente'
-    cancelarPassword()
-    
-    setTimeout(() => {
-      successMessage.value = null
-    }, 3000)
+    if (response.data.success) {
+      successMessage.value = 'Contraseña actualizada correctamente'
+      cancelarPassword()
+      
+      setTimeout(() => {
+        successMessage.value = null
+      }, 3000)
+    }
   } catch (err) {
-    error.value = err.message || 'Error al cambiar la contraseña'
+    error.value = err.response?.data?.message || 'Error al cambiar la contraseña'
   } finally {
     loadingPassword.value = false
   }
