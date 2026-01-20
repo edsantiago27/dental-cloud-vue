@@ -91,6 +91,13 @@
         :is-open="isOpen"
       />
 
+      <MenuItem
+        to="/presupuestos"
+        icon="fas fa-file-invoice"
+        label="Presupuestos"
+        :is-open="isOpen"
+      />
+
       <!-- Sección: Administración -->
       <div v-if="isOpen" class="px-5 py-6">
         <p class="text-[9px] font-black text-white/30 uppercase tracking-[0.3em]">Administración</p>

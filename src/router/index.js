@@ -79,6 +79,12 @@ const router = createRouter({
           meta: { title: 'Tratamientos' }
         },
         {
+          path: 'presupuestos',
+          name: 'clinica-presupuestos',
+          component: () => import('@clinica/views/Presupuestos.vue'),
+          meta: { title: 'Presupuestos' }
+        },
+        {
           path: 'facturacion',
           name: 'clinica-facturacion',
           component: () => import('@clinica/views/FacturacionDashboard.vue'),
