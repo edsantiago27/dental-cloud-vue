@@ -5,19 +5,34 @@ import { authService } from '../services'
 
 export const usePacienteAuthStore = defineStore('pacienteAuth', () => {
   // State
-  const paciente = ref(null)
+  const user = ref(null)
   const clinica = ref(null)
+  const clinicas = ref([])
   const token = ref(null)
   const loading = ref(false)
   const error = ref(null)
 
   // Getters
   const isAuthenticated = computed(() => !!token.value)
+  const isPacienteUser = computed(() => true)
   
-  const nombreCompleto = computed(() => {
-    if (!paciente.value) return ''
-    return `${paciente.value.nombre} ${paciente.value.apellido}`
+  const userName = computed(() => {
+    if (!user.value) return ''
+    return `${user.value.nombre || ''} ${user.value.apellido || ''}`.trim()
   })
+
+  const userInitials = computed(() => {
+    if (!user.value) return '?'
+    const n = user.value.nombre?.[0] || ''
+    const a = user.value.apellido?.[0] || ''
+    return (n + a).toUpperCase() || '?'
+  })
+
+  // Paciente tiene múltiples clínicas
+  const hasMultipleClinics = computed(() => clinicas.value.length > 1)
+
+  // Mantener alias para compatibilidad interna si se requiere
+  const paciente = computed(() => user.value)
 
   const iniciales = computed(() => {
     if (!paciente.value) return ''
@@ -41,27 +56,33 @@ export const usePacienteAuthStore = defineStore('pacienteAuth', () => {
       
       // Token priority: authData.token > authData.access_token
       token.value = authData.token || authData.access_token
-      paciente.value = authData.user || authData.paciente
+      user.value = authData.user || authData.paciente
       clinica.value = authData.clinica
+      clinicas.value = authData.clinicas || []
 
       if (token.value) {
         localStorage.setItem('paciente_token', token.value)
-        console.log('💾 Token guardado en localStorage')
-      } else {
-        console.warn('⚠️ Login exitoso pero no se encontró token en la respuesta')
       }
       
-      if (paciente.value) {
-        localStorage.setItem('paciente_user', JSON.stringify(paciente.value))
+      if (user.value) {
+        localStorage.setItem('paciente_user', JSON.stringify(user.value))
       }
       
       if (clinica.value) {
         localStorage.setItem('paciente_clinica', JSON.stringify(clinica.value))
       }
+
+      if (clinicas.value.length > 0) {
+        localStorage.setItem('paciente_clinicas', JSON.stringify(clinicas.value))
+      }
       
       localStorage.setItem('clinica_slug', clinicaSlug)
 
-      return { success: true }
+      return { 
+        success: true, 
+        requiresSelection: clinicas.value.length > 1,
+        clinicas: clinicas.value
+      }
     }
 
     throw new Error(response.message || 'Error al iniciar sesión')
@@ -101,18 +122,22 @@ export const usePacienteAuthStore = defineStore('pacienteAuth', () => {
       const authData = response.data || response
       
       token.value = authData.token || authData.access_token
-      paciente.value = authData.user || authData.paciente
+      user.value = authData.user || authData.paciente
       clinica.value = authData.clinica
+      clinicas.value = authData.clinicas || []
 
       // Guardar en localStorage
       if (token.value) {
         localStorage.setItem('paciente_token', token.value)
       }
-      if (paciente.value) {
-        localStorage.setItem('paciente_user', JSON.stringify(paciente.value))
+      if (user.value) {
+        localStorage.setItem('paciente_user', JSON.stringify(user.value))
       }
       if (clinica.value) {
         localStorage.setItem('paciente_clinica', JSON.stringify(clinica.value))
+      }
+      if (clinicas.value.length > 0) {
+        localStorage.setItem('paciente_clinicas', JSON.stringify(clinicas.value))
       }
       localStorage.setItem('clinica_slug', clinicaSlug)
 
@@ -148,27 +173,54 @@ export const usePacienteAuthStore = defineStore('pacienteAuth', () => {
       console.error('Error logout:', err)
     } finally {
       // Limpiar estado y localStorage
-      paciente.value = null
+      user.value = null
       clinica.value = null
+      clinicas.value = []
       token.value = null
       error.value = null
 
       localStorage.removeItem('paciente_token')
       localStorage.removeItem('paciente_user')
       localStorage.removeItem('paciente_clinica')
+      localStorage.removeItem('paciente_clinicas')
       localStorage.removeItem('clinica_slug')
     }
+  }
+
+  async function selectClinica(clinicaId) {
+    loading.value = true
+    error.value = null
+    try {
+      const selected = clinicas.value.find(c => c.id === clinicaId)
+      if (selected) {
+        clinica.value = selected
+        localStorage.setItem('paciente_clinica', JSON.stringify(selected))
+        return { success: true }
+      }
+      throw new Error('Clínica no encontrada en la lista')
+    } catch (err) {
+      error.value = err.message
+      return { success: false, message: err.message }
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function switchClinica(clinicaId) {
+    clinica.value = null
+    return await selectClinica(clinicaId)
   }
 
   async function checkAuth() {
     const storedToken = localStorage.getItem('paciente_token')
     const storedUser = localStorage.getItem('paciente_user')
     const storedClinica = localStorage.getItem('paciente_clinica')
+    const storedClinicas = localStorage.getItem('paciente_clinicas')
 
     if (storedToken && storedUser) {
       token.value = storedToken
       try {
-        paciente.value = JSON.parse(storedUser)
+        user.value = JSON.parse(storedUser)
       } catch (e) {
         console.error('Error parsing user:', e)
       }
@@ -180,6 +232,14 @@ export const usePacienteAuthStore = defineStore('pacienteAuth', () => {
           console.error('Error parsing clinica:', e)
         }
       }
+
+      if (storedClinicas) {
+        try {
+          clinicas.value = JSON.parse(storedClinicas)
+        } catch (e) {
+          console.error('Error parsing clinicas:', e)
+        }
+      }
     }
   }
 
@@ -188,7 +248,7 @@ export const usePacienteAuthStore = defineStore('pacienteAuth', () => {
       const response = await authService.getPerfil()
       
       if (response.success) {
-        paciente.value = response.data
+        user.value = response.data
         clinica.value = response.data.clinica || clinica.value
         
         // Actualizar localStorage
@@ -210,10 +270,10 @@ export const usePacienteAuthStore = defineStore('pacienteAuth', () => {
       
       if (response.success) {
         // Actualizar el store
-        paciente.value = { ...paciente.value, ...response.data }
+        user.value = { ...user.value, ...response.data }
         
         // Actualizar localStorage
-        localStorage.setItem('paciente_user', JSON.stringify(paciente.value))
+        localStorage.setItem('paciente_user', JSON.stringify(user.value))
         
         return { success: true }
       }
@@ -258,21 +318,25 @@ export const usePacienteAuthStore = defineStore('pacienteAuth', () => {
 
   return {
     // State
-    paciente,
+    user,
     clinica,
+    clinicas,
     token,
     loading,
     error,
     
     // Getters
     isAuthenticated,
-    nombreCompleto,
-    iniciales,
+    userName,
+    isPacienteUser,
+    hasMultipleClinics,
     
     // Actions
     login,
     registro,
     logout,
+    selectClinica,
+    switchClinica,
     checkAuth,
     fetchPerfil,
     actualizarPerfil,

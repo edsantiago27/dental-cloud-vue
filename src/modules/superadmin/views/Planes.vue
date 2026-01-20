@@ -1,204 +1,142 @@
 <!-- views/superadmin/Planes.vue -->
 <template>
-  <div class="space-y-6">
+  <div class="space-y-8 animate-fade-in-up">
 
     <!-- Header -->
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between pb-2">
       <div>
-        <h2 class="text-2xl font-bold text-gray-900">Gestión de Planes</h2>
-        <p class="text-sm text-gray-500 mt-1">Configura los planes disponibles para las clínicas</p>
+        <h2 class="text-3xl font-black text-gray-900 dark:text-white tracking-tight uppercase">Modelo de Negocio</h2>
+        <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1">Configuración de suscripciones y límites comerciales</p>
       </div>
       <button
         @click="modalNuevoPlan = true"
-        class="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition"
+        class="px-8 py-4 bg-violet-600 dark:bg-orange-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-violet-200 dark:shadow-orange-500/20 hover:scale-105 active:scale-95 transition-all"
       >
-        <i class="fas fa-plus mr-2"></i>
-        Nuevo Plan
+        <i class="fas fa-plus mr-2"></i> Nuevo Plan
       </button>
     </div>
 
-    <!-- Loading -->
-    <div v-if="loading && planesList.length === 0" class="flex justify-center py-12">
-      <i class="fas fa-spinner fa-spin text-4xl text-blue-600"></i>
-    </div>
-
     <!-- Planes Grid -->
-    <div v-else-if="planesList.length > 0" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div v-if="planesList.length > 0" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
       
       <div
         v-for="plan in planesOrdenados"
         :key="plan.id"
-        class="bg-white rounded-xl shadow-lg overflow-hidden border-2 transition-all hover:shadow-xl"
-        :class="{
-          'border-purple-500': plan.nombre === 'Enterprise',
-          'border-blue-500': plan.nombre === 'Profesional',
-          'border-green-500': plan.nombre === 'Básico',
-          'border-gray-300': !['Enterprise', 'Profesional', 'Básico'].includes(plan.nombre),
-          'opacity-60': plan.estado !== 'activo'
-        }"
+        class="bg-white dark:bg-[#111111] rounded-[2.5rem] border border-gray-100 dark:border-white/5 shadow-xl shadow-gray-100/20 dark:shadow-none overflow-hidden transition-all hover:scale-[1.02] flex flex-col"
+        :class="{ 'opacity-60 grayscale-[0.5]': plan.estado !== 'activo' }"
       >
         
-        <!-- Header del Plan -->
+        <!-- Header del Plan (Gradient per target) -->
         <div
-          class="p-6 text-white"
+          class="p-8 text-white relative overflow-hidden"
           :class="{
-            'bg-gradient-to-br from-purple-600 to-purple-700': plan.nombre === 'Enterprise',
-            'bg-gradient-to-br from-blue-600 to-blue-700': plan.nombre === 'Profesional',
-            'bg-gradient-to-br from-green-600 to-green-700': plan.nombre === 'Básico',
-            'bg-gradient-to-br from-gray-600 to-gray-700': !['Enterprise', 'Profesional', 'Básico'].includes(plan.nombre)
+            'bg-gradient-to-br from-violet-600 to-violet-800 dark:from-orange-500 dark:to-orange-700': plan.nombre === 'Enterprise' || plan.nombre === 'Profesional',
+            'bg-gray-900 dark:bg-white/10 text-white': plan.nombre === 'Básico'
           }"
         >
-          <div class="flex items-start justify-between mb-4">
+          <div class="absolute -right-6 -top-6 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+          
+          <div class="flex items-start justify-between relative z-10 mb-8">
             <div>
-              <h3 class="text-2xl font-bold">{{ plan.nombre }}</h3>
-              <p class="text-sm opacity-90 mt-1">{{ plan.descripcion }}</p>
+              <h3 class="text-2xl font-black tracking-tight uppercase">{{ plan.nombre }}</h3>
+              <p class="text-[10px] font-bold opacity-80 uppercase tracking-widest mt-1">{{ plan.descripcion }}</p>
             </div>
-            <span
+            <div 
               v-if="plan.estado !== 'activo'"
-              class="px-2 py-1 text-xs bg-white bg-opacity-20 rounded-full"
+              class="px-3 py-1 bg-black/20 rounded-full text-[9px] font-black uppercase tracking-widest"
             >
-              {{ plan.estado === 'descontinuado' ? 'Descontinuado' : 'Inactivo' }}
-            </span>
+              {{ plan.estado }}
+            </div>
           </div>
           
-          <!-- Precio -->
-          <div class="mt-6">
+          <div class="relative z-10">
             <div class="flex items-baseline gap-2">
-              <span class="text-4xl font-bold">{{ formatMoney(plan.precio_mensual) }}</span>
-              <span class="text-sm opacity-80">/mes</span>
+              <span class="text-4xl font-black tracking-tighter">{{ formatMoney(plan.precio_mensual) }}</span>
+              <span class="text-xs font-bold opacity-70">/mes</span>
             </div>
-            <div class="mt-2 text-sm opacity-90">
-              o {{ formatMoney(plan.precio_anual) }} /año
-              <span class="ml-2 px-2 py-0.5 bg-white bg-opacity-20 rounded text-xs">
-                {{ calcularDescuento(plan) }}% OFF
-              </span>
-            </div>
+            <p class="text-[10px] font-black uppercase tracking-widest mt-2 opacity-60">
+              o {{ formatMoney(plan.precio_anual) }} anualizado
+            </p>
           </div>
         </div>
 
-        <!-- Features -->
-        <div class="p-6">
+        <!-- Features & Limits -->
+        <div class="p-8 space-y-8 flex-1">
           
-          <!-- Límites -->
-          <div class="space-y-3 mb-6">
-            <div class="flex items-center gap-3 text-sm">
-              <i class="fas fa-users text-blue-600 w-5"></i>
-              <span class="flex-1 text-gray-700">Pacientes</span>
-              <span class="font-semibold text-gray-900">
-                {{ plan.max_pacientes || 'Ilimitado' }}
-              </span>
-            </div>
-            
-            <div class="flex items-center gap-3 text-sm">
-              <i class="fas fa-user-md text-purple-600 w-5"></i>
-              <span class="flex-1 text-gray-700">Profesionales</span>
-              <span class="font-semibold text-gray-900">
-                {{ plan.max_profesionales || 'Ilimitado' }}
-              </span>
+          <div class="space-y-4">
+            <div class="flex items-center gap-4">
+              <div class="w-10 h-10 bg-gray-50 dark:bg-white/5 rounded-xl flex items-center justify-center text-gray-400">
+                <i class="fas fa-users text-sm"></i>
+              </div>
+              <div class="flex-1">
+                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Capacidad</p>
+                <p class="text-sm font-black text-gray-900 dark:text-white">{{ plan.max_pacientes || 'Ilimitado' }} <span class="text-[10px] font-bold opacity-50 uppercase ml-1">Pacientes</span></p>
+              </div>
             </div>
 
-            <div class="flex items-center gap-3 text-sm">
-              <i class="fas fa-calendar text-green-600 w-5"></i>
-              <span class="flex-1 text-gray-700">Citas</span>
-              <span class="font-semibold text-gray-900">Ilimitado</span>
+            <div class="flex items-center gap-4">
+              <div class="w-10 h-10 bg-gray-50 dark:bg-white/5 rounded-xl flex items-center justify-center text-gray-400">
+                <i class="fas fa-user-md text-sm"></i>
+              </div>
+              <div class="flex-1">
+                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Personal</p>
+                <p class="text-sm font-black text-gray-900 dark:text-white">{{ plan.max_profesionales || 'Ilimitado' }} <span class="text-[10px] font-bold opacity-50 uppercase ml-1">Profesionales</span></p>
+              </div>
             </div>
 
-            <div class="flex items-center gap-3 text-sm">
-              <i class="fas fa-hdd text-orange-600 w-5"></i>
-              <span class="flex-1 text-gray-700">Almacenamiento</span>
-              <span class="font-semibold text-gray-900">
-                {{ plan.max_almacenamiento || 'Ilimitado' }} GB
-              </span>
-            </div>
-          </div>
-
-          <!-- Módulos -->
-          <div class="border-t pt-4">
-            <p class="text-xs font-semibold text-gray-500 uppercase mb-3">Módulos Incluidos</p>
-            <div class="space-y-2">
-              <div
-                v-for="modulo in modulosDisponibles"
-                :key="modulo.key"
-                class="flex items-center gap-2 text-sm"
-              >
-                <i
-                  class="text-xs"
-                  :class="plan.modulos?.[modulo.key]
-                    ? 'fas fa-check-circle text-green-600'
-                    : 'fas fa-times-circle text-gray-300'
-                  "
-                ></i>
-                <span
-                  :class="plan.modulos?.[modulo.key] ? 'text-gray-700' : 'text-gray-400'"
-                >
-                  {{ modulo.label }}
-                </span>
+            <div class="flex items-center gap-4">
+              <div class="w-10 h-10 bg-gray-50 dark:bg-white/5 rounded-xl flex items-center justify-center text-gray-400">
+                <i class="fas fa-hdd text-sm"></i>
+              </div>
+              <div class="flex-1">
+                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Almacenamiento</p>
+                <p class="text-sm font-black text-gray-900 dark:text-white">{{ plan.max_almacenamiento || '5' }} GB <span class="text-[10px] font-bold opacity-50 uppercase ml-1">Cloud Space</span></p>
               </div>
             </div>
           </div>
 
-          <!-- Clínicas usando este plan -->
-          <div v-if="plan.clinicas_count" class="mt-6 p-3 bg-gray-50 rounded-lg">
-            <div class="flex items-center gap-2 text-sm text-gray-600">
-              <i class="fas fa-hospital"></i>
-              <span>{{ plan.clinicas_count }} clínica(s) usando este plan</span>
-            </div>
+          <!-- Módulos Incluidos (Small Pills) -->
+          <div class="pt-6 border-t border-gray-50 dark:border-white/5">
+             <p class="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4">Ecosistema de Módulos</p>
+             <div class="flex flex-wrap gap-2">
+               <span 
+                v-for="modulo in modulosDisponibles" 
+                :key="modulo.key"
+                class="px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-tight transition-all"
+                :class="plan.modulos?.[modulo.key] 
+                  ? 'bg-violet-50 dark:bg-orange-500/10 text-violet-600 dark:text-orange-500' 
+                  : 'bg-gray-50 dark:bg-white/5 text-gray-300 dark:text-gray-700'"
+               >
+                 <i :class="[plan.modulos?.[modulo.key] ? 'fas fa-check-circle' : 'fas fa-minus-circle', 'mr-1.5']"></i>
+                 {{ modulo.label }}
+               </span>
+             </div>
           </div>
+        </div>
 
+        <!-- Footnote / Usage -->
+        <div v-if="plan.clinicas_count" class="px-8 py-4 bg-gray-50 dark:bg-white/5 text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] text-center border-t border-gray-100 dark:border-white/5">
+          {{ plan.clinicas_count }} Clínicas Activas
         </div>
 
         <!-- Acciones -->
-        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex gap-2">
+        <div class="p-8 bg-white dark:bg-[#111111] border-t border-gray-50 dark:border-white/5 flex gap-3">
           <button
             @click="editarPlan(plan)"
-            class="flex-1 px-4 py-2 text-blue-700 bg-blue-50 border border-blue-300 rounded-lg hover:bg-blue-100 transition text-sm"
+            class="flex-1 py-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg"
           >
-            <i class="fas fa-edit mr-2"></i>
-            Editar
+            Editar Plan
           </button>
-
           <button
-            v-if="plan.estado === 'activo'"
             @click="confirmarDesactivar(plan)"
-            class="px-4 py-2 text-orange-700 bg-orange-50 border border-orange-300 rounded-lg hover:bg-orange-100 transition text-sm"
+            class="w-14 h-14 flex items-center justify-center rounded-2xl border border-gray-100 dark:border-white/5 text-gray-400 hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-500/10 transition-all"
           >
             <i class="fas fa-pause-circle"></i>
-          </button>
-
-          <button
-            v-else
-            @click="confirmarActivar(plan)"
-            class="px-4 py-2 text-green-700 bg-green-50 border border-green-300 rounded-lg hover:bg-green-100 transition text-sm"
-          >
-            <i class="fas fa-play-circle"></i>
-          </button>
-
-          <button
-            @click="confirmarEliminar(plan)"
-            class="px-4 py-2 text-red-700 bg-red-50 border border-red-300 rounded-lg hover:bg-red-100 transition text-sm"
-            :disabled="plan.clinicas_count > 0"
-            :title="plan.clinicas_count > 0 ? 'No se puede eliminar un plan en uso' : 'Eliminar plan'"
-          >
-            <i class="fas fa-trash"></i>
           </button>
         </div>
 
       </div>
 
-    </div>
-
-    <!-- Empty State -->
-    <div v-else class="bg-white rounded-lg shadow p-12 text-center">
-      <i class="fas fa-layer-group text-6xl text-gray-300 mb-4"></i>
-      <p class="text-lg text-gray-500 mb-2">No hay planes configurados</p>
-      <p class="text-sm text-gray-400 mb-4">Crea el primer plan para comenzar</p>
-      <button
-        @click="modalNuevoPlan = true"
-        class="px-6 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition"
-      >
-        <i class="fas fa-plus mr-2"></i>
-        Crear Primer Plan
-      </button>
     </div>
 
     <!-- Modales -->
@@ -228,49 +166,26 @@ import PlanFormModal from '@superadmin/components/PlanFormModal.vue'
 import ConfirmModal from '@superadmin/components/ConfirmModal.vue'
 
 const planesStore = useSuperAdminPlanesStore()
-
 const modalNuevoPlan = ref(false)
 const modalEditarPlan = ref(false)
 const planParaEditar = ref(null)
+const modalConfirm = ref({ show: false, title: '', message: '', type: 'danger', onConfirm: null })
 
-const modalConfirm = ref({
-  show: false,
-  title: '',
-  message: '',
-  type: 'danger',
-  onConfirm: null
-})
-
-// Módulos disponibles
 const modulosDisponibles = [
-  { key: 'agenda', label: 'Agenda y Citas' },
-  { key: 'historia_clinica', label: 'Historia Clínica' },
-  { key: 'facturacion', label: 'Facturación' },
-  { key: 'inventario', label: 'Inventario' },
-  { key: 'reportes', label: 'Reportes' },
-  { key: 'whatsapp', label: 'WhatsApp' },
-  { key: 'recordatorios', label: 'Recordatorios' }
+  { key: 'agenda', label: 'Calendario' },
+  { key: 'historia_clinica', label: 'E-Medical' },
+  { key: 'facturacion', label: 'Billing' },
+  { key: 'inventario', label: 'Stock' },
+  { key: 'reportes', label: 'BI' },
+  { key: 'whatsapp', label: 'Social' }
 ]
 
-// Computed
 const planesList = computed(() => planesStore.planes)
 const planesOrdenados = computed(() => planesStore.planesOrdenados)
 const loading = computed(() => planesStore.loading)
 
-// Methods
 function formatMoney(value) {
-  return new Intl.NumberFormat('es-CL', {
-    style: 'currency',
-    currency: 'CLP',
-    minimumFractionDigits: 0
-  }).format(value)
-}
-
-function calcularDescuento(plan) {
-  if (!plan.precio_mensual || !plan.precio_anual) return 0
-  const mensualAnualizado = plan.precio_mensual * 12
-  const descuento = ((mensualAnualizado - plan.precio_anual) / mensualAnualizado) * 100
-  return Math.round(descuento)
+  return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', minimumFractionDigits: 0 }).format(value)
 }
 
 function editarPlan(plan) {
@@ -278,66 +193,14 @@ function editarPlan(plan) {
   modalEditarPlan.value = true
 }
 
-function confirmarActivar(plan) {
-  modalConfirm.value = {
-    show: true,
-    title: 'Activar Plan',
-    message: `¿Estás seguro de activar el plan "${plan.nombre}"? Estará disponible para nuevas clínicas.`,
-    type: 'success',
-    onConfirm: async () => {
-      const result = await planesStore.activarPlan(plan.id)
-      
-      if (result.success) {
-        alert('Plan activado exitosamente')
-      } else {
-        alert(result.message || 'Error al activar plan')
-      }
-      
-      modalConfirm.value.show = false
-    }
-  }
-}
-
 function confirmarDesactivar(plan) {
   modalConfirm.value = {
     show: true,
-    title: 'Desactivar Plan',
-    message: `¿Estás seguro de desactivar el plan "${plan.nombre}"? No estará disponible para nuevas clínicas.`,
+    title: 'Pausar Oferta',
+    message: `¿Estás seguro de desactivar el plan y ocultarlo para nuevas clínicas?`,
     type: 'warning',
     onConfirm: async () => {
-      const result = await planesStore.desactivarPlan(plan.id)
-      
-      if (result.success) {
-        alert('Plan desactivado exitosamente')
-      } else {
-        alert(result.message || 'Error al desactivar plan')
-      }
-      
-      modalConfirm.value.show = false
-    }
-  }
-}
-
-function confirmarEliminar(plan) {
-  if (plan.clinicas_count > 0) {
-    alert('No se puede eliminar un plan que está siendo usado por clínicas')
-    return
-  }
-
-  modalConfirm.value = {
-    show: true,
-    title: 'Eliminar Plan',
-    message: `¿Estás seguro de eliminar el plan "${plan.nombre}"? Esta acción no se puede deshacer.`,
-    type: 'danger',
-    onConfirm: async () => {
-      const result = await planesStore.eliminarPlan(plan.id)
-      
-      if (result.success) {
-        alert('Plan eliminado exitosamente')
-      } else {
-        alert(result.message || 'Error al eliminar plan')
-      }
-      
+      await planesStore.desactivarPlan(plan.id)
       modalConfirm.value.show = false
     }
   }
@@ -354,8 +217,17 @@ async function handlePlanSaved() {
   await planesStore.fetchPlanes()
 }
 
-// Lifecycle
 onMounted(() => {
   planesStore.fetchPlanes()
 })
 </script>
+
+<style scoped>
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+</style>

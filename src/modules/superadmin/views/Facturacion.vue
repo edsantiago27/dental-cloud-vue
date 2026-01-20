@@ -1,343 +1,222 @@
 <!-- views/superadmin/Facturacion.vue -->
 <template>
-  <div class="space-y-6">
+  <div class="space-y-8 animate-fade-in-up">
 
-    <!-- Header con Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <div class="bg-white rounded-lg shadow p-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-500">Ingresos del Mes</p>
-            <p class="text-2xl font-bold text-green-600">{{ formatMoney(stats.ingresos_mes) }}</p>
+    <!-- Header con Stats (Bento Grid) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="bg-white dark:bg-[#111111] rounded-[2rem] p-6 border border-gray-100 dark:border-white/5 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-10 h-10 bg-emerald-50 dark:bg-emerald-500/10 rounded-xl flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+            <i class="fas fa-money-bill-wave text-lg"></i>
           </div>
-          <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-            <i class="fas fa-dollar-sign text-green-600 text-xl"></i>
-          </div>
+          <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Recaudado</span>
         </div>
+        <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Ingresos del Mes</p>
+        <p class="text-2xl font-black text-gray-900 dark:text-white tracking-tighter">{{ formatMoney(stats.ingresos_mes) }}</p>
       </div>
 
-      <div class="bg-white rounded-lg shadow p-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-500">Pendientes</p>
-            <p class="text-2xl font-bold text-orange-600">{{ stats.pendientes }}</p>
+      <div class="bg-white dark:bg-[#111111] rounded-[2rem] p-6 border border-gray-100 dark:border-white/5 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-10 h-10 bg-orange-50 dark:bg-orange-500/10 rounded-xl flex items-center justify-center text-orange-600 dark:text-orange-400">
+            <i class="fas fa-clock text-lg"></i>
           </div>
-          <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-            <i class="fas fa-clock text-orange-600 text-xl"></i>
-          </div>
+          <span class="text-[9px] font-black text-orange-600 uppercase tracking-widest">Pendientes</span>
         </div>
+        <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Cuentas por Cobrar</p>
+        <p class="text-3xl font-black text-gray-900 dark:text-white tracking-tighter">{{ stats.pendientes }}</p>
       </div>
 
-      <div class="bg-white rounded-lg shadow p-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-500">Vencidas</p>
-            <p class="text-2xl font-bold text-red-600">{{ stats.vencidas }}</p>
+      <div class="bg-white dark:bg-[#111111] rounded-[2rem] p-6 border border-gray-100 dark:border-white/5 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-10 h-10 bg-red-50 dark:bg-red-500/10 rounded-xl flex items-center justify-center text-red-600 dark:text-red-400">
+            <i class="fas fa-exclamation-circle text-lg"></i>
           </div>
-          <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-            <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
-          </div>
+          <span class="text-[9px] font-black text-red-600 uppercase tracking-widest">Crítico</span>
         </div>
+        <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Facturas Vencidas</p>
+        <p class="text-3xl font-black text-gray-900 dark:text-white tracking-tighter">{{ stats.vencidas }}</p>
       </div>
 
-      <div class="bg-white rounded-lg shadow p-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-500">Tasa de Cobro</p>
-            <p class="text-2xl font-bold text-blue-600">{{ stats.tasa_cobro }}%</p>
+      <div class="bg-violet-600 dark:bg-orange-500 rounded-[2rem] p-6 shadow-lg shadow-violet-200 dark:shadow-orange-500/20">
+        <div class="flex items-center justify-between mb-4 text-white">
+          <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+            <i class="fas fa-chart-pie text-lg"></i>
           </div>
-          <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-            <i class="fas fa-chart-line text-blue-600 text-xl"></i>
-          </div>
+          <span class="text-[9px] font-black text-white/60 uppercase tracking-widest">Performance</span>
         </div>
+        <p class="text-[10px] font-black text-white/60 uppercase tracking-widest mb-1">Tasa de Cobro</p>
+        <p class="text-3xl font-black text-white tracking-tighter">{{ stats.tasa_cobro }}%</p>
       </div>
     </div>
 
     <!-- Filtros y Acciones -->
-    <div class="bg-white rounded-lg shadow p-4">
-      <div class="flex flex-col md:flex-row gap-4">
-        
-        <!-- Búsqueda -->
-        <div class="flex-1">
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <i class="fas fa-search text-gray-400"></i>
-            </div>
-            <input
-              v-model="filtros.buscar"
-              @input="handleSearch"
-              type="text"
-              placeholder="Buscar por clínica o número..."
-              class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+    <div class="bg-white dark:bg-[#111111] rounded-[2.5rem] p-6 border border-gray-100 dark:border-white/5 shadow-xl shadow-gray-100/20 dark:shadow-none">
+      <div class="flex flex-col xl:flex-row gap-4 items-center">
+        <div class="flex-1 w-full relative">
+          <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input
+            v-model="filtros.buscar"
+            @input="handleSearch"
+            type="text"
+            placeholder="Buscar por clínica o número de factura..."
+            class="w-full pl-14 pr-6 py-4 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/5 rounded-2xl focus:bg-white dark:focus:bg-[#1a1a1a] focus:ring-2 focus:ring-violet-600/20 dark:focus:ring-orange-500/20 text-sm font-bold transition-all outline-none text-gray-900 dark:text-white"
+          >
+        </div>
+        <div class="flex flex-wrap gap-3 w-full xl:w-auto">
+          <select
+            v-model="filtros.estado"
+            @change="aplicarFiltros"
+            class="px-6 py-4 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-400 outline-none cursor-pointer appearance-none"
+          >
+            <option value="">Estados</option>
+            <option value="pendiente">Pendientes</option>
+            <option value="pagada">Pagadas</option>
+            <option value="vencida">Vencidas</option>
+          </select>
+
+          <input
+            v-model="filtros.mes"
+            @change="aplicarFiltros"
+            type="month"
+            class="px-6 py-4 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-400 outline-none cursor-pointer"
+          >
+
+          <div class="flex gap-2 ml-auto xl:ml-0">
+            <button
+              @click="modalGenerarMasivo = true"
+              class="px-6 py-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-md"
             >
+              Generación Masiva
+            </button>
+            <button
+              @click="modalNuevaFactura = true"
+              class="p-4 bg-violet-600 dark:bg-orange-500 text-white rounded-2xl hover:scale-105 transition-all shadow-lg shadow-violet-200 dark:shadow-orange-500/20"
+            >
+              <i class="fas fa-plus"></i>
+            </button>
           </div>
         </div>
-
-        <!-- Filtro Estado -->
-        <select
-          v-model="filtros.estado"
-          @change="aplicarFiltros"
-          class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        >
-          <option value="">Todos los estados</option>
-          <option value="pendiente">Pendientes</option>
-          <option value="pagada">Pagadas</option>
-          <option value="vencida">Vencidas</option>
-          <option value="anulada">Anuladas</option>
-        </select>
-
-        <!-- Filtro Mes -->
-        <input
-          v-model="filtros.mes"
-          @change="aplicarFiltros"
-          type="month"
-          class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        >
-
-        <!-- Botones -->
-        <div class="flex gap-2">
-          <button
-            @click="limpiarFiltros"
-            class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
-          >
-            <i class="fas fa-times mr-2"></i>
-            Limpiar
-          </button>
-
-          <button
-            @click="exportar"
-            class="px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 transition"
-          >
-            <i class="fas fa-file-export mr-2"></i>
-            Exportar
-          </button>
-
-          <button
-            @click="modalGenerarMasivo = true"
-            class="px-4 py-2 text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition"
-          >
-            <i class="fas fa-layer-group mr-2"></i>
-            Generar Masivo
-          </button>
-
-          <button
-            @click="modalNuevaFactura = true"
-            class="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition"
-          >
-            <i class="fas fa-plus mr-2"></i>
-            Nueva Factura
-          </button>
-        </div>
-
       </div>
     </div>
 
     <!-- Tabla -->
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-      
-      <!-- Loading -->
-      <div v-if="loading" class="p-8 text-center">
-        <i class="fas fa-spinner fa-spin text-3xl text-blue-600"></i>
-        <p class="mt-2 text-gray-500">Cargando facturas...</p>
+    <div class="bg-white dark:bg-[#111111] rounded-[2.5rem] border border-gray-100 dark:border-white/5 shadow-xl shadow-gray-100/20 dark:shadow-none overflow-hidden text-gray-900 dark:text-white">
+      <div v-if="loading" class="p-20 text-center">
+        <i class="fas fa-spinner fa-spin text-3xl text-violet-600 dark:text-orange-500"></i>
       </div>
 
-      <!-- Tabla -->
-      <div v-else-if="facturasList.length > 0" class="overflow-x-auto">
-        <table class="w-full">
-          <thead class="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Número
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Clínica
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Monto
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Estado
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Vencimiento
-              </th>
-              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Acciones
-              </th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <tr
-              v-for="factura in facturasList"
-              :key="factura.id"
-              class="hover:bg-gray-50 transition"
-            >
-              <!-- Número -->
-              <td class="px-6 py-4">
-                <div class="text-sm">
-                  <p class="font-medium text-gray-900">{{ factura.numero }}</p>
-                  <p class="text-xs text-gray-500">{{ formatDate(factura.fecha_emision) }}</p>
-                </div>
-              </td>
+      <div v-else-if="facturasList.length > 0">
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="text-left border-b border-gray-50 dark:border-white/5">
+                <th class="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Documento</th>
+                <th class="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Clínica Emisora</th>
+                <th class="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Monto Neto</th>
+                <th class="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Tracking de Pago</th>
+                <th class="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Draft</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50 dark:divide-white/5">
+              <tr 
+                v-for="factura in facturasList" 
+                :key="factura.id"
+                class="group hover:bg-gray-50/50 dark:hover:bg-white/[0.02] transition-colors"
+              >
+                <td class="px-8 py-5">
+                  <p class="text-sm font-black">{{ factura.numero }}</p>
+                  <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-tight">{{ formatDate(factura.fecha_emision) }}</p>
+                </td>
+                <td class="px-8 py-5">
+                  <p class="text-sm font-black">{{ factura.clinica?.nombre }}</p>
+                  <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-tight">{{ factura.suscripcion?.plan?.nombre }}</p>
+                </td>
+                <td class="px-8 py-5">
+                  <p class="text-sm font-black text-emerald-600 dark:text-emerald-500">{{ formatMoney(factura.total) }}</p>
+                  <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-tight">{{ factura.suscripcion?.tipo }}</p>
+                </td>
+                <td class="px-8 py-5">
+                  <div class="flex items-center gap-3">
+                    <span 
+                      class="px-3 py-1 text-[9px] font-black uppercase tracking-widest rounded-full border"
+                      :class="{
+                        'bg-green-50 text-green-600 border-green-100 dark:bg-green-500/10 dark:text-green-500 dark:border-green-500/20': factura.estado === 'pagada',
+                        'bg-orange-50 text-orange-600 border-orange-100 dark:bg-orange-500/10 dark:text-orange-500 dark:border-orange-500/20': factura.estado === 'pendiente',
+                        'bg-red-50 text-red-600 border-red-100 dark:bg-red-500/10 dark:text-red-500 dark:border-red-500/20': factura.estado === 'vencida'
+                      }"
+                    >
+                      {{ factura.estado }}
+                    </span>
+                    <span v-if="factura.estado !== 'pagada'" class="text-[10px] font-bold" :class="factura.dias_vencimiento < 0 ? 'text-red-500' : 'text-gray-400'">
+                      {{ factura.dias_vencimiento < 0 ? 'Expirada' : `Vence en ${factura.dias_vencimiento}d` }}
+                    </span>
+                  </div>
+                </td>
+                <td class="px-8 py-5 text-right">
+                  <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      v-if="factura.estado !== 'pagada'"
+                      @click="mostrarModalRegistrarPago(factura)"
+                      class="w-9 h-9 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 rounded-xl hover:bg-emerald-600 hover:text-white transition-all flex items-center justify-center shadow-sm"
+                    >
+                      <i class="fas fa-check text-xs"></i>
+                    </button>
+                    <button
+                      v-if="factura.estado !== 'pagada'"
+                      @click="confirmarEnviarRecordatorio(factura)"
+                      class="w-9 h-9 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-xl hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center shadow-sm"
+                    >
+                      <i class="fas fa-paper-plane text-xs"></i>
+                    </button>
+                    <button
+                      @click="$router.push(`/superadmin/clinicas/${factura.clinica_id}`)"
+                      class="w-9 h-9 bg-gray-50 dark:bg-white/5 text-gray-400 dark:text-gray-500 rounded-xl hover:bg-gray-900 dark:hover:bg-white dark:hover:text-gray-900 hover:text-white transition-all flex items-center justify-center shadow-sm"
+                    >
+                      <i class="fas fa-external-link-alt text-xs"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-              <!-- Clínica -->
-              <td class="px-6 py-4">
-                <div>
-                  <p class="font-medium text-gray-900">{{ factura.clinica?.nombre }}</p>
-                  <p class="text-sm text-gray-500">{{ factura.suscripcion?.plan?.nombre }}</p>
-                </div>
-              </td>
-
-              <!-- Monto -->
-              <td class="px-6 py-4">
-                <div class="text-sm">
-                  <p class="font-semibold text-gray-900">{{ formatMoney(factura.total) }}</p>
-                  <p class="text-xs text-gray-500">{{ factura.suscripcion?.tipo }}</p>
-                </div>
-              </td>
-
-              <!-- Estado -->
-              <td class="px-6 py-4">
-                <span
-                  class="inline-flex px-2 py-1 text-xs font-medium rounded-full"
-                  :class="{
-                    'bg-green-100 text-green-800': factura.estado === 'pagada',
-                    'bg-orange-100 text-orange-800': factura.estado === 'pendiente',
-                    'bg-red-100 text-red-800': factura.estado === 'vencida',
-                    'bg-gray-100 text-gray-800': factura.estado === 'anulada'
-                  }"
-                >
-                  <i
-                    class="mr-1"
-                    :class="{
-                      'fas fa-check-circle': factura.estado === 'pagada',
-                      'fas fa-clock': factura.estado === 'pendiente',
-                      'fas fa-exclamation-triangle': factura.estado === 'vencida',
-                      'fas fa-ban': factura.estado === 'anulada'
-                    }"
-                  ></i>
-                  {{ factura.estado }}
-                </span>
-              </td>
-
-              <!-- Vencimiento -->
-              <td class="px-6 py-4 text-sm">
-                <div>
-                  <p class="text-gray-900">{{ formatDate(factura.fecha_vencimiento) }}</p>
-                  <p v-if="factura.dias_vencimiento" class="text-xs" :class="{
-                    'text-red-600': factura.dias_vencimiento < 0,
-                    'text-orange-600': factura.dias_vencimiento >= 0 && factura.dias_vencimiento <= 3,
-                    'text-gray-500': factura.dias_vencimiento > 3
-                  }">
-                    {{ factura.dias_vencimiento < 0 ? 'Vencida' : `${factura.dias_vencimiento} días` }}
-                  </p>
-                </div>
-              </td>
-
-              <!-- Acciones -->
-              <td class="px-6 py-4 text-right">
-                <div class="flex items-center justify-end gap-2">
-                  
-                  <button
-                    v-if="factura.estado === 'pendiente' || factura.estado === 'vencida'"
-                    @click="mostrarModalRegistrarPago(factura)"
-                    class="p-2 text-green-600 hover:bg-green-50 rounded-lg transition"
-                    title="Registrar pago"
-                  >
-                    <i class="fas fa-dollar-sign"></i>
-                  </button>
-
-                  <button
-                    v-if="factura.estado === 'pendiente' || factura.estado === 'vencida'"
-                    @click="confirmarEnviarRecordatorio(factura)"
-                    class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
-                    title="Enviar recordatorio"
-                  >
-                    <i class="fas fa-envelope"></i>
-                  </button>
-
-                  <button
-                    v-if="factura.estado !== 'anulada'"
-                    @click="confirmarAnular(factura)"
-                    class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
-                    title="Anular factura"
-                  >
-                    <i class="fas fa-ban"></i>
-                  </button>
-
-                  <button
-                    @click="$router.push(`/superadmin/clinicas/${factura.clinica_id}`)"
-                    class="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition"
-                    title="Ver clínica"
-                  >
-                    <i class="fas fa-external-link-alt"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Empty State -->
-      <div v-else class="p-12 text-center">
-        <i class="fas fa-file-invoice text-6xl text-gray-300 mb-4"></i>
-        <p class="text-lg text-gray-500 mb-2">No hay facturas</p>
-        <p class="text-sm text-gray-400 mb-4">Las facturas aparecerán aquí</p>
-        <button
-          @click="modalNuevaFactura = true"
-          class="px-6 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition"
-        >
-          <i class="fas fa-plus mr-2"></i>
-          Nueva Factura
-        </button>
-      </div>
-
-      <!-- Paginación -->
-      <div
-        v-if="facturasList.length > 0 && paginacion.last_page > 1"
-        class="px-6 py-4 border-t border-gray-200"
-      >
-        <div class="flex items-center justify-between">
-          <p class="text-sm text-gray-500">
-            Mostrando {{ ((paginacion.current_page - 1) * paginacion.per_page) + 1 }}
-            a {{ Math.min(paginacion.current_page * paginacion.per_page, paginacion.total) }}
-            de {{ paginacion.total }} resultados
+        <!-- Paginación -->
+        <div class="px-8 py-6 border-t border-gray-50 dark:border-white/5 flex items-center justify-between">
+          <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+            Registros {{ ((paginacion.current_page - 1) * paginacion.per_page) + 1 }}-{{ Math.min(paginacion.current_page * paginacion.per_page, paginacion.total) }} de {{ paginacion.total }}
           </p>
-
           <div class="flex gap-2">
             <button
               @click="cambiarPagina(paginacion.current_page - 1)"
               :disabled="paginacion.current_page === 1"
-              class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              class="w-10 h-10 bg-gray-50 dark:bg-white/5 rounded-xl flex items-center justify-center text-gray-400 disabled:opacity-30"
             >
-              <i class="fas fa-chevron-left"></i>
+              <i class="fas fa-chevron-left text-xs"></i>
             </button>
-
             <button
               v-for="pagina in paginasVisibles"
               :key="pagina"
               @click="cambiarPagina(pagina)"
-              class="px-3 py-2 border rounded-lg transition"
-              :class="pagina === paginacion.current_page
-                ? 'bg-blue-600 text-white border-blue-600'
-                : 'border-gray-300 hover:bg-gray-50'
-              "
+              class="px-4 py-2 rounded-xl text-[10px] font-black"
+              :class="pagina === paginacion.current_page ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900' : 'text-gray-400 dark:text-gray-500'"
             >
               {{ pagina }}
             </button>
-
             <button
               @click="cambiarPagina(paginacion.current_page + 1)"
               :disabled="paginacion.current_page === paginacion.last_page"
-              class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              class="w-10 h-10 bg-gray-50 dark:bg-white/5 rounded-xl flex items-center justify-center text-gray-400 disabled:opacity-30"
             >
-              <i class="fas fa-chevron-right"></i>
+              <i class="fas fa-chevron-right text-xs"></i>
             </button>
           </div>
         </div>
       </div>
 
+      <div v-else class="p-20 text-center text-gray-400 uppercase font-black text-[10px] tracking-widest">
+        No se han generado facturas en este periodo
+      </div>
     </div>
 
     <!-- Modales -->
@@ -381,26 +260,13 @@ import GenerarMasivoModal from '@superadmin/components/GenerarMasivoModal.vue'
 import ConfirmModal from '@superadmin/components/ConfirmModal.vue'
 
 const facturacionStore = useSuperAdminFacturacionStore()
-
 const modalNuevaFactura = ref(false)
 const modalGenerarMasivo = ref(false)
-
-const modalRegistrarPago = ref({
-  show: false,
-  factura: null
-})
-
-const modalConfirm = ref({
-  show: false,
-  title: '',
-  message: '',
-  type: 'danger',
-  onConfirm: null
-})
+const modalRegistrarPago = ref({ show: false, factura: null })
+const modalConfirm = ref({ show: false, title: '', message: '', type: 'danger', onConfirm: null })
 
 let searchTimeout = null
 
-// Computed
 const stats = computed(() => facturacionStore.estadisticas)
 const facturasList = computed(() => facturacionStore.facturas)
 const loading = computed(() => facturacionStore.loading)
@@ -412,42 +278,25 @@ const paginasVisibles = computed(() => {
   const last = paginacion.value.last_page
   const delta = 2
   const range = []
-  
-  for (let i = Math.max(2, current - delta); i <= Math.min(last - 1, current + delta); i++) {
-    range.push(i)
-  }
-
+  for (let i = Math.max(2, current - delta); i <= Math.min(last - 1, current + delta); i++) range.push(i)
   if (current - delta > 2) range.unshift('...')
   if (current + delta < last - 1) range.push('...')
-
   range.unshift(1)
   if (last > 1) range.push(last)
-
   return range.filter(p => p !== '...' || range.indexOf(p) === range.lastIndexOf(p))
 })
 
-// Methods
 function formatDate(date) {
-  return new Date(date).toLocaleDateString('es-CL', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric'
-  })
+  return new Date(date).toLocaleDateString('es-CL', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
 function formatMoney(value) {
-  return new Intl.NumberFormat('es-CL', {
-    style: 'currency',
-    currency: 'CLP',
-    minimumFractionDigits: 0
-  }).format(value)
+  return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', minimumFractionDigits: 0 }).format(value)
 }
 
 function handleSearch() {
   if (searchTimeout) clearTimeout(searchTimeout)
-  searchTimeout = setTimeout(() => {
-    aplicarFiltros()
-  }, 500)
+  searchTimeout = setTimeout(() => aplicarFiltros(), 500)
 }
 
 function aplicarFiltros() {
@@ -455,93 +304,26 @@ function aplicarFiltros() {
   facturacionStore.cambiarPagina(1)
 }
 
-function limpiarFiltros() {
-  facturacionStore.limpiarFiltros()
-  facturacionStore.fetchFacturas()
-}
-
 function cambiarPagina(pagina) {
-  if (pagina !== '...') {
-    facturacionStore.cambiarPagina(pagina)
-  }
+  if (pagina !== '...') facturacionStore.cambiarPagina(pagina)
 }
 
 function mostrarModalRegistrarPago(factura) {
-  modalRegistrarPago.value = {
-    show: true,
-    factura
-  }
+  modalRegistrarPago.value = { show: true, factura }
 }
 
-function confirmarEnviarRecordatorio(factura) {
-  modalConfirm.value = {
-    show: true,
-    title: 'Enviar Recordatorio',
-    message: `¿Enviar recordatorio de pago a "${factura.clinica?.nombre}"?`,
-    type: 'info',
-    onConfirm: async () => {
-      const result = await facturacionStore.enviarRecordatorio(factura.id)
-      
-      if (result.success) {
-        alert('Recordatorio enviado exitosamente')
-      } else {
-        alert(result.message || 'Error al enviar recordatorio')
-      }
-      
-      modalConfirm.value.show = false
-    }
-  }
-}
-
-function confirmarAnular(factura) {
-  modalConfirm.value = {
-    show: true,
-    title: 'Anular Factura',
-    message: `¿Estás seguro de anular la factura ${factura.numero}? Esta acción no se puede deshacer.`,
-    type: 'danger',
-    onConfirm: async () => {
-      const motivo = prompt('Motivo de anulación (opcional):')
-      const result = await facturacionStore.anularFactura(factura.id, motivo || '')
-      
-      if (result.success) {
-        alert('Factura anulada exitosamente')
-      } else {
-        alert(result.message || 'Error al anular factura')
-      }
-      
-      modalConfirm.value.show = false
-    }
-  }
-}
-
-async function exportar() {
-  const result = await facturacionStore.exportarFacturas()
-  if (!result.success) {
-    alert('Error al exportar facturas')
-  }
-}
-
-async function handleFacturaGenerada() {
-  modalNuevaFactura.value = false
-  await facturacionStore.fetchFacturas()
-  await facturacionStore.fetchEstadisticas()
-}
-
-async function handlePagoRegistrado() {
-  modalRegistrarPago.value.show = false
-  await facturacionStore.fetchFacturas()
-  await facturacionStore.fetchEstadisticas()
-}
-
-async function handleMasivoGenerado() {
-  modalGenerarMasivo.value = false
-  await facturacionStore.fetchFacturas()
-  await facturacionStore.fetchEstadisticas()
-}
-
-// Lifecycle
 onMounted(async () => {
   await facturacionStore.fetchFacturas()
   await facturacionStore.fetchEstadisticas()
 })
 </script>
+
+<style scoped>
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+</style>

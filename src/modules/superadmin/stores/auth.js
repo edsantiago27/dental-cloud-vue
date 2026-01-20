@@ -39,8 +39,10 @@ export const useSuperAdminAuthStore = defineStore('superadminAuth', () => {
   async function logout() {
     try {
       if (token.value) {
-        await authService.logout()
+        await authService.logout().catch(e => console.warn('Logout API failed, continuing with local cleanup'))
       }
+    } catch (err) {
+      console.warn('Silent logout error:', err)
     } finally {
       user.value = null
       token.value = null

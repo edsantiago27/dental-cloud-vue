@@ -1,327 +1,213 @@
-<!-- views/superadmin/Clinicas.vue -->
 <template>
-  <div class="space-y-6">
+  <div class="space-y-8 animate-fade-in-up">
 
-    <!-- Header con Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <div class="bg-white rounded-lg shadow p-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-500">Total Clínicas</p>
-            <p class="text-2xl font-bold text-gray-900">{{ stats.total }}</p>
+    <!-- Header con Stats (Bento Grid) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="bg-white dark:bg-[#111111] rounded-[2rem] p-6 border border-gray-100 dark:border-white/5 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-10 h-10 bg-violet-50 dark:bg-violet-500/10 rounded-xl flex items-center justify-center text-violet-600 dark:text-violet-400">
+            <i class="fas fa-hospital text-lg"></i>
           </div>
-          <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-            <i class="fas fa-hospital text-blue-600 text-xl"></i>
-          </div>
+          <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Total</span>
         </div>
+        <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Clínicas Registradas</p>
+        <p class="text-3xl font-black text-gray-900 dark:text-white tracking-tighter">{{ stats.total }}</p>
       </div>
 
-      <div class="bg-white rounded-lg shadow p-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-500">Activas</p>
-            <p class="text-2xl font-bold text-green-600">{{ stats.activas }}</p>
+      <div class="bg-white dark:bg-[#111111] rounded-[2rem] p-6 border border-gray-100 dark:border-white/5 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-10 h-10 bg-green-50 dark:bg-green-500/10 rounded-xl flex items-center justify-center text-green-600 dark:text-green-400">
+            <i class="fas fa-check-circle text-lg"></i>
           </div>
-          <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-            <i class="fas fa-check-circle text-green-600 text-xl"></i>
-          </div>
+          <span class="text-[9px] font-black text-green-600 uppercase tracking-widest">Activo</span>
         </div>
+        <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Cuentas Activas</p>
+        <p class="text-3xl font-black text-gray-900 dark:text-white tracking-tighter">{{ stats.activas }}</p>
       </div>
 
-      <div class="bg-white rounded-lg shadow p-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-500">Trial</p>
-            <p class="text-2xl font-bold text-yellow-600">{{ stats.trial }}</p>
+      <div class="bg-white dark:bg-[#111111] rounded-[2rem] p-6 border border-gray-100 dark:border-white/5 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-10 h-10 bg-orange-50 dark:bg-orange-500/10 rounded-xl flex items-center justify-center text-orange-600 dark:text-orange-400">
+            <i class="fas fa-clock text-lg"></i>
           </div>
-          <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-            <i class="fas fa-clock text-yellow-600 text-xl"></i>
-          </div>
+          <span class="text-[9px] font-black text-orange-600 uppercase tracking-widest">Trial</span>
         </div>
+        <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">En Período de Prueba</p>
+        <p class="text-3xl font-black text-gray-900 dark:text-white tracking-tighter">{{ stats.trial }}</p>
       </div>
 
-      <div class="bg-white rounded-lg shadow p-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-500">Suspendidas</p>
-            <p class="text-2xl font-bold text-red-600">{{ stats.suspendidas }}</p>
+      <div class="bg-white dark:bg-[#111111] rounded-[2rem] p-6 border border-gray-100 dark:border-white/5 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-10 h-10 bg-red-50 dark:bg-red-500/10 rounded-xl flex items-center justify-center text-red-600 dark:text-red-400">
+            <i class="fas fa-ban text-lg"></i>
           </div>
-          <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-            <i class="fas fa-ban text-red-600 text-xl"></i>
-          </div>
+          <span class="text-[9px] font-black text-red-600 uppercase tracking-widest">Alerta</span>
         </div>
+        <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Suscripciones Suspendidas</p>
+        <p class="text-3xl font-black text-gray-900 dark:text-white tracking-tighter">{{ stats.suspendidas }}</p>
       </div>
     </div>
 
     <!-- Filtros y Acciones -->
-    <div class="bg-white rounded-lg shadow p-4">
-      <div class="flex flex-col md:flex-row gap-4">
+    <div class="bg-white dark:bg-[#111111] rounded-[2.5rem] p-6 border border-gray-100 dark:border-white/5 shadow-xl shadow-gray-100/20 dark:shadow-none">
+      <div class="flex flex-col lg:flex-row gap-6 items-center">
         
         <!-- Búsqueda -->
-        <div class="flex-1">
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <i class="fas fa-search text-gray-400"></i>
-            </div>
-            <input
-              v-model="filtros.buscar"
-              @input="handleSearch"
-              type="text"
-              placeholder="Buscar por nombre, email o RUT..."
-              class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
+        <div class="flex-1 w-full relative group">
+          <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none text-gray-400">
+            <i class="fas fa-search transition-colors group-focus-within:text-violet-600 dark:group-focus-within:text-orange-500"></i>
           </div>
+          <input
+            v-model="filtros.buscar"
+            @input="handleSearch"
+            type="text"
+            placeholder="Buscar por nombre, email o RUT..."
+            class="w-full pl-14 pr-6 py-4 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/5 rounded-2xl focus:bg-white dark:focus:bg-[#1a1a1a] focus:ring-2 focus:ring-violet-600/20 dark:focus:ring-orange-500/20 text-sm font-bold transition-all outline-none text-gray-900 dark:text-white"
+          >
         </div>
 
-        <!-- Filtro Estado -->
-        <select
-          v-model="filtros.estado"
-          @change="aplicarFiltros"
-          class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        >
-          <option value="">Todos los estados</option>
-          <option value="activa">Activas</option>
-          <option value="suspendida">Suspendidas</option>
-          <option value="inactiva">Inactivas</option>
-        </select>
-
-        <!-- Botones -->
-        <div class="flex gap-2">
-          <button
-            @click="limpiarFiltros"
-            class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+        <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+          <!-- Filtro Estado -->
+          <select
+            v-model="filtros.estado"
+            @change="aplicarFiltros"
+            class="px-6 py-4 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/5 rounded-2xl text-xs font-black uppercase tracking-widest text-gray-500 dark:text-gray-400 outline-none cursor-pointer hover:bg-white dark:hover:bg-white/10 transition-all appearance-none pr-10 relative"
           >
-            <i class="fas fa-times mr-2"></i>
-            Limpiar
+            <option value="">Todos los estados</option>
+            <option value="activa">Activas</option>
+            <option value="suspendida">Suspendidas</option>
+            <option value="inactiva">Inactivas</option>
+          </select>
+
+          <button
+            @click="modalNuevaClinica = true"
+            class="flex-1 lg:flex-none px-8 py-4 bg-violet-600 dark:bg-orange-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-violet-200 dark:shadow-orange-500/20 hover:scale-105 active:scale-95 transition-all"
+          >
+            <i class="fas fa-plus mr-2"></i> Nueva Clínica
           </button>
 
           <button
             @click="exportar"
-            class="px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 transition"
+            class="p-4 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 rounded-2xl hover:bg-emerald-600 hover:text-white transition-all"
+            title="Exportar"
           >
-            <i class="fas fa-file-export mr-2"></i>
-            Exportar
-          </button>
-
-          <button
-            @click="modalNuevaClinica = true"
-            class="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition"
-          >
-            <i class="fas fa-plus mr-2"></i>
-            Nueva Clínica
+            <i class="fas fa-file-export"></i>
           </button>
         </div>
-
       </div>
     </div>
 
-    <!-- Tabla de Clínicas -->
-    <div class="bg-white rounded-lg shadow overflow-hidden">
+    <!-- Tabla / Listado de Clínicas -->
+    <div class="bg-white dark:bg-[#111111] rounded-[2.5rem] border border-gray-100 dark:border-white/5 shadow-xl shadow-gray-100/20 dark:shadow-none overflow-hidden">
       
-      <!-- Loading -->
-      <div v-if="loading" class="p-8 text-center">
-        <i class="fas fa-spinner fa-spin text-3xl text-blue-600"></i>
-        <p class="mt-2 text-gray-500">Cargando clínicas...</p>
+      <!-- Loading State -->
+      <div v-if="loading" class="p-20 text-center animate-pulse">
+        <i class="fas fa-spinner fa-spin text-3xl text-violet-600 dark:text-orange-500 mb-4"></i>
+        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Sincronizando clínicas...</p>
       </div>
 
-      <!-- Tabla -->
-      <div v-else-if="clinicasList.length > 0" class="overflow-x-auto">
-        <table class="w-full">
-          <thead class="bg-gray-50 border-b border-gray-200">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Clínica
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Plan
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Contacto
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Estado
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Registro
-              </th>
-              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Acciones
-              </th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <tr
-              v-for="clinica in clinicasList"
-              :key="clinica.id"
-              class="hover:bg-gray-50 transition"
-            >
-              <!-- Clínica -->
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                  <div
-                    v-if="clinica.logo"
-                    class="w-10 h-10 rounded-lg overflow-hidden bg-gray-100"
-                  >
-                    <img :src="clinica.logo_url" :alt="clinica.nombre" class="w-full h-full object-cover">
+      <!-- Content -->
+      <div v-else-if="clinicasList.length > 0">
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="text-left border-b border-gray-50 dark:border-white/5">
+                <th class="px-8 py-6 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Clínica</th>
+                <th class="px-8 py-6 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Plan Actual</th>
+                <th class="px-8 py-6 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Estado</th>
+                <th class="px-8 py-6 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Fecha Registro</th>
+                <th class="px-8 py-6 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50 dark:divide-white/5">
+              <tr
+                v-for="clinica in clinicasList"
+                :key="clinica.id"
+                class="group hover:bg-gray-50/50 dark:hover:bg-white/[0.02] transition-colors"
+              >
+                <td class="px-8 py-5">
+                  <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-gray-100 dark:bg-white/5 rounded-2xl flex items-center justify-center text-gray-400 group-hover:scale-110 transition-transform overflow-hidden font-black text-xs">
+                      <img v-if="clinica.logo" :src="clinica.logo_url" class="w-full h-full object-cover">
+                      <span v-else>{{ clinica.nombre.substring(0,2).toUpperCase() }}</span>
+                    </div>
+                    <div>
+                      <p class="text-sm font-black text-gray-900 dark:text-white">{{ clinica.nombre }}</p>
+                      <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-tight">{{ clinica.email }}</p>
+                    </div>
                   </div>
-                  <div
-                    v-else
-                    class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center"
-                  >
-                    <i class="fas fa-hospital text-blue-600"></i>
+                </td>
+                <td class="px-8 py-5">
+                  <div class="flex flex-col">
+                    <span v-if="clinica.plan" class="text-xs font-black text-gray-700 dark:text-gray-300">{{ clinica.plan.nombre }}</span>
+                    <span v-else class="text-[10px] font-black text-gray-300 uppercase tracking-widest">Sin Plan</span>
                   </div>
-                  <div>
-                    <p class="font-medium text-gray-900">{{ clinica.nombre }}</p>
-                    <p class="text-sm text-gray-500">{{ clinica.slug }}</p>
-                  </div>
-                </div>
-              </td>
-
-              <!-- Plan -->
-              <td class="px-6 py-4">
-                <span
-                  v-if="clinica.plan"
-                  class="inline-flex px-2 py-1 text-xs font-medium rounded-full"
-                  :class="{
-                    'bg-purple-100 text-purple-800': clinica.plan.nombre === 'Enterprise',
-                    'bg-blue-100 text-blue-800': clinica.plan.nombre === 'Profesional',
-                    'bg-green-100 text-green-800': clinica.plan.nombre === 'Básico'
-                  }"
-                >
-                  {{ clinica.plan.nombre }}
-                </span>
-                <span v-else class="text-sm text-gray-400">Sin plan</span>
-              </td>
-
-              <!-- Contacto -->
-              <td class="px-6 py-4">
-                <div class="text-sm">
-                  <p class="text-gray-900">{{ clinica.email }}</p>
-                  <p class="text-gray-500">{{ clinica.telefono || '-' }}</p>
-                </div>
-              </td>
-
-              <!-- Estado -->
-              <td class="px-6 py-4">
-                <span
-                  class="inline-flex px-2 py-1 text-xs font-medium rounded-full"
-                  :class="{
-                    'bg-green-100 text-green-800': clinica.estado === 'activa',
-                    'bg-red-100 text-red-800': clinica.estado === 'suspendida',
-                    'bg-gray-100 text-gray-800': clinica.estado === 'inactiva'
-                  }"
-                >
-                  <i
-                    class="mr-1"
+                </td>
+                <td class="px-8 py-5">
+                  <span
+                    class="px-3 py-1 text-[9px] font-black uppercase tracking-widest rounded-full border"
                     :class="{
-                      'fas fa-check-circle': clinica.estado === 'activa',
-                      'fas fa-ban': clinica.estado === 'suspendida',
-                      'fas fa-circle': clinica.estado === 'inactiva'
+                      'bg-green-50 text-green-600 border-green-100 dark:bg-green-500/10 dark:text-green-500 dark:border-green-500/20': clinica.estado === 'activa',
+                      'bg-red-50 text-red-600 border-red-100 dark:bg-red-500/10 dark:text-red-500 dark:border-red-500/20': clinica.estado === 'suspendida',
+                      'bg-gray-50 text-gray-500 border-gray-100 dark:bg-white/5 dark:text-gray-400 dark:border-white/10': clinica.estado === 'inactiva'
                     }"
-                  ></i>
-                  {{ clinica.estado }}
-                </span>
-              </td>
-
-              <!-- Registro -->
-              <td class="px-6 py-4 text-sm text-gray-500">
-                {{ formatDate(clinica.created_at) }}
-              </td>
-
-              <!-- Acciones -->
-              <td class="px-6 py-4 text-right">
-                <div class="flex items-center justify-end gap-2">
-                  <button
-                    @click="verDetalle(clinica.id)"
-                    class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
-                    title="Ver detalle"
                   >
-                    <i class="fas fa-eye"></i>
-                  </button>
-
-                  <button
-                    @click="editarClinica(clinica)"
-                    class="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition"
-                    title="Editar"
-                  >
-                    <i class="fas fa-edit"></i>
-                  </button>
-
-                  <button
-                    v-if="clinica.estado === 'activa'"
-                    @click="confirmarSuspender(clinica)"
-                    class="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition"
-                    title="Suspender"
-                  >
-                    <i class="fas fa-pause-circle"></i>
-                  </button>
-
-                  <button
-                    v-if="clinica.estado === 'suspendida'"
-                    @click="confirmarActivar(clinica)"
-                    class="p-2 text-green-600 hover:bg-green-50 rounded-lg transition"
-                    title="Activar"
-                  >
-                    <i class="fas fa-play-circle"></i>
-                  </button>
-
-                  <button
-                    @click="confirmarEliminar(clinica)"
-                    class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
-                    title="Eliminar"
-                  >
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Empty State -->
-      <div v-else class="p-12 text-center">
-        <i class="fas fa-hospital text-6xl text-gray-300 mb-4"></i>
-        <p class="text-lg text-gray-500 mb-2">No hay clínicas registradas</p>
-        <p class="text-sm text-gray-400 mb-4">Crea la primera clínica para comenzar</p>
-        <button
-          @click="modalNuevaClinica = true"
-          class="px-6 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition"
-        >
-          <i class="fas fa-plus mr-2"></i>
-          Nueva Clínica
-        </button>
-      </div>
-
-      <!-- Paginación -->
-      <div
-        v-if="clinicasList.length > 0 && paginacion.last_page > 1"
-        class="px-6 py-4 border-t border-gray-200"
-      >
-        <div class="flex items-center justify-between">
-          <p class="text-sm text-gray-500">
-            Mostrando {{ ((paginacion.current_page - 1) * paginacion.per_page) + 1 }}
-            a {{ Math.min(paginacion.current_page * paginacion.per_page, paginacion.total) }}
-            de {{ paginacion.total }} resultados
+                    {{ clinica.estado }}
+                  </span>
+                </td>
+                <td class="px-8 py-5">
+                  <span class="text-[11px] font-bold text-gray-500 dark:text-gray-400">{{ formatDate(clinica.created_at) }}</span>
+                </td>
+                <td class="px-8 py-5 text-right">
+                  <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      @click="verDetalle(clinica.id)"
+                      class="w-9 h-9 bg-violet-50 dark:bg-orange-500/10 text-violet-600 dark:text-orange-500 rounded-xl hover:bg-violet-600 dark:hover:bg-orange-500 hover:text-white transition-all flex items-center justify-center shadow-sm"
+                    >
+                      <i class="fas fa-eye text-xs"></i>
+                    </button>
+                    <button
+                      @click="editarClinica(clinica)"
+                      class="w-9 h-9 bg-gray-50 dark:bg-white/5 text-gray-400 dark:text-gray-500 rounded-xl hover:bg-gray-900 dark:hover:bg-white dark:hover:text-gray-900 hover:text-white transition-all flex items-center justify-center shadow-sm"
+                    >
+                      <i class="fas fa-edit text-xs"></i>
+                    </button>
+                    <button
+                      @click="confirmarEliminar(clinica)"
+                      class="w-9 h-9 bg-red-50 dark:bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all flex items-center justify-center shadow-sm"
+                    >
+                      <i class="fas fa-trash text-xs"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <!-- Paginación -->
+        <div class="px-8 py-6 flex flex-col md:flex-row items-center justify-between gap-6 border-t border-gray-50 dark:border-white/5">
+          <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+            Mostrando registros {{ ((paginacion.current_page - 1) * paginacion.per_page) + 1 }} - {{ Math.min(paginacion.current_page * paginacion.per_page, paginacion.total) }} de {{ paginacion.total }}
           </p>
 
           <div class="flex gap-2">
             <button
               @click="cambiarPagina(paginacion.current_page - 1)"
               :disabled="paginacion.current_page === 1"
-              class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              class="w-10 h-10 bg-gray-50 dark:bg-white/5 text-gray-400 rounded-xl hover:bg-violet-600 dark:hover:bg-orange-500 hover:text-white transition-all disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center"
             >
-              <i class="fas fa-chevron-left"></i>
+              <i class="fas fa-chevron-left text-xs"></i>
             </button>
 
             <button
               v-for="pagina in paginasVisibles"
               :key="pagina"
               @click="cambiarPagina(pagina)"
-              class="px-3 py-2 border rounded-lg transition"
+              class="px-4 py-2 rounded-xl text-[10px] font-black transition-all"
               :class="pagina === paginacion.current_page
-                ? 'bg-blue-600 text-white border-blue-600'
-                : 'border-gray-300 hover:bg-gray-50'
+                ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
+                : 'text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5'
               "
             >
               {{ pagina }}
@@ -330,14 +216,28 @@
             <button
               @click="cambiarPagina(paginacion.current_page + 1)"
               :disabled="paginacion.current_page === paginacion.last_page"
-              class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              class="w-10 h-10 bg-gray-50 dark:bg-white/5 text-gray-400 rounded-xl hover:bg-violet-600 dark:hover:bg-orange-500 hover:text-white transition-all disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center"
             >
-              <i class="fas fa-chevron-right"></i>
+              <i class="fas fa-chevron-right text-xs"></i>
             </button>
           </div>
         </div>
       </div>
 
+      <!-- Empty State -->
+      <div v-else class="p-20 text-center">
+        <div class="w-20 h-20 bg-gray-50 dark:bg-white/5 rounded-3xl flex items-center justify-center text-3xl text-gray-200 dark:text-gray-700 mx-auto mb-6">
+          <i class="fas fa-hospital"></i>
+        </div>
+        <h3 class="text-xl font-black text-gray-900 dark:text-white mb-2">No hay clínicas registradas</h3>
+        <p class="text-sm text-gray-400 dark:text-gray-500 mb-8 max-w-xs mx-auto">Comienza expandiendo el ecosistema DentalCloud agregando una nueva sucursal.</p>
+        <button
+          @click="modalNuevaClinica = true"
+          class="px-8 py-4 bg-violet-600 dark:bg-orange-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl"
+        >
+          Nueva Clínica
+        </button>
+      </div>
     </div>
 
     <!-- Modales -->
@@ -461,72 +361,24 @@ function editarClinica(clinica) {
   modalEditarClinica.value = true
 }
 
-function confirmarSuspender(clinica) {
-  modalConfirm.value = {
-    show: true,
-    title: 'Suspender Clínica',
-    message: `¿Estás seguro de suspender "${clinica.nombre}"? La clínica no podrá acceder al sistema.`,
-    type: 'warning',
-    onConfirm: async () => {
-      const motivo = prompt('Motivo de suspensión (opcional):')
-      const result = await clinicasStore.suspenderClinica(clinica.id, motivo || '')
-      
-      if (result.success) {
-        alert('Clínica suspendida exitosamente')
-      } else {
-        alert(result.message || 'Error al suspender clínica')
-      }
-      
-      modalConfirm.value.show = false
-    }
-  }
-}
-
-function confirmarActivar(clinica) {
-  modalConfirm.value = {
-    show: true,
-    title: 'Activar Clínica',
-    message: `¿Estás seguro de activar "${clinica.nombre}"?`,
-    type: 'success',
-    onConfirm: async () => {
-      const result = await clinicasStore.activarClinica(clinica.id)
-      
-      if (result.success) {
-        alert('Clínica activada exitosamente')
-      } else {
-        alert(result.message || 'Error al activar clínica')
-      }
-      
-      modalConfirm.value.show = false
-    }
-  }
-}
-
 function confirmarEliminar(clinica) {
   modalConfirm.value = {
     show: true,
     title: 'Eliminar Clínica',
-    message: `¿Estás seguro de eliminar "${clinica.nombre}"? Esta acción no se puede deshacer.`,
+    message: `¿Estás seguro de eliminar "${clinica.nombre}"? Esta acción no se puede deshacer y afectará a todos sus usuarios.`,
     type: 'danger',
     onConfirm: async () => {
       const result = await clinicasStore.eliminarClinica(clinica.id)
-      
       if (result.success) {
-        alert('Clínica eliminada exitosamente')
-      } else {
-        alert(result.message || 'Error al eliminar clínica')
+        // success toast
       }
-      
       modalConfirm.value.show = false
     }
   }
 }
 
 async function exportar() {
-  const result = await clinicasStore.exportarClinicas()
-  if (!result.success) {
-    alert('Error al exportar clínicas')
-  }
+  await clinicasStore.exportarClinicas()
 }
 
 function cerrarModales() {
@@ -547,3 +399,13 @@ onMounted(async () => {
   await clinicasStore.fetchEstadisticas()
 })
 </script>
+
+<style scoped>
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+</style>

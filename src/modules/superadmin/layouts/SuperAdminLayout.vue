@@ -1,15 +1,41 @@
 <template>
-  <div class="min-h-screen bg-slate-50 flex">
-    <SuperAdminSidebar @logout="handleLogout" />
+  <div class="min-h-screen transition-colors duration-500 bg-slate-100 dark:bg-[#0a0a0a]">
+    <div class="flex h-screen overflow-hidden">
+      
+      <!-- Sidebar Component -->
+      <SuperAdminSidebar @logout="handleLogout" />
 
-    <div class="flex-1 flex flex-col">
-      <SuperAdminHeader :title="pageTitle" :subtitle="pageSubtitle" />
+      <!-- Main Content Area -->
+      <div class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+        
+        <!-- Header Component -->
+        <SuperAdminHeader :title="pageTitle" :subtitle="pageSubtitle" />
 
-      <main class="flex-1 overflow-y-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <router-view />
+        <!-- Main Viewport -->
+        <main class="flex-1 overflow-y-auto px-6 lg:px-10 py-8 lg:py-10 custom-scrollbar relative z-10">
+          <div class="max-w-[1600px] mx-auto">
+            <router-view v-slot="{ Component }">
+              <transition 
+                enter-active-class="transition duration-300 ease-out"
+                enter-from-class="transform translate-y-4 opacity-0"
+                enter-to-class="transform translate-y-0 opacity-100"
+                leave-active-class="transition duration-200 ease-in"
+                leave-from-class="transform translate-y-0 opacity-100"
+                leave-to-class="transform translate-y-4 opacity-0"
+                mode="out-in"
+              >
+                <component :is="Component" />
+              </transition>
+            </router-view>
+          </div>
+        </main>
+
+        <!-- Dynamic Accent for Light/Dark -->
+        <div class="fixed bottom-0 right-0 w-[500px] h-[500px] -mr-32 -mb-32 pointer-events-none opacity-50">
+          <div v-if="themeStore.theme === 'dark'" class="w-full h-full bg-orange-500/5 rounded-full blur-[120px]"></div>
+          <div v-else class="w-full h-full bg-violet-500/[0.03] rounded-full blur-[120px]"></div>
         </div>
-      </main>
+      </div>
     </div>
   </div>
 </template>
@@ -21,11 +47,13 @@ import SuperAdminSidebar from '@superadmin/components/Sidebar.vue'
 import SuperAdminHeader from '@superadmin/components/Header.vue'
 import { useSuperAdminAuthStore } from '@superadmin/stores/auth'
 import { useSuperAdminDashboardStore } from '@superadmin/stores/dashboard'
+import { useSuperAdminThemeStore } from '@superadmin/stores/theme'
 
 const route = useRoute()
 const router = useRouter()
 const authStore = useSuperAdminAuthStore()
 const dashboardStore = useSuperAdminDashboardStore()
+const themeStore = useSuperAdminThemeStore()
 
 const pageTitle = computed(() => {
   const titles = {
@@ -62,6 +90,7 @@ async function handleLogout() {
 
 onMounted(async () => {
   authStore.checkAuth()
+  themeStore.applyTheme()
   if (!dashboardStore.estadisticas.clinicas?.total) {
     await dashboardStore.loadDashboard()
   }
@@ -69,5 +98,17 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* El estilo principal lo dan los componentes hijos */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.05);
+  border-radius: 10px;
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.05);
+}
 </style>

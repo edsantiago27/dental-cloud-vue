@@ -1,59 +1,59 @@
 <!-- components/superadmin/ConfirmModal.vue -->
 <template>
-  <div class="fixed inset-0 z-50 overflow-y-auto">
+  <div class="fixed inset-0 z-[100] overflow-y-auto">
     <!-- Overlay -->
-    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" @click="$emit('cancel')"></div>
+    <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" @click="$emit('cancel')"></div>
 
     <!-- Modal -->
     <div class="flex min-h-screen items-center justify-center p-4">
-      <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-md transform transition-all">
+      <div class="relative bg-white dark:bg-[#111111] rounded-[2.5rem] shadow-2xl w-full max-w-sm transform transition-all border border-gray-100 dark:border-white/5 overflow-hidden">
         
-        <!-- Icon -->
-        <div class="p-6 text-center">
+        <!-- Icon & Content -->
+        <div class="p-10 text-center">
           <div
-            class="mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4"
+            class="mx-auto w-20 h-20 rounded-3xl flex items-center justify-center mb-6 transition-transform hover:scale-110"
             :class="{
-              'bg-red-100': type === 'danger',
-              'bg-yellow-100': type === 'warning',
-              'bg-green-100': type === 'success',
-              'bg-blue-100': type === 'info'
+              'bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400': type === 'danger',
+              'bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400': type === 'warning',
+              'bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400': type === 'success',
+              'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400': type === 'info'
             }"
           >
             <i
               class="text-3xl"
               :class="{
-                'fas fa-exclamation-triangle text-red-600': type === 'danger',
-                'fas fa-exclamation-circle text-yellow-600': type === 'warning',
-                'fas fa-check-circle text-green-600': type === 'success',
-                'fas fa-info-circle text-blue-600': type === 'info'
+                'fas fa-exclamation-triangle': type === 'danger',
+                'fas fa-exclamation-circle': type === 'warning',
+                'fas fa-check-circle': type === 'success',
+                'fas fa-info-circle': type === 'info'
               }"
             ></i>
           </div>
 
-          <h3 class="text-xl font-semibold text-gray-900 mb-2">
+          <h3 class="text-xl font-black text-gray-900 dark:text-white mb-2 tracking-tight uppercase">
             {{ title }}
           </h3>
-          <p class="text-gray-600">
+          <p class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest leading-relaxed">
             {{ message }}
           </p>
         </div>
 
         <!-- Actions -->
-        <div class="flex items-center justify-end gap-3 px-6 py-4 bg-gray-50 border-t border-gray-200 rounded-b-xl">
+        <div class="flex items-center gap-3 p-8 bg-gray-50 dark:bg-white/5 border-t border-gray-50 dark:border-white/5">
           <button
             @click="$emit('cancel')"
-            class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+            class="flex-1 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white transition-all shadow-sm"
           >
             Cancelar
           </button>
           <button
             @click="$emit('confirm')"
-            class="px-4 py-2 text-white rounded-lg transition"
+            class="flex-1 py-4 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg transition-all active:scale-[0.98]"
             :class="{
-              'bg-red-600 hover:bg-red-700': type === 'danger',
-              'bg-yellow-600 hover:bg-yellow-700': type === 'warning',
-              'bg-green-600 hover:bg-green-700': type === 'success',
-              'bg-blue-600 hover:bg-blue-700': type === 'info'
+              'bg-red-600 shadow-red-200 dark:shadow-red-500/20': type === 'danger',
+              'bg-orange-500 shadow-orange-200 dark:shadow-orange-500/20': type === 'warning',
+              'bg-green-600 shadow-green-200 dark:shadow-green-500/20': type === 'success',
+              'bg-violet-600 shadow-violet-200 dark:shadow-violet-600/20': type === 'info'
             }"
           >
             Confirmar

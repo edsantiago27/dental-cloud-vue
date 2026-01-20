@@ -1,324 +1,312 @@
 <!-- views/superadmin/Configuracion.vue -->
 <template>
-  <div class="space-y-6">
+  <div class="space-y-8 animate-fade-in-up">
 
-    <!-- Header -->
-    <div>
-      <h2 class="text-2xl font-bold text-gray-900">Configuración del Sistema</h2>
-      <p class="text-sm text-gray-500 mt-1">Ajustes generales y configuraciones avanzadas</p>
-    </div>
-
-    <!-- Tabs -->
-    <div class="border-b border-gray-200">
-      <nav class="-mb-px flex space-x-8">
+    <!-- Header & Tabs -->
+    <div class="bg-white dark:bg-[#111111] rounded-[2.5rem] p-4 border border-gray-100 dark:border-white/5 shadow-xl shadow-gray-100/20 dark:shadow-none">
+      <nav class="flex flex-wrap gap-2">
         <button
           v-for="tab in tabs"
           :key="tab.id"
           @click="tabActual = tab.id"
-          class="py-4 px-1 border-b-2 font-medium text-sm transition"
+          class="flex-1 min-w-[140px] flex items-center justify-center gap-3 py-4 px-6 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all"
           :class="tabActual === tab.id
-            ? 'border-blue-500 text-blue-600'
-            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-lg'
+            : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-white/5'
           "
         >
-          <i :class="tab.icon" class="mr-2"></i>
+          <i :class="[tab.icon, 'text-xs']"></i>
           {{ tab.label }}
         </button>
       </nav>
     </div>
 
     <!-- Contenido Tabs -->
-    <div class="bg-white rounded-lg shadow">
+    <div class="bg-white dark:bg-[#111111] rounded-[2.5rem] p-8 lg:p-10 border border-gray-100 dark:border-white/5 shadow-xl shadow-gray-100/20 dark:shadow-none min-h-[500px]">
       
       <!-- Tab: General -->
-      <div v-show="tabActual === 'general'" class="p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Información General</h3>
+      <div v-if="tabActual === 'general'" class="space-y-8">
+        <div>
+          <h3 class="text-xl font-black text-gray-900 dark:text-white tracking-tight uppercase">Información General</h3>
+          <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1">Configuración básica de la marca y soporte</p>
+        </div>
         
-        <form @submit.prevent="guardarGeneral" class="space-y-4">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                Nombre del Sistema
-              </label>
+        <form @submit.prevent="guardarGeneral" class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="md:col-span-2">
+              <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">Nombre del Sistema</label>
               <input
                 v-model="formGeneral.nombre_sistema"
                 type="text"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="w-full px-6 py-4 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/5 rounded-2xl focus:bg-white dark:focus:bg-[#1a1a1a] focus:ring-2 focus:ring-violet-600/20 dark:focus:ring-orange-500/20 text-sm font-bold transition-all outline-none text-gray-900 dark:text-white"
               >
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                Email de Soporte
-              </label>
+              <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">Email de Soporte</label>
               <input
                 v-model="formGeneral.email_soporte"
                 type="email"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="w-full px-6 py-4 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/5 rounded-2xl focus:bg-white dark:focus:bg-[#1a1a1a] focus:ring-2 focus:ring-violet-600/20 dark:focus:ring-orange-500/20 text-sm font-bold transition-all outline-none text-gray-900 dark:text-white"
               >
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                Teléfono de Soporte
-              </label>
+              <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">Teléfono de Soporte</label>
               <input
                 v-model="formGeneral.telefono_soporte"
                 type="text"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="w-full px-6 py-4 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/5 rounded-2xl focus:bg-white dark:focus:bg-[#1a1a1a] focus:ring-2 focus:ring-violet-600/20 dark:focus:ring-orange-500/20 text-sm font-bold transition-all outline-none text-gray-900 dark:text-white"
               >
             </div>
           </div>
 
-          <div class="flex justify-end pt-4">
+          <div class="flex justify-end pt-6 border-t border-gray-50 dark:border-white/5">
             <button
               type="submit"
-              class="px-6 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition"
+              class="px-10 py-4 bg-violet-600 dark:bg-orange-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-violet-200 dark:shadow-orange-500/20 hover:scale-105 active:scale-95 transition-all"
             >
-              <i class="fas fa-save mr-2"></i>
-              Guardar Cambios
+              <i class="fas fa-save mr-2"></i> Guardar Cambios
             </button>
           </div>
         </form>
       </div>
 
       <!-- Tab: Email -->
-      <div v-show="tabActual === 'email'" class="p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Configuración de Email (SMTP)</h3>
+      <div v-if="tabActual === 'email'" class="space-y-8">
+        <div>
+          <h3 class="text-xl font-black text-gray-900 dark:text-white tracking-tight uppercase">Pasarela de Correo (SMTP)</h3>
+          <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1">Configuración técnica para el envío de notificaciones</p>
+        </div>
         
-        <form @submit.prevent="guardarEmail" class="space-y-4">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                SMTP Host
-              </label>
+        <form @submit.prevent="guardarEmail" class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2">
+              <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">SMTP Host</label>
               <input
                 v-model="formEmail.smtp_host"
                 type="text"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="w-full px-6 py-4 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/5 rounded-2xl focus:bg-white dark:focus:bg-[#1a1a1a] focus:ring-2 focus:ring-violet-600/20 dark:focus:ring-orange-500/20 text-sm font-bold transition-all outline-none text-gray-900 dark:text-white"
                 placeholder="smtp.gmail.com"
               >
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                SMTP Port
-              </label>
+              <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">Puerto</label>
               <input
                 v-model.number="formEmail.smtp_port"
                 type="number"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="587"
+                class="w-full px-6 py-4 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/5 rounded-2xl focus:bg-white dark:focus:bg-[#1a1a1a] focus:ring-2 focus:ring-violet-600/20 dark:focus:ring-orange-500/20 text-sm font-bold transition-all outline-none text-gray-900 dark:text-white"
               >
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                SMTP User
-              </label>
+              <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">Usuario SMTP</label>
               <input
                 v-model="formEmail.smtp_user"
                 type="text"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="w-full px-6 py-4 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/5 rounded-2xl focus:bg-white dark:focus:bg-[#1a1a1a] focus:ring-2 focus:ring-violet-600/20 dark:focus:ring-orange-500/20 text-sm font-bold transition-all outline-none text-gray-900 dark:text-white"
               >
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                SMTP Password
-              </label>
+              <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">Contraseña SMTP</label>
               <input
                 v-model="formEmail.smtp_password"
                 type="password"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="w-full px-6 py-4 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/5 rounded-2xl focus:bg-white dark:focus:bg-[#1a1a1a] focus:ring-2 focus:ring-violet-600/20 dark:focus:ring-orange-500/20 text-sm font-bold transition-all outline-none text-gray-900 dark:text-white"
               >
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                From Email
-              </label>
+              <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">Remitente (Email)</label>
               <input
                 v-model="formEmail.from_email"
                 type="email"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                From Name
-              </label>
-              <input
-                v-model="formEmail.from_name"
-                type="text"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="w-full px-6 py-4 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/5 rounded-2xl focus:bg-white dark:focus:bg-[#1a1a1a] focus:ring-2 focus:ring-violet-600/20 dark:focus:ring-orange-500/20 text-sm font-bold transition-all outline-none text-gray-900 dark:text-white"
               >
             </div>
           </div>
 
-          <div class="flex justify-end gap-3 pt-4">
+          <div class="flex justify-end gap-3 pt-6 border-t border-gray-50 dark:border-white/5">
             <button
               type="button"
               @click="probarEmail"
-              class="px-6 py-2 text-blue-700 bg-blue-50 border border-blue-300 rounded-lg hover:bg-blue-100 transition"
+              class="px-8 py-4 bg-gray-50 dark:bg-white/5 text-gray-400 dark:text-gray-500 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-gray-900 dark:hover:bg-white hover:text-white dark:hover:text-gray-900 transition-all font-black"
             >
-              <i class="fas fa-envelope mr-2"></i>
-              Enviar Email de Prueba
+              <i class="fas fa-paper-plane mr-2 text-xs"></i> Probar Conexión
             </button>
             <button
               type="submit"
-              class="px-6 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition"
+              class="px-10 py-4 bg-violet-600 dark:bg-orange-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-violet-200 dark:shadow-orange-500/20 hover:scale-105 active:scale-95 transition-all"
             >
-              <i class="fas fa-save mr-2"></i>
-              Guardar Cambios
+              <i class="fas fa-save mr-2"></i> Guardar Cambios
             </button>
           </div>
         </form>
       </div>
 
       <!-- Tab: Facturación -->
-      <div v-show="tabActual === 'facturacion'" class="p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Configuración de Facturación</h3>
+      <div v-if="tabActual === 'facturacion'" class="space-y-8">
+        <div>
+          <h3 class="text-xl font-black text-gray-900 dark:text-white tracking-tight uppercase">Ciclos de Facturación</h3>
+          <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1">Reglas de negocio para cobros y vencimientos</p>
+        </div>
         
-        <form @submit.prevent="guardarFacturacion" class="space-y-4">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                Días de Vencimiento
-              </label>
-              <input
-                v-model.number="formFacturacion.dias_vencimiento"
-                type="number"
-                min="1"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-              <p class="text-xs text-gray-500 mt-1">Días desde emisión hasta vencimiento</p>
+        <form @submit.prevent="guardarFacturacion" class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-gray-50 dark:bg-white/5 p-6 rounded-3xl border border-transparent dark:border-white/5">
+              <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4">Días de Vencimiento</label>
+              <div class="flex items-center gap-4">
+                <input
+                  v-model.number="formFacturacion.dias_vencimiento"
+                  type="number"
+                  min="1"
+                  class="w-20 px-4 py-3 bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-white/10 rounded-xl text-center text-sm font-black text-gray-900 dark:text-white outline-none"
+                >
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Días tras emisión</span>
+              </div>
             </div>
 
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                Días Antes de Recordatorio
-              </label>
-              <input
-                v-model.number="formFacturacion.dias_antes_recordatorio"
-                type="number"
-                min="1"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-              <p class="text-xs text-gray-500 mt-1">Días antes del vencimiento para enviar recordatorio</p>
+            <div class="bg-gray-50 dark:bg-white/5 p-6 rounded-3xl border border-transparent dark:border-white/5">
+              <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4">Recordatorio Preventivo</label>
+              <div class="flex items-center gap-4">
+                <input
+                  v-model.number="formFacturacion.dias_antes_recordatorio"
+                  type="number"
+                  min="1"
+                  class="w-20 px-4 py-3 bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-white/10 rounded-xl text-center text-sm font-black text-gray-900 dark:text-white outline-none"
+                >
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Días antes</span>
+              </div>
             </div>
 
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                Día de Generación Automática
-              </label>
-              <input
-                v-model.number="formFacturacion.dia_generacion"
-                type="number"
-                min="1"
-                max="28"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-              <p class="text-xs text-gray-500 mt-1">Día del mes para generar facturas automáticamente</p>
+            <div class="bg-gray-50 dark:bg-white/5 p-6 rounded-3xl border border-transparent dark:border-white/5">
+              <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4">Día de Generación</label>
+              <div class="flex items-center gap-4">
+                <input
+                  v-model.number="formFacturacion.dia_generacion"
+                  type="number"
+                  min="1"
+                  max="28"
+                  class="w-20 px-4 py-3 bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-white/10 rounded-xl text-center text-sm font-black text-gray-900 dark:text-white outline-none"
+                >
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Día del mes</span>
+              </div>
             </div>
           </div>
 
-          <div class="space-y-3 pt-4">
-            <label class="flex items-center gap-3">
-              <input
-                v-model="formFacturacion.enviar_recordatorios"
-                type="checkbox"
-                class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-              >
-              <span class="text-sm text-gray-700">Enviar recordatorios de pago automáticamente</span>
-            </label>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+            <div 
+              @click="formFacturacion.enviar_recordatorios = !formFacturacion.enviar_recordatorios"
+              class="flex items-center gap-5 p-6 bg-white dark:bg-white/5 border-2 rounded-3xl cursor-pointer transition-all"
+              :class="formFacturacion.enviar_recordatorios ? 'border-violet-600/50 dark:border-orange-500/50 bg-violet-50/10 dark:bg-orange-500/5' : 'border-gray-50 dark:border-white/5'"
+            >
+              <div class="w-12 h-12 flex items-center justify-center rounded-2xl" :class="formFacturacion.enviar_recordatorios ? 'bg-violet-600 dark:bg-orange-500 text-white' : 'bg-gray-100 dark:bg-white/5 text-gray-400'">
+                <i class="fas fa-bell"></i>
+              </div>
+              <div class="flex-1">
+                <p class="text-xs font-black text-gray-900 dark:text-white uppercase tracking-tight">Recordatorios Automáticos</p>
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Notificar pagos pendientes</p>
+              </div>
+              <div class="w-12 h-6 bg-gray-200 dark:bg-white/10 rounded-full relative transition-colors" :class="{ 'bg-violet-600 dark:bg-orange-500': formFacturacion.enviar_recordatorios }">
+                <div class="w-4 h-4 bg-white rounded-full absolute top-1 transition-all" :class="formFacturacion.enviar_recordatorios ? 'left-7' : 'left-1'"></div>
+              </div>
+            </div>
 
-            <label class="flex items-center gap-3">
-              <input
-                v-model="formFacturacion.generar_automatico"
-                type="checkbox"
-                class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-              >
-              <span class="text-sm text-gray-700">Generar facturas automáticamente cada mes</span>
-            </label>
+            <div 
+              @click="formFacturacion.generar_automatico = !formFacturacion.generar_automatico"
+              class="flex items-center gap-5 p-6 bg-white dark:bg-white/5 border-2 rounded-3xl cursor-pointer transition-all"
+              :class="formFacturacion.generar_automatico ? 'border-violet-600/50 dark:border-orange-500/50 bg-violet-50/10 dark:bg-orange-500/5' : 'border-gray-50 dark:border-white/5'"
+            >
+              <div class="w-12 h-12 flex items-center justify-center rounded-2xl" :class="formFacturacion.generar_automatico ? 'bg-violet-600 dark:bg-orange-500 text-white' : 'bg-gray-100 dark:bg-white/5 text-gray-400'">
+                <i class="fas fa-magic"></i>
+              </div>
+              <div class="flex-1">
+                <p class="text-xs font-black text-gray-900 dark:text-white uppercase tracking-tight">Generación Proactiva</p>
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Emisión masiva recurrente</p>
+              </div>
+              <div class="w-12 h-6 bg-gray-200 dark:bg-white/10 rounded-full relative transition-colors" :class="{ 'bg-violet-600 dark:bg-orange-500': formFacturacion.generar_automatico }">
+                <div class="w-4 h-4 bg-white rounded-full absolute top-1 transition-all" :class="formFacturacion.generar_automatico ? 'left-7' : 'left-1'"></div>
+              </div>
+            </div>
           </div>
 
-          <div class="flex justify-end pt-4">
+          <div class="flex justify-end pt-6 border-t border-gray-50 dark:border-white/5">
             <button
               type="submit"
-              class="px-6 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition"
+              class="px-10 py-4 bg-violet-600 dark:bg-orange-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-violet-200 dark:shadow-orange-500/20 hover:scale-105 active:scale-95 transition-all"
             >
-              <i class="fas fa-save mr-2"></i>
-              Guardar Cambios
+              <i class="fas fa-save mr-2"></i> Guardar Cambios
             </button>
           </div>
         </form>
       </div>
 
       <!-- Tab: Notificaciones -->
-      <div v-show="tabActual === 'notificaciones'" class="p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Configuración de Notificaciones</h3>
+      <div v-if="tabActual === 'notificaciones'" class="space-y-8">
+        <div>
+          <h3 class="text-xl font-black text-gray-900 dark:text-white tracking-tight uppercase">Eventos del Sistema</h3>
+          <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1">Alertas internas para el equipo administrativo</p>
+        </div>
         
-        <form @submit.prevent="guardarNotificaciones" class="space-y-4">
-          <div class="space-y-3">
-            <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-              <input
-                v-model="formNotificaciones.email_nuevas_clinicas"
-                type="checkbox"
-                class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-              >
-              <div>
-                <p class="text-sm font-medium text-gray-900">Nuevas Clínicas Registradas</p>
-                <p class="text-xs text-gray-500">Recibir email cuando una nueva clínica se registra</p>
+        <form @submit.prevent="guardarNotificaciones" class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div 
+              @click="formNotificaciones.email_nuevas_clinicas = !formNotificaciones.email_nuevas_clinicas"
+              class="p-6 bg-gray-50 dark:bg-white/5 rounded-3xl border-2 transition-all cursor-pointer flex justify-between items-center"
+              :class="formNotificaciones.email_nuevas_clinicas ? 'border-violet-600/50 dark:border-orange-500/50' : 'border-transparent'"
+            >
+              <div class="flex items-center gap-4 text-gray-900 dark:text-white">
+                <i class="fas fa-hospital-user text-xl opacity-40"></i>
+                <div>
+                  <p class="text-xs font-black uppercase tracking-tight">Registro de Clínicas</p>
+                  <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Alertar sobre nuevos partners</p>
+                </div>
               </div>
-            </label>
+              <div class="w-6 h-6 rounded-lg flex items-center justify-center transition-colors" :class="formNotificaciones.email_nuevas_clinicas ? 'bg-violet-600 dark:bg-orange-500 text-white' : 'bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/10'">
+                <i v-if="formNotificaciones.email_nuevas_clinicas" class="fas fa-check text-[10px]"></i>
+              </div>
+            </div>
 
-            <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-              <input
-                v-model="formNotificaciones.email_pagos_recibidos"
-                type="checkbox"
-                class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-              >
-              <div>
-                <p class="text-sm font-medium text-gray-900">Pagos Recibidos</p>
-                <p class="text-xs text-gray-500">Recibir email cuando se registra un pago</p>
+            <div 
+              @click="formNotificaciones.email_pagos_recibidos = !formNotificaciones.email_pagos_recibidos"
+              class="p-6 bg-gray-50 dark:bg-white/5 rounded-3xl border-2 transition-all cursor-pointer flex justify-between items-center"
+              :class="formNotificaciones.email_pagos_recibidos ? 'border-violet-600/50 dark:border-orange-500/50' : 'border-transparent'"
+            >
+              <div class="flex items-center gap-4 text-gray-900 dark:text-white">
+                <i class="fas fa-coins text-xl opacity-40"></i>
+                <div>
+                  <p class="text-xs font-black uppercase tracking-tight">Ingresos de Caja</p>
+                  <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Notificar pagos aceptados</p>
+                </div>
               </div>
-            </label>
-
-            <label class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-              <input
-                v-model="formNotificaciones.email_facturas_vencidas"
-                type="checkbox"
-                class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-              >
-              <div>
-                <p class="text-sm font-medium text-gray-900">Facturas Vencidas</p>
-                <p class="text-xs text-gray-500">Recibir email diario con facturas vencidas</p>
+              <div class="w-6 h-6 rounded-lg flex items-center justify-center transition-colors" :class="formNotificaciones.email_pagos_recibidos ? 'bg-violet-600 dark:bg-orange-500 text-white' : 'bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-white/10'">
+                <i v-if="formNotificaciones.email_pagos_recibidos" class="fas fa-check text-[10px]"></i>
               </div>
-            </label>
+            </div>
           </div>
 
           <div class="pt-4">
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Webhook URL (opcional)
-            </label>
-            <input
-              v-model="formNotificaciones.webhook_url"
-              type="url"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="https://tu-servidor.com/webhook"
-            >
-            <p class="text-xs text-gray-500 mt-1">URL para recibir notificaciones por webhook</p>
+            <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3 px-1">Webhook URL (Integraciones externas)</label>
+            <div class="relative group">
+              <i class="fas fa-link absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-600 group-focus-within:text-violet-600 dark:group-focus-within:text-orange-500 transition-colors"></i>
+              <input
+                v-model="formNotificaciones.webhook_url"
+                type="url"
+                class="w-full pl-14 pr-6 py-4 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/5 rounded-2xl focus:bg-white dark:focus:bg-[#1a1a1a] focus:ring-2 focus:ring-violet-600/20 dark:focus:ring-orange-500/20 text-sm font-bold transition-all outline-none text-gray-900 dark:text-white"
+                placeholder="https://tu-servidor.com/webhook"
+              >
+            </div>
+            <p class="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-3 px-1">Endpoint para sincronizar eventos con herramientas de terceros (Zapier, Slack, etc)</p>
           </div>
 
-          <div class="flex justify-end pt-4">
+          <div class="flex justify-end pt-6 border-t border-gray-50 dark:border-white/5">
             <button
               type="submit"
-              class="px-6 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition"
+              class="px-10 py-4 bg-violet-600 dark:bg-orange-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-violet-200 dark:shadow-orange-500/20 hover:scale-105 active:scale-95 transition-all"
             >
-              <i class="fas fa-save mr-2"></i>
-              Guardar Cambios
+              <i class="fas fa-save mr-2"></i> Guardar Cambios
             </button>
           </div>
         </form>
@@ -334,7 +322,6 @@ import { ref, computed, onMounted } from 'vue'
 import { useSuperAdminConfiguracionStore } from '@superadmin/stores/configuracion'
 
 const configuracionStore = useSuperAdminConfiguracionStore()
-
 const tabActual = ref('general')
 
 const tabs = [
@@ -344,22 +331,17 @@ const tabs = [
   { id: 'notificaciones', label: 'Notificaciones', icon: 'fas fa-bell' }
 ]
 
-// Forms
 const formGeneral = ref({})
 const formEmail = ref({})
 const formFacturacion = ref({})
 const formNotificaciones = ref({})
 
-// Computed
 const config = computed(() => configuracionStore.config)
 
-// Methods
 async function guardarGeneral() {
   const result = await configuracionStore.actualizarConfiguracion('general', formGeneral.value)
   if (result.success) {
     alert('Configuración general guardada exitosamente')
-  } else {
-    alert(result.message || 'Error al guardar configuración')
   }
 }
 
@@ -367,8 +349,6 @@ async function guardarEmail() {
   const result = await configuracionStore.actualizarConfiguracion('email', formEmail.value)
   if (result.success) {
     alert('Configuración de email guardada exitosamente')
-  } else {
-    alert(result.message || 'Error al guardar configuración')
   }
 }
 
@@ -376,8 +356,6 @@ async function guardarFacturacion() {
   const result = await configuracionStore.actualizarConfiguracion('facturacion', formFacturacion.value)
   if (result.success) {
     alert('Configuración de facturación guardada exitosamente')
-  } else {
-    alert(result.message || 'Error al guardar configuración')
   }
 }
 
@@ -385,28 +363,31 @@ async function guardarNotificaciones() {
   const result = await configuracionStore.actualizarConfiguracion('notificaciones', formNotificaciones.value)
   if (result.success) {
     alert('Configuración de notificaciones guardada exitosamente')
-  } else {
-    alert(result.message || 'Error al guardar configuración')
   }
 }
 
 async function probarEmail() {
   const result = await configuracionStore.testEmailConfig()
   if (result.success) {
-    alert('Email de prueba enviado correctamente. Revisa tu bandeja de entrada.')
-  } else {
-    alert(result.message || 'Error al enviar email de prueba')
+    alert('Email de prueba enviado correctamente.')
   }
 }
 
-// Lifecycle
 onMounted(async () => {
   await configuracionStore.fetchConfiguracion()
-  
-  // Cargar datos en forms
   formGeneral.value = { ...config.value.general }
   formEmail.value = { ...config.value.email }
   formFacturacion.value = { ...config.value.facturacion }
   formNotificaciones.value = { ...config.value.notificaciones }
 })
 </script>
+
+<style scoped>
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+</style>

@@ -1,9 +1,9 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { useAuthStore } from '@shared/stores/auth'
+import { usePacienteAuthStore } from '../stores/auth'
 import { useToast } from 'vue-toastification'
 
-const authStore = useAuthStore()
+const authStore = usePacienteAuthStore()
 const toast = useToast()
 const showDropdown = ref(false)
 

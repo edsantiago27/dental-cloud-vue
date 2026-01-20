@@ -1,169 +1,141 @@
 <!-- views/superadmin/Reportes.vue -->
 <template>
-  <div class="space-y-6">
+  <div class="space-y-8 animate-fade-in-up">
 
     <!-- Header -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-2">
       <div>
-        <h2 class="text-2xl font-bold text-gray-900">Reportes y Analytics</h2>
-        <p class="text-sm text-gray-500 mt-1">Métricas avanzadas del negocio</p>
+        <h2 class="text-3xl font-black text-gray-900 dark:text-white tracking-tight uppercase">Inteligencia de Negocio</h2>
+        <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1">Análisis profundo de métricas SaaS y crecimiento global</p>
       </div>
-      <div class="flex gap-2">
+      <div class="flex gap-3">
         <button
           @click="exportarReporte('completo')"
-          class="px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 transition"
+          class="px-6 py-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg"
         >
-          <i class="fas fa-file-pdf mr-2"></i>
-          Exportar PDF
+          <i class="fas fa-file-pdf mr-2 text-xs"></i> Exportar Snapshot
         </button>
         <button
           @click="recargarDatos"
-          class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+          class="p-4 bg-white dark:bg-white/5 border border-gray-100 dark:border-white/5 text-gray-400 dark:text-gray-500 rounded-2xl hover:text-violet-600 dark:hover:text-orange-500 transition-all shadow-sm"
         >
-          <i class="fas fa-sync-alt mr-2"></i>
-          Actualizar
+          <i class="fas fa-sync-alt"></i>
         </button>
       </div>
     </div>
 
-    <!-- KPIs Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <!-- KPIs Grid (Bento Style) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <!-- MRR -->
-      <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-lg p-6 text-white">
-        <div class="flex items-center justify-between mb-2">
-          <p class="text-sm opacity-90">MRR</p>
-          <i class="fas fa-dollar-sign text-2xl opacity-80"></i>
+      <div class="bg-violet-600 dark:bg-orange-500 rounded-[2rem] p-8 text-white shadow-xl shadow-violet-200 dark:shadow-orange-500/20 relative overflow-hidden group">
+        <div class="absolute -right-6 -top-6 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+        <div class="relative z-10 flex flex-col h-full">
+          <p class="text-[10px] font-black uppercase tracking-widest opacity-60 mb-1">Monthly Recurring Revenue</p>
+          <h3 class="text-3xl font-black tracking-tighter mb-auto">{{ formatMoney(kpis.mrr) }}</h3>
+          <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
+            <span class="text-[9px] font-bold uppercase tracking-widest opacity-60">MRR Actual</span>
+            <i class="fas fa-dollar-sign text-xs opacity-40"></i>
+          </div>
         </div>
-        <p class="text-3xl font-bold">{{ formatMoney(kpis.mrr) }}</p>
-        <p class="text-xs opacity-75 mt-1">Monthly Recurring Revenue</p>
       </div>
 
       <!-- ARR -->
-      <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lg p-6 text-white">
-        <div class="flex items-center justify-between mb-2">
-          <p class="text-sm opacity-90">ARR</p>
-          <i class="fas fa-chart-line text-2xl opacity-80"></i>
+      <div class="bg-white dark:bg-[#111111] rounded-[2rem] p-8 border border-gray-100 dark:border-white/5 shadow-xl shadow-gray-100/20 dark:shadow-none relative overflow-hidden group">
+        <div class="relative z-10">
+          <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Annual Recurring Revenue</p>
+          <h3 class="text-3xl font-black text-gray-900 dark:text-white tracking-tighter">{{ formatMoney(kpis.arr) }}</h3>
+          <div class="mt-6 pt-4 border-t border-gray-50 dark:border-white/5 flex items-center justify-between text-emerald-500">
+            <span class="text-[9px] font-bold uppercase tracking-widest">ARR Proyectado</span>
+            <i class="fas fa-chart-line text-xs"></i>
+          </div>
         </div>
-        <p class="text-3xl font-bold">{{ formatMoney(kpis.arr) }}</p>
-        <p class="text-xs opacity-75 mt-1">Annual Recurring Revenue</p>
       </div>
 
       <!-- ARPU -->
-      <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-lg p-6 text-white">
-        <div class="flex items-center justify-between mb-2">
-          <p class="text-sm opacity-90">ARPU</p>
-          <i class="fas fa-user-circle text-2xl opacity-80"></i>
+      <div class="bg-white dark:bg-[#111111] rounded-[2rem] p-8 border border-gray-100 dark:border-white/5 shadow-xl shadow-gray-100/20 dark:shadow-none relative overflow-hidden group">
+        <div class="relative z-10">
+          <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">ARPU</p>
+          <h3 class="text-3xl font-black text-gray-900 dark:text-white tracking-tighter">{{ formatMoney(kpis.arpu) }}</h3>
+          <div class="mt-6 pt-4 border-t border-gray-50 dark:border-white/5 flex items-center justify-between text-violet-600 dark:text-orange-500">
+            <span class="text-[9px] font-bold uppercase tracking-widest text-gray-400">Ingreso Promedio</span>
+            <i class="fas fa-user-circle text-xs"></i>
+          </div>
         </div>
-        <p class="text-3xl font-bold">{{ formatMoney(kpis.arpu) }}</p>
-        <p class="text-xs opacity-75 mt-1">Average Revenue Per User</p>
-      </div>
-
-      <!-- LTV -->
-      <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg shadow-lg p-6 text-white">
-        <div class="flex items-center justify-between mb-2">
-          <p class="text-sm opacity-90">LTV</p>
-          <i class="fas fa-trophy text-2xl opacity-80"></i>
-        </div>
-        <p class="text-3xl font-bold">{{ formatMoney(kpis.ltv) }}</p>
-        <p class="text-xs opacity-75 mt-1">Lifetime Value</p>
       </div>
 
       <!-- Churn Rate -->
-      <div class="bg-white rounded-lg shadow p-4 border-l-4 border-red-500">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-500">Churn Rate</p>
-            <p class="text-2xl font-bold text-red-600">{{ kpis.churn_rate }}%</p>
+      <div class="bg-white dark:bg-[#111111] rounded-[2rem] p-8 border border-gray-100 dark:border-white/5 shadow-xl shadow-gray-100/20 dark:shadow-none relative overflow-hidden group">
+        <div class="relative z-10">
+          <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Churn Rate</p>
+          <h3 class="text-3xl font-black text-red-600 dark:text-red-500 tracking-tighter">{{ kpis.churn_rate }}%</h3>
+          <div class="mt-6 pt-4 border-t border-gray-50 dark:border-white/5 flex items-center justify-between text-gray-400">
+            <span class="text-[9px] font-bold uppercase tracking-widest">Tasa de Deserción</span>
+            <i class="fas fa-user-slash text-xs"></i>
           </div>
-          <i class="fas fa-user-times text-red-500 text-xl"></i>
-        </div>
-      </div>
-
-      <!-- Conversion Rate -->
-      <div class="bg-white rounded-lg shadow p-4 border-l-4 border-green-500">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-500">Conversion Rate</p>
-            <p class="text-2xl font-bold text-green-600">{{ kpis.conversion_rate }}%</p>
-          </div>
-          <i class="fas fa-percentage text-green-500 text-xl"></i>
-        </div>
-      </div>
-
-      <!-- CAC -->
-      <div class="bg-white rounded-lg shadow p-4 border-l-4 border-yellow-500">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-500">CAC</p>
-            <p class="text-2xl font-bold text-yellow-600">{{ formatMoney(kpis.cac) }}</p>
-          </div>
-          <i class="fas fa-bullseye text-yellow-500 text-xl"></i>
-        </div>
-      </div>
-
-      <!-- New Signups -->
-      <div class="bg-white rounded-lg shadow p-4 border-l-4 border-blue-500">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm text-gray-500">New Signups</p>
-            <p class="text-2xl font-bold text-blue-600">{{ kpis.new_signups }}</p>
-          </div>
-          <i class="fas fa-user-plus text-blue-500 text-xl"></i>
         </div>
       </div>
     </div>
 
-    <!-- Gráficos -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Analytics Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       
-      <!-- Crecimiento de Clínicas -->
-      <div class="bg-white rounded-lg shadow p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">
-          <i class="fas fa-chart-line text-blue-600 mr-2"></i>
-          Crecimiento de Clínicas
-        </h3>
-        <canvas ref="chartCrecimiento" height="250"></canvas>
+      <!-- Crecimiento Chart -->
+      <div class="lg:col-span-2 bg-white dark:bg-[#111111] rounded-[2.5rem] p-8 border border-gray-100 dark:border-white/5 shadow-xl shadow-gray-100/20 dark:shadow-none">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h3 class="text-lg font-black text-gray-900 dark:text-white tracking-tight">ESCALE DE CLÍNICAS</h3>
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Evolución de registros históricos</p>
+          </div>
+        </div>
+        <div class="h-[300px] relative">
+          <canvas ref="chartCrecimiento"></canvas>
+        </div>
       </div>
 
-      <!-- Ingresos Mensuales -->
-      <div class="bg-white rounded-lg shadow p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">
-          <i class="fas fa-chart-bar text-green-600 mr-2"></i>
-          Ingresos Mensuales
-        </h3>
-        <canvas ref="chartIngresos" height="250"></canvas>
+      <!-- Distribución Chart -->
+      <div class="bg-white dark:bg-[#111111] rounded-[2.5rem] p-8 border border-gray-100 dark:border-white/5 shadow-xl shadow-gray-100/20 dark:shadow-none">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h3 class="text-lg font-black text-gray-900 dark:text-white tracking-tight">MARKET SHARE</h3>
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Distribución por planes</p>
+          </div>
+        </div>
+        <div class="h-[300px] relative">
+          <canvas ref="chartPlanes"></canvas>
+        </div>
       </div>
 
-      <!-- Distribución por Plan -->
-      <div class="bg-white rounded-lg shadow p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">
-          <i class="fas fa-chart-pie text-purple-600 mr-2"></i>
-          Distribución por Plan
-        </h3>
-        <canvas ref="chartPlanes" height="250"></canvas>
+      <!-- Ingresos Chart -->
+      <div class="lg:col-span-2 bg-white dark:bg-[#111111] rounded-[2.5rem] p-8 border border-gray-100 dark:border-white/5 shadow-xl shadow-gray-100/20 dark:shadow-none">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h3 class="text-lg font-black text-gray-900 dark:text-white tracking-tight">MONETIZACIÓN</h3>
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Facturación mensual consolidada</p>
+          </div>
+        </div>
+        <div class="h-[300px] relative">
+          <canvas ref="chartIngresos"></canvas>
+        </div>
       </div>
 
-      <!-- Top 10 Clínicas -->
-      <div class="bg-white rounded-lg shadow p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">
-          <i class="fas fa-trophy text-orange-600 mr-2"></i>
-          Top 10 Clínicas Más Activas
-        </h3>
-        <div class="space-y-3 max-h-[250px] overflow-y-auto">
+      <!-- Top Clinics List -->
+      <div class="bg-white dark:bg-[#111111] rounded-[2.5rem] p-8 border border-gray-100 dark:border-white/5 shadow-xl shadow-gray-100/20 dark:shadow-none">
+        <h3 class="text-lg font-black text-gray-900 dark:text-white mb-6 uppercase tracking-tight">Top Performance</h3>
+        <div class="space-y-4">
           <div
             v-for="(clinica, index) in topClinicas"
             :key="clinica.id"
-            class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
+            class="flex items-center gap-4 p-4 bg-gray-50/50 dark:bg-white/[0.03] rounded-2xl border border-transparent dark:border-white/5 hover:border-violet-100 dark:hover:border-orange-500/20 transition-all group"
           >
-            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold">
-              {{ index + 1 }}
+            <div class="w-10 h-10 rounded-xl bg-violet-600 dark:bg-orange-500 text-white flex items-center justify-center font-black text-xs shadow-lg shadow-violet-200 dark:shadow-orange-500/20">
+              #{{ index + 1 }}
             </div>
             <div class="flex-1 min-w-0">
-              <p class="font-medium text-gray-900 truncate">{{ clinica.nombre }}</p>
-              <p class="text-xs text-gray-500">{{ clinica.actividad }} acciones</p>
+              <p class="text-xs font-black text-gray-900 dark:text-white truncate uppercase">{{ clinica.nombre }}</p>
+              <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">{{ clinica.actividad }} Movimientos</p>
             </div>
             <div class="text-right">
-              <p class="text-sm font-semibold text-green-600">{{ formatMoney(clinica.ingresos) }}</p>
+              <p class="text-[11px] font-black text-emerald-600 dark:text-emerald-500">{{ formatMoney(clinica.ingresos) }}</p>
             </div>
           </div>
         </div>
@@ -175,72 +147,73 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick } from 'vue'
+import { ref, computed, onMounted, nextTick, watch } from 'vue'
 import { useSuperAdminReportesStore } from '@superadmin/stores/reportes'
+import { useSuperAdminThemeStore } from '@superadmin/stores/theme'
 import Chart from 'chart.js/auto'
 
 const reportesStore = useSuperAdminReportesStore()
+const themeStore = useSuperAdminThemeStore()
 
-// Refs para canvas
 const chartCrecimiento = ref(null)
 const chartIngresos = ref(null)
 const chartPlanes = ref(null)
 
-// Instancias de gráficos
 let chartCrecimientoInstance = null
 let chartIngresosInstance = null
 let chartPlanesInstance = null
 
-// Computed
 const kpis = computed(() => reportesStore.kpis)
 const topClinicas = computed(() => reportesStore.topClinicas)
 
-// Methods
 function formatMoney(value) {
-  return new Intl.NumberFormat('es-CL', {
-    style: 'currency',
-    currency: 'CLP',
-    minimumFractionDigits: 0
-  }).format(value)
+  return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', minimumFractionDigits: 0 }).format(value)
+}
+
+function getChartColors() {
+  const isDark = themeStore.theme === 'dark'
+  return {
+    accent: isDark ? '#f97316' : '#7c3aed', // orange-500 : violet-600
+    grid: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
+    text: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)'
+  }
 }
 
 function crearGraficoCrecimiento() {
   if (!chartCrecimiento.value) return
-
   const data = reportesStore.crecimiento
-
-  if (chartCrecimientoInstance) {
-    chartCrecimientoInstance.destroy()
-  }
-
+  if (chartCrecimientoInstance) chartCrecimientoInstance.destroy()
+  
+  const colors = getChartColors()
   chartCrecimientoInstance = new Chart(chartCrecimiento.value, {
     type: 'line',
     data: {
       labels: data.map(d => d.mes),
       datasets: [{
-        label: 'Clínicas Totales',
+        label: 'Clínicas',
         data: data.map(d => d.total),
-        borderColor: 'rgb(59, 130, 246)',
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-        tension: 0.4,
-        fill: true
+        borderColor: colors.accent,
+        backgroundColor: colors.accent + '15',
+        tension: 0.5,
+        fill: true,
+        pointRadius: 0,
+        pointHoverRadius: 6,
+        borderWidth: 3
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          display: true,
-          position: 'bottom'
-        }
-      },
+      plugins: { legend: { display: false } },
       scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            precision: 0
-          }
+        y: { 
+          beginAtZero: true, 
+          grid: { color: colors.grid }, 
+          ticks: { color: colors.text, font: { size: 10, weight: '900' } } 
+        },
+        x: { 
+          grid: { display: false }, 
+          ticks: { color: colors.text, font: { size: 10, weight: '900' } } 
         }
       }
     }
@@ -249,43 +222,31 @@ function crearGraficoCrecimiento() {
 
 function crearGraficoIngresos() {
   if (!chartIngresos.value) return
-
   const data = reportesStore.ingresos
-
-  if (chartIngresosInstance) {
-    chartIngresosInstance.destroy()
-  }
-
+  if (chartIngresosInstance) chartIngresosInstance.destroy()
+  
+  const colors = getChartColors()
   chartIngresosInstance = new Chart(chartIngresos.value, {
     type: 'bar',
     data: {
       labels: data.map(d => d.mes),
       datasets: [{
-        label: 'Ingresos (CLP)',
+        label: 'Facturación',
         data: data.map(d => d.total),
-        backgroundColor: 'rgba(34, 197, 94, 0.8)',
-        borderColor: 'rgb(34, 197, 94)',
-        borderWidth: 1
+        backgroundColor: colors.accent,
+        borderRadius: 8
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          display: true,
-          position: 'bottom'
-        }
-      },
+      plugins: { legend: { display: false } },
       scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            callback: function(value) {
-              return formatMoney(value)
-            }
-          }
-        }
+        y: { 
+          grid: { color: colors.grid }, 
+          ticks: { color: colors.text, font: { size: 9, weight: '900' }, callback: v => '$' + (v/1000) + 'k' } 
+        },
+        x: { grid: { display: false }, ticks: { color: colors.text, font: { size: 10, weight: '900' } } }
       }
     }
   })
@@ -293,42 +254,31 @@ function crearGraficoIngresos() {
 
 function crearGraficoPlanes() {
   if (!chartPlanes.value) return
-
   const data = reportesStore.distribucionPlanes
-
-  if (chartPlanesInstance) {
-    chartPlanesInstance.destroy()
-  }
-
+  if (chartPlanesInstance) chartPlanesInstance.destroy()
+  
+  const isDark = themeStore.theme === 'dark'
   chartPlanesInstance = new Chart(chartPlanes.value, {
     type: 'doughnut',
     data: {
       labels: data.map(d => d.plan),
       datasets: [{
         data: data.map(d => d.cantidad),
-        backgroundColor: [
-          'rgba(59, 130, 246, 0.8)',
-          'rgba(139, 92, 246, 0.8)',
-          'rgba(236, 72, 153, 0.8)',
-          'rgba(34, 197, 94, 0.8)',
-          'rgba(251, 146, 60, 0.8)'
-        ],
-        borderColor: [
-          'rgb(59, 130, 246)',
-          'rgb(139, 92, 246)',
-          'rgb(236, 72, 153)',
-          'rgb(34, 197, 94)',
-          'rgb(251, 146, 60)'
-        ],
-        borderWidth: 2
+        backgroundColor: isDark 
+          ? ['#f97316', '#fb923c', '#fdba74', '#ffedd5', '#fed7aa']
+          : ['#7c3aed', '#8b5cf6', '#a78bfa', '#c4b5fd', '#ddd6fe'],
+        borderWidth: 0,
+        hoverOffset: 20
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      cutout: '70%',
       plugins: {
         legend: {
-          position: 'right'
+          position: 'bottom',
+          labels: { color: getChartColors().text, font: { size: 9, weight: '900' }, padding: 20, usePointStyle: true }
         }
       }
     }
@@ -349,14 +299,26 @@ async function recargarDatos() {
 }
 
 async function exportarReporte(tipo) {
-  const result = await reportesStore.exportarReporte(tipo)
-  if (!result.success) {
-    alert('Error al exportar reporte')
-  }
+  await reportesStore.exportarReporte(tipo)
 }
 
-// Lifecycle
+watch(() => themeStore.theme, () => {
+  crearGraficoCrecimiento()
+  crearGraficoIngresos()
+  crearGraficoPlanes()
+})
+
 onMounted(async () => {
   await recargarDatos()
 })
 </script>
+
+<style scoped>
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+</style>
