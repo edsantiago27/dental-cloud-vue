@@ -1,242 +1,132 @@
-<!-- views/Dashboard-View.vue -->
+<!-- views/Dashboard.vue -->
 <template>
-  <div class="min-h-screen bg-gray-50 p-6">
-    
-    <!-- Header con saludo -->
-    <div class="mb-6">
-      <h1 class="text-3xl font-bold text-gray-900">
-        <i class="fas fa-chart-line text-blue-600 mr-3"></i>
-        Dashboard
-      </h1>
-      <p class="text-gray-600 mt-1">
-        Bienvenido de vuelta, {{ usuarioNombre }} 👋
-      </p>
-      <p class="text-sm text-gray-500">
-        {{ fechaActual }}
-      </p>
+  <div class="space-y-8 animate-fade-in p-2">
+    <!-- Header Premium -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div>
+        <div class="flex items-center gap-3 mb-2">
+          <span class="px-3 py-1 bg-violet-600 text-white text-[8px] font-black uppercase tracking-[0.3em] rounded-lg shadow-lg shadow-violet-500/20 animate-pulse">Live Dashboard</span>
+          <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">{{ fechaActual }}</span>
+        </div>
+        <h1 class="text-4xl font-black text-gray-900 tracking-tighter uppercase leading-none">
+          Hola, {{ usuarioNombre.split(' ')[0] }}
+        </h1>
+        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.3em] mt-2">Bienvenido al centro de mando de tu clínica</p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button
+          @click="handleRefresh"
+          :disabled="dashboardStore.loading"
+          class="flex items-center gap-3 px-6 py-4 bg-white border border-gray-100 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:shadow-xl transition-all disabled:opacity-50 group"
+        >
+          <i :class="['fas fa-sync-alt', dashboardStore.loading ? 'fa-spin' : 'group-hover:rotate-180 transition-transform duration-500']"></i>
+          {{ dashboardStore.loading ? 'Actualizando' : 'Sincronizar Datos' }}
+        </button>
+      </div>
     </div>
 
-    <!-- Botón Refrescar -->
-    <div class="flex justify-end mb-4">
-      <button
-        @click="handleRefresh"
-        :disabled="dashboardStore.loading"
-        class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition disabled:opacity-50"
-      >
-        <i 
-          :class="[
-            'fas fa-sync-alt',
-            dashboardStore.loading ? 'fa-spin' : ''
-          ]"
-        ></i>
-        {{ dashboardStore.loading ? 'Actualizando...' : 'Actualizar' }}
-      </button>
-    </div>
-
-    <!-- KPIs Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-      
-      <!-- Pacientes -->
+    <!-- Bento Grid Layer 1: KPIs -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <KPICard
-        title="Total Pacientes"
+        title="Pacientes"
         :value="dashboardStore.kpis.pacientes.total"
-        :subtitle="`${dashboardStore.kpis.pacientes.nuevos_mes} nuevos este mes`"
+        :subtitle="`${dashboardStore.kpis.pacientes.nuevos_mes} ingresos este mes`"
         icon="fas fa-users"
-        color="#3B82F6"
+        color="#7c3aed"
+        :change="12"
       />
-
-      <!-- Citas Hoy -->
       <KPICard
         title="Citas Hoy"
         :value="dashboardStore.kpis.citas.hoy"
-        :subtitle="`${dashboardStore.kpis.citas.pendientes} pendientes`"
-        icon="fas fa-calendar-day"
-        color="#10B981"
+        :subtitle="`${dashboardStore.kpis.citas.pendientes} por atender`"
+        icon="fas fa-calendar-check"
+        color="#0891b2"
+        :progress="Math.round(((dashboardStore.kpis.citas.hoy - dashboardStore.kpis.citas.pendientes) / dashboardStore.kpis.citas.hoy) * 100) || 0"
       />
-
-      <!-- Ingresos del Mes -->
       <KPICard
-        title="Ingresos del Mes"
+        title="Ingresos"
         :value="dashboardStore.kpis.ingresos.mes_actual"
-        :subtitle="`${formatCurrency(dashboardStore.kpis.ingresos.pendiente)} pendiente`"
-        icon="fas fa-dollar-sign"
-        color="#F59E0B"
+        :subtitle="`Meta mensual: $5.000.000`"
+        icon="fas fa-wallet"
+        color="#059669"
         format="currency"
+        :progress="Math.round((dashboardStore.kpis.ingresos.mes_actual / 5000000) * 100)"
       />
-
-      <!-- Tratamientos Activos -->
       <KPICard
-        title="Tratamientos Activos"
+        title="Tratamientos"
         :value="dashboardStore.kpis.tratamientos.activos"
-        :subtitle="`En curso`"
+        subtitle="Planes en ejecución"
         icon="fas fa-tooth"
-        color="#6366F1"
+        color="#db2777"
       />
-
     </div>
 
-    <!-- Fila de Widgets -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+    <!-- Bento Grid Layer 2: Main Content -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
       
-      <!-- Próximas Citas (2 columnas) -->
-      <div class="lg:col-span-2">
+      <!-- Próximas Citas (Bento Large) -->
+      <div class="lg:col-span-8">
         <ProximasCitasWidget
           :citas="dashboardStore.proximasCitas"
           :loading="dashboardStore.loading"
         />
       </div>
 
-      <!-- Resumen Rápido -->
-      <div class="bg-white rounded-xl shadow-md p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">
-          <i class="fas fa-chart-bar text-blue-600 mr-2"></i>
-          Resumen Rápido
-        </h3>
+      <!-- Quick Summary (Bento Tall) -->
+      <div class="lg:col-span-4 flex flex-col gap-8">
+         <div class="bg-gray-900 rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden group flex-1 min-h-[300px]">
+            <div class="absolute -right-10 -top-10 w-40 h-40 bg-violet-600/20 rounded-full blur-3xl group-hover:bg-violet-600/30 transition-colors"></div>
+            
+            <h3 class="text-sm font-black uppercase tracking-tight mb-8 relative z-10 flex items-center justify-between">
+              Estado Operativo
+              <i class="fas fa-chart-bar text-violet-400"></i>
+            </h3>
 
-        <div class="space-y-4">
-          
-          <!-- Profesionales -->
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <i class="fas fa-user-md text-blue-600"></i>
-              </div>
-              <div>
-                <p class="text-sm text-gray-600">Profesionales</p>
-                <p class="font-semibold text-gray-900">
-                  {{ profesionalesStore.totalActivos }} activos
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Citas Semana -->
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                <i class="fas fa-calendar-week text-green-600"></i>
-              </div>
-              <div>
-                <p class="text-sm text-gray-600">Citas esta semana</p>
-                <p class="font-semibold text-gray-900">
-                  {{ dashboardStore.kpis.citas.semana }}
-                </p>
+            <div class="space-y-6 relative z-10">
+              <div v-for="(stat, idx) in quickStats" :key="idx" class="flex items-center justify-between group/stat">
+                <div class="flex items-center gap-4">
+                  <div :class="['w-10 h-10 rounded-xl flex items-center justify-center text-xs', stat.bg]">
+                    <i :class="stat.icon"></i>
+                  </div>
+                  <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest group-hover/stat:text-white transition-colors">{{ stat.label }}</span>
+                </div>
+                <span class="text-sm font-black tracking-tight">{{ stat.value }}</span>
               </div>
             </div>
-          </div>
 
-          <!-- Pacientes Activos -->
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                <i class="fas fa-user-check text-purple-600"></i>
-              </div>
-              <div>
-                <p class="text-sm text-gray-600">Pacientes activos</p>
-                <p class="font-semibold text-gray-900">
-                  {{ dashboardStore.kpis.pacientes.activos }}
-                </p>
-              </div>
+            <div class="mt-12 pt-8 border-t border-white/5 relative z-10">
+               <button class="w-full py-4 bg-white/5 hover:bg-white/10 rounded-2xl text-[9px] font-black uppercase tracking-[0.2em] transition-all">Ver Reporte Detallado</button>
             </div>
-          </div>
-
-          <!-- Citas Mes -->
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                <i class="fas fa-calendar-alt text-orange-600"></i>
-              </div>
-              <div>
-                <p class="text-sm text-gray-600">Citas este mes</p>
-                <p class="font-semibold text-gray-900">
-                  {{ dashboardStore.kpis.citas.mes }}
-                </p>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Accesos Rápidos -->
-    <div class="bg-white rounded-xl shadow-md p-6 mb-6">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">
-        <i class="fas fa-bolt text-blue-600 mr-2"></i>
-        Accesos Rápidos
-      </h3>
-
-      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        
-        <router-link
-          to="/pacientes"
-          class="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-lg hover:bg-blue-50 hover:shadow-md transition group"
-        >
-          <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-600 transition">
-            <i class="fas fa-users text-blue-600 text-xl group-hover:text-white transition"></i>
-          </div>
-          <span class="text-sm font-medium text-gray-700 text-center">Pacientes</span>
-        </router-link>
-
-        <router-link
-          to="/citas"
-          class="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-lg hover:bg-green-50 hover:shadow-md transition group"
-        >
-          <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-600 transition">
-            <i class="fas fa-calendar text-green-600 text-xl group-hover:text-white transition"></i>
-          </div>
-          <span class="text-sm font-medium text-gray-700 text-center">Citas</span>
-        </router-link>
-
-        <router-link
-          to="/profesionales"
-          class="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-lg hover:bg-purple-50 hover:shadow-md transition group"
-        >
-          <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-600 transition">
-            <i class="fas fa-user-md text-purple-600 text-xl group-hover:text-white transition"></i>
-          </div>
-          <span class="text-sm font-medium text-gray-700 text-center">Profesionales</span>
-        </router-link>
-
-        <router-link
-          to="/facturacion"
-          class="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-lg hover:bg-orange-50 hover:shadow-md transition group"
-        >
-          <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center group-hover:bg-orange-600 transition">
-            <i class="fas fa-file-invoice-dollar text-orange-600 text-xl group-hover:text-white transition"></i>
-          </div>
-          <span class="text-sm font-medium text-gray-700 text-center">Facturación</span>
-        </router-link>
-
-        <router-link
-          to="/historia-clinica"
-          class="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-lg hover:bg-pink-50 hover:shadow-md transition group"
-        >
-          <div class="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center group-hover:bg-pink-600 transition">
-            <i class="fas fa-notes-medical text-pink-600 text-xl group-hover:text-white transition"></i>
-          </div>
-          <span class="text-sm font-medium text-gray-700 text-center">Historia Clínica</span>
-        </router-link>
-
-        <router-link
-          to="/configuracion"
-          class="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-lg hover:bg-gray-200 hover:shadow-md transition group"
-        >
-          <div class="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center group-hover:bg-gray-600 transition">
-            <i class="fas fa-cog text-gray-600 text-xl group-hover:text-white transition"></i>
-          </div>
-          <span class="text-sm font-medium text-gray-700 text-center">Configuración</span>
-        </router-link>
-
+         </div>
       </div>
     </div>
 
+    <!-- Quick Access (Horizontal Grid) -->
+    <div class="bg-white rounded-[2.5rem] p-10 border border-gray-100 shadow-sm relative overflow-hidden">
+       <div class="absolute -left-20 -bottom-20 w-64 h-64 bg-gray-50 rounded-full blur-3xl"></div>
+       
+       <h3 class="text-sm font-black text-gray-900 uppercase tracking-tight mb-8 relative z-10">Acciones Frecuentes</h3>
+       
+       <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 relative z-10">
+          <router-link
+            v-for="link in quickLinks"
+            :key="link.to"
+            :to="link.to"
+            class="flex flex-col items-center gap-4 p-6 bg-gray-50/50 rounded-[2rem] hover:bg-white hover:shadow-2xl hover:scale-105 transition-all group border border-transparent hover:border-gray-100"
+          >
+            <div :class="['w-14 h-14 rounded-2xl flex items-center justify-center text-xl shadow-sm transition-all group-hover:shadow-lg', link.bg, link.text]">
+              <i :class="link.icon"></i>
+            </div>
+            <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest text-center group-hover:text-gray-900 transition-colors">{{ link.label }}</span>
+          </router-link>
+       </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useDashboardStore } from '@clinica/stores/dashboard'
 import { useProfesionalesStore } from '@clinica/stores/profesionales'
 import { useAuthStore } from '@shared/stores/auth'
@@ -247,39 +137,57 @@ const dashboardStore = useDashboardStore()
 const profesionalesStore = useProfesionalesStore()
 const authStore = useAuthStore()
 
-const usuarioNombre = computed(() => {
-  return authStore.user?.nombre || 'Usuario'
-})
+const usuarioNombre = computed(() => authStore.user?.nombre || 'Colega')
 
 const fechaActual = computed(() => {
-  const opciones = { 
-    weekday: 'long', 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
-  }
-  return new Date().toLocaleDateString('es-ES', opciones)
+  return new Date().toLocaleDateString('es-ES', { 
+    weekday: 'long', day: 'numeric', month: 'long' 
+  })
 })
 
-function formatCurrency(value) {
-  return new Intl.NumberFormat('es-CL', {
-    style: 'currency',
-    currency: 'CLP',
-    minimumFractionDigits: 0
-  }).format(value || 0)
-}
+const quickStats = computed(() => [
+  { label: 'Especialistas', value: `${profesionalesStore.totalActivos} Activos`, icon: 'fas fa-user-md', bg: 'bg-blue-500/10 text-blue-400' },
+  { label: 'Agenda Semanal', value: dashboardStore.kpis.citas.semana, icon: 'fas fa-calendar-week', bg: 'bg-emerald-500/10 text-emerald-400' },
+  { label: 'Fichas Activas', value: dashboardStore.kpis.pacientes.activos, icon: 'fas fa-id-card', bg: 'bg-orange-500/10 text-orange-400' },
+  { label: 'Productividad', value: '84%', icon: 'fas fa-rocket', bg: 'bg-violet-500/10 text-violet-400' }
+])
+
+const quickLinks = [
+  { to: '/pacientes', label: 'Pacientes', icon: 'fas fa-users', bg: 'bg-violet-50', text: 'text-violet-600' },
+  { to: '/calendario', label: 'Agenda', icon: 'fas fa-calendar-plus', bg: 'bg-emerald-50', text: 'text-emerald-600' },
+  { to: '/profesionales', label: 'Staff', icon: 'fas fa-user-md', bg: 'bg-blue-50', text: 'text-blue-600' },
+  { to: '/facturacion', label: 'Finanzas', icon: 'fas fa-wallet', bg: 'bg-orange-50', text: 'text-orange-600' },
+  { to: '/tratamientos', label: 'Servicios', icon: 'fas fa-tooth', bg: 'bg-pink-50', text: 'text-pink-600' },
+  { to: '/configuracion', label: 'Ajustes', icon: 'fas fa-cog', bg: 'bg-gray-100', text: 'text-gray-600' }
+]
 
 async function handleRefresh() {
-  await dashboardStore.refresh()
+  await dashboardStore.loadDashboard()
 }
 
 onMounted(async () => {
-  // Cargar datos del dashboard
   await dashboardStore.loadDashboard()
-  
-  // Cargar profesionales si no están cargados
   if (profesionalesStore.profesionales.length === 0) {
     await profesionalesStore.fetchProfesionales()
   }
 })
 </script>
+
+<style scoped>
+@keyframes fade-in { 
+  from { opacity: 0; transform: translateY(10px); } 
+  to { opacity: 1; transform: translateY(0); } 
+}
+.animate-fade-in { animation: fade-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+}
+</style>

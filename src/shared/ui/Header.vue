@@ -1,215 +1,142 @@
-<!-- components/admin/Header.vue -->
+<!-- components/shared/Header.vue -->
 <template>
-  <header class="bg-white border-b border-gray-200 h-16">
-    <div class="h-full px-4 flex items-center justify-between">
-      
-      <!-- Left: Menu Toggle + Breadcrumbs -->
-      <div class="flex items-center gap-4">
-        
-        <!-- Menu Toggle (Mobile) -->
-        <button
-          @click="$emit('toggle-sidebar')"
-          class="lg:hidden text-gray-500 hover:text-gray-700 transition"
-        >
-          <i class="fas fa-bars text-xl"></i>
-        </button>
+  <header class="h-24 px-8 flex items-center justify-between relative z-30 bg-gray-50/50 backdrop-blur-md">
+    <!-- Left: Breadcrumbs / Title -->
+    <div class="flex items-center gap-6">
+      <!-- Mobile Toggle -->
+      <button
+        @click="$emit('toggle-sidebar')"
+        class="lg:hidden w-12 h-12 flex items-center justify-center bg-white rounded-2xl shadow-sm border border-gray-100 text-gray-500 hover:text-violet-600 transition-colors"
+      >
+        <i class="fas fa-bars"></i>
+      </button>
 
-        <!-- Breadcrumbs / Page Title -->
-        <div>
-          <h2 class="text-xl font-bold text-gray-800">
-            {{ pageTitle }}
-          </h2>
-          <p class="text-xs text-gray-500" v-if="pageSubtitle">
-            {{ pageSubtitle }}
+      <div>
+        <h2 class="text-xl font-black text-gray-900 uppercase tracking-tight">
+          {{ pageTitle }}
+        </h2>
+        <div class="flex items-center gap-2 mt-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-violet-600 animate-pulse"></span>
+          <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em]">
+            {{ pageSubtitle || 'Sistema de Gestión Inteligente' }}
           </p>
         </div>
+      </div>
+    </div>
 
+    <!-- Right: Actions & User -->
+    <div class="flex items-center gap-6">
+      <!-- Search (Premium Style) -->
+      <div class="hidden xl:block relative group">
+        <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within/input:text-violet-600 transition-colors text-xs"></i>
+        <input
+          type="text"
+          placeholder="BUSCAR PACIENTE, CITA..."
+          class="w-72 pl-14 pr-6 py-4 bg-white border border-gray-100 rounded-2xl text-[10px] font-black uppercase tracking-widest outline-none focus:ring-4 focus:ring-violet-600/5 focus:border-violet-600/20 transition-all shadow-sm group-hover:shadow-md"
+        >
       </div>
 
-      <!-- Right: Search + Notifications + User -->
-      <div class="flex items-center gap-4">
-        
-        <!-- Search -->
-        <div class="hidden md:block">
-          <div class="relative">
-            <input
-              type="text"
-              placeholder="Buscar paciente, cita..."
-              class="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-            >
-            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-          </div>
-        </div>
-
-        <!-- Notifications -->
+      <!-- Notifications -->
+      <div class="relative">
         <button
           @click="toggleNotifications"
-          class="relative text-gray-500 hover:text-gray-700 transition"
+          class="w-12 h-12 flex items-center justify-center bg-white border border-gray-100 rounded-2xl text-gray-400 hover:text-violet-600 hover:shadow-md transition-all relative"
         >
-          <i class="fas fa-bell text-xl"></i>
+          <i class="fas fa-bell text-sm"></i>
           <span
             v-if="unreadNotifications > 0"
-            class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold"
+            class="absolute top-3 right-3 w-4 h-4 bg-violet-600 text-white text-[8px] rounded-lg flex items-center justify-center font-black border-2 border-white shadow-lg shadow-violet-500/20"
           >
-            {{ unreadNotifications > 9 ? '9+' : unreadNotifications }}
+            {{ unreadNotifications }}
           </span>
         </button>
 
-        <!-- Divider -->
-        <div class="h-8 w-px bg-gray-300"></div>
+        <!-- Notifications Panel (Absoluto) -->
+        <transition 
+          enter-active-class="transition duration-300 ease-out"
+          enter-from-class="opacity-0 translate-y-4"
+          enter-to-class="opacity-100 translate-y-0"
+          leave-active-class="transition duration-200 ease-in"
+          leave-from-class="opacity-100 translate-y-0"
+          leave-to-class="opacity-0 translate-y-4"
+        >
+          <div v-show="notificationsOpen" class="absolute right-0 mt-4 w-[400px] bg-white rounded-[2.5rem] shadow-2xl border border-gray-100 p-8 z-[60] overflow-hidden">
+             <!-- Header -->
+             <div class="flex items-center justify-between mb-6">
+                <h4 class="text-sm font-black text-gray-900 uppercase tracking-tight">Notificaciones</h4>
+                <button @click="markAllAsRead" class="text-[9px] font-black text-violet-600 uppercase tracking-widest hover:underline">Limpiar</button>
+             </div>
+             <!-- List -->
+             <div class="space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
+                <div v-for="notif in notifications" :key="notif.id" class="flex gap-4 p-4 rounded-3xl bg-gray-50/50 hover:bg-gray-50 transition-colors group cursor-pointer">
+                  <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-xs flex-shrink-0" :class="getNotifBg(notif.type)">
+                    <i :class="getNotifIcon(notif.type)"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-[11px] font-black text-gray-900 uppercase tracking-tight mb-1">{{ notif.title }}</p>
+                    <p class="text-[10px] font-bold text-gray-500 leading-relaxed line-clamp-2 uppercase tracking-tight opacity-70">{{ notif.message }}</p>
+                    <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest mt-2">{{ notif.time }}</p>
+                  </div>
+                </div>
+             </div>
+          </div>
+        </transition>
+      </div>
 
-        <!-- User Menu -->
-        <div class="relative">
-          <button
-            @click="toggleUserMenu"
-            class="flex items-center gap-3 hover:bg-gray-50 rounded-lg px-3 py-2 transition"
-          >
-            <!-- Avatar -->
-            <div class="w-9 h-9 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
-              {{ authStore.userInitials }}
-            </div>
+      <!-- Divider -->
+      <div class="h-8 w-[1px] bg-gray-200 hidden md:block"></div>
 
-            <!-- User Info -->
-            <div class="hidden md:block text-left">
-              <p class="text-sm font-medium text-gray-800">
-                {{ authStore.userName }}
-              </p>
-              <p class="text-xs text-gray-500">
-                {{ authStore.user?.rol }}
-              </p>
-            </div>
+      <!-- User Menu -->
+      <div class="relative">
+        <button
+          @click="toggleUserMenu"
+          class="flex items-center gap-4 bg-white border border-gray-100 h-14 pl-2 pr-5 rounded-[1.2rem] hover:shadow-md transition-all group"
+        >
+          <!-- Avatar con gradiente -->
+          <div class="w-10 h-10 bg-gradient-to-br from-violet-600 to-indigo-800 rounded-xl flex items-center justify-center text-white text-[10px] font-black shadow-lg shadow-violet-500/20 group-hover:scale-105 transition-transform">
+            {{ authStore.userInitials }}
+          </div>
 
-            <!-- Dropdown Icon -->
-            <i class="fas fa-chevron-down text-gray-400 text-sm"></i>
-          </button>
+          <!-- User Info -->
+          <div class="hidden md:flex flex-col text-left">
+            <span class="text-[10px] font-black text-gray-900 uppercase tracking-tight leading-none mb-1">
+              {{ authStore.userName }}
+            </span>
+            <span class="text-[8px] font-bold text-violet-500 uppercase tracking-widest leading-none">
+              {{ authStore.user?.rol || 'Staff' }}
+            </span>
+          </div>
 
-          <!-- User Dropdown -->
-          <transition
-            enter-active-class="transition ease-out duration-100"
-            enter-from-class="transform opacity-0 scale-95"
-            enter-to-class="transform opacity-100 scale-100"
-            leave-active-class="transition ease-in duration-75"
-            leave-from-class="transform opacity-100 scale-100"
-            leave-to-class="transform opacity-0 scale-95"
-          >
-            <div
-              v-if="userMenuOpen"
-              class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
-            >
-              <!-- User Info -->
-              <div class="px-4 py-3 border-b border-gray-100">
-                <p class="text-sm font-medium text-gray-800">
-                  {{ authStore.userName }}
-                </p>
-                <p class="text-xs text-gray-500">
-                  {{ authStore.user?.email }}
-                </p>
-              </div>
+          <i class="fas fa-chevron-down text-[10px] text-gray-400 group-hover:text-violet-600 transition-colors"></i>
+        </button>
 
-              <!-- Menu Items -->
-              <router-link
-                to="/perfil"
-                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition"
-                @click="userMenuOpen = false"
-              >
-                <i class="fas fa-user mr-3 text-gray-400"></i>
-                Mi Perfil
-              </router-link>
-
-              <router-link
-                to="/configuracion"
-                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition"
-                @click="userMenuOpen = false"
-              >
-                <i class="fas fa-cog mr-3 text-gray-400"></i>
-                Configuración
-              </router-link>
-
-              <div class="border-t border-gray-100 my-2"></div>
-
-              <button
-                @click="handleLogout"
-                class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition"
-              >
-                <i class="fas fa-sign-out-alt mr-3"></i>
-                Cerrar Sesión
-              </button>
-            </div>
-          </transition>
-        </div>
-
+        <!-- Dropdown (Absoluto) -->
+        <transition 
+          enter-active-class="transition duration-300 ease-out"
+          enter-from-class="opacity-0 scale-95"
+          enter-to-class="opacity-100 scale-100"
+          leave-active-class="transition duration-200 ease-in"
+          leave-from-class="opacity-100 scale-100"
+          leave-to-class="opacity-0 scale-95"
+        >
+          <div v-show="userMenuOpen" class="absolute right-0 mt-4 w-64 bg-white rounded-[2rem] shadow-2xl border border-gray-100 p-6 z-[60]">
+             <div class="space-y-1">
+                <router-link to="/perfil" @click="userMenuOpen = false" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-[10px] font-black text-gray-600 uppercase tracking-widest transition-colors">
+                  <i class="fas fa-user-circle text-gray-400"></i> Mi Perfil
+                </router-link>
+                <router-link to="/configuracion" @click="userMenuOpen = false" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 text-[10px] font-black text-gray-600 uppercase tracking-widest transition-colors">
+                  <i class="fas fa-cog text-gray-400"></i> Ajustes
+                </router-link>
+                <div class="h-[1px] bg-gray-100 my-2"></div>
+                <button @click="handleLogout" class="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-red-50 text-[10px] font-black text-red-500 uppercase tracking-widest transition-colors">
+                  <i class="fas fa-sign-out-alt"></i> Finalizar Sesión
+                </button>
+             </div>
+          </div>
+        </transition>
       </div>
 
     </div>
-
-    <!-- Notifications Panel -->
-    <transition
-      enter-active-class="transition ease-out duration-100"
-      enter-from-class="transform opacity-0 -translate-y-2"
-      enter-to-class="transform opacity-100 translate-y-0"
-      leave-active-class="transition ease-in duration-75"
-      leave-from-class="transform opacity-100 translate-y-0"
-      leave-to-class="transform opacity-0 -translate-y-2"
-    >
-      <div
-        v-if="notificationsOpen"
-        class="absolute right-4 top-16 w-96 bg-white rounded-lg shadow-xl border border-gray-200 z-50"
-      >
-        <!-- Header -->
-        <div class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
-          <h3 class="font-semibold text-gray-800">Notificaciones</h3>
-          <button
-            @click="markAllAsRead"
-            class="text-xs text-blue-600 hover:text-blue-700 font-medium"
-          >
-            Marcar todas como leídas
-          </button>
-        </div>
-
-        <!-- Notifications List -->
-        <div class="max-h-96 overflow-y-auto">
-          <div
-            v-for="notification in notifications"
-            :key="notification.id"
-            class="px-4 py-3 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition"
-          >
-            <div class="flex gap-3">
-              <div :class="[
-                'w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0',
-                notification.type === 'cita' ? 'bg-blue-100 text-blue-600' :
-                notification.type === 'pago' ? 'bg-green-100 text-green-600' :
-                'bg-purple-100 text-purple-600'
-              ]">
-                <i :class="[
-                  notification.type === 'cita' ? 'fas fa-calendar' :
-                  notification.type === 'pago' ? 'fas fa-dollar-sign' :
-                  'fas fa-bell'
-                ]"></i>
-              </div>
-              <div class="flex-1">
-                <p class="text-sm text-gray-800 font-medium">
-                  {{ notification.title }}
-                </p>
-                <p class="text-xs text-gray-600 mt-1">
-                  {{ notification.message }}
-                </p>
-                <p class="text-xs text-gray-400 mt-1">
-                  {{ notification.time }}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Footer -->
-        <div class="px-4 py-3 bg-gray-50 text-center">
-          <button class="text-sm text-blue-600 hover:text-blue-700 font-medium">
-            Ver todas las notificaciones
-          </button>
-        </div>
-      </div>
-    </transition>
-
   </header>
 </template>
 
@@ -224,60 +151,44 @@ const authStore = useAuthStore()
 
 defineEmits(['toggle-sidebar'])
 
-// State
 const userMenuOpen = ref(false)
 const notificationsOpen = ref(false)
 
-// Page Title
 const pageTitle = computed(() => {
   const titles = {
-    '/dashboard': 'Dashboard',
-    '/pacientes': 'Pacientes',
-    '/profesionales': 'Profesionales',
-    '/tratamientos': 'Tratamientos',
-    '/citas': 'Citas',
-    '/calendario': 'Calendario',
-    '/facturacion': 'Facturación',
-    '/pagos': 'Pagos',
-    '/reportes': 'Reportes',
-    '/configuracion': 'Configuración',
-    '/usuarios': 'Usuarios'
+    '/dashboard': 'Panel Principal',
+    '/pacientes': 'Base de Pacientes',
+    '/profesionales': 'Especialistas',
+    '/tratamientos': 'Servicios Clínicos',
+    '/agenda': 'Agenda Maestra',
+    '/citas': 'Agenda Maestra',
+    '/calendario': 'Calendario Global',
+    '/facturacion': 'Módulo Financiero',
+    '/reportes': 'Inteligencia de Datos',
+    '/configuracion': 'Configuración Sistema',
+    '/usuarios': 'Seguridad de Acceso'
   }
   return titles[route.path] || 'DentalCloud'
 })
 
 const pageSubtitle = computed(() => {
-  return null
+  const subtitles = {
+    '/dashboard': 'Snapshot de rendimiento clínico',
+    '/pacientes': 'Gestión integral de fichas y registros',
+    '/agenda': 'Sincronización de citas y turnos',
+    '/citas': 'Sincronización de citas y turnos'
+  }
+  return subtitles[route.path]
 })
 
-// Notifications (ejemplo)
 const notifications = ref([
-  {
-    id: 1,
-    type: 'cita',
-    title: 'Nueva cita programada',
-    message: 'Juan Pérez - Hoy 14:00',
-    time: 'Hace 5 minutos'
-  },
-  {
-    id: 2,
-    type: 'pago',
-    title: 'Pago recibido',
-    message: 'María González - $150.000',
-    time: 'Hace 1 hora'
-  },
-  {
-    id: 3,
-    type: 'alert',
-    title: 'Recordatorio',
-    message: 'Revisar stock de materiales',
-    time: 'Hace 2 horas'
-  }
+  { id: 1, type: 'cita', title: 'Nueva Cita Agendada', message: 'Juan Pérez - Hoy a las 14:00 por Evaluación General', time: 'Hace 5 MIN' },
+  { id: 2, type: 'pago', title: 'Abono Recibido', message: 'María González ha registrado un abono de $150.000', time: 'Hace 1 HR' },
+  { id: 3, type: 'alert', title: 'Stock Crítico', message: 'Los Guantes de Nitrilo (M) han llegado al límite mínimo', time: 'Hace 2 HRS' }
 ])
 
 const unreadNotifications = computed(() => notifications.value.length)
 
-// Functions
 function toggleUserMenu() {
   userMenuOpen.value = !userMenuOpen.value
   notificationsOpen.value = false
@@ -293,8 +204,16 @@ function markAllAsRead() {
   notificationsOpen.value = false
 }
 
+function getNotifIcon(type) {
+  return type === 'cita' ? 'fas fa-calendar' : type === 'pago' ? 'fas fa-wallet' : 'fas fa-exclamation-circle'
+}
+
+function getNotifBg(type) {
+  return type === 'cita' ? 'bg-blue-50 text-blue-600' : type === 'pago' ? 'bg-emerald-50 text-emerald-600' : 'bg-orange-50 text-orange-600'
+}
+
 async function handleLogout() {
-  if (confirm('¿Estás seguro que deseas cerrar sesión?')) {
+  if (confirm('¿Estás seguro que deseas cerrar sesión en el sistema?')) {
     await authStore.logout()
     router.push('/login')
   }
@@ -308,3 +227,16 @@ document.addEventListener('click', (e) => {
   }
 })
 </script>
+
+<style scoped>
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+}
+</style>

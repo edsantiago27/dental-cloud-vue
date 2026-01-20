@@ -1,107 +1,65 @@
 <!-- components/citas/CitasCalendar.vue -->
-<!-- VERSIÓN 2.0 - ARQUITECTURA ANTI-LOOP -->
+<!-- VERSIÓN 2.0 - ARQUITECTURA ANTI-LOOP - BENTO REDESIGN -->
 <template>
-  <div class="bg-white rounded-lg shadow-md p-6">
+  <div class="bg-transparent h-full flex flex-col">
     
-    <!-- Toolbar -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+    <!-- Toolbar Custom Bento -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-10">
       
-      <!-- Navegación -->
-      <div class="flex items-center gap-2">
+      <!-- Navegación Premium -->
+      <div class="flex items-center gap-2 bg-gray-50 p-1.5 rounded-[1.5rem] border border-gray-100 shadow-sm">
         <button
           @click="handlePrev"
-          class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+          class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white hover:shadow-md transition-all text-gray-500 hover:text-violet-600"
         >
-          <i class="fas fa-chevron-left"></i>
+          <i class="fas fa-chevron-left text-[10px]"></i>
         </button>
         <button
           @click="handleToday"
-          class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+          class="px-6 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-white hover:shadow-md transition-all text-gray-900"
         >
           Hoy
         </button>
         <button
           @click="handleNext"
-          class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+          class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white hover:shadow-md transition-all text-gray-500 hover:text-violet-600"
         >
-          <i class="fas fa-chevron-right"></i>
-        </button>
-        <h2 class="ml-4 text-xl font-bold text-gray-800">
-          {{ calendarTitle }}
-        </h2>
-      </div>
-
-      <!-- Vistas -->
-      <div class="flex items-center gap-2">
-        <button
-          @click="changeView('timeGridDay')"
-          :class="[
-            'px-3 py-2 rounded-lg transition',
-            currentView === 'timeGridDay'
-              ? 'bg-blue-600 text-white'
-              : 'border border-gray-300 hover:bg-gray-50'
-          ]"
-        >
-          Día
-        </button>
-        <button
-          @click="changeView('timeGridWeek')"
-          :class="[
-            'px-3 py-2 rounded-lg transition',
-            currentView === 'timeGridWeek'
-              ? 'bg-blue-600 text-white'
-              : 'border border-gray-300 hover:bg-gray-50'
-          ]"
-        >
-          Semana
-        </button>
-        <button
-          @click="changeView('dayGridMonth')"
-          :class="[
-            'px-3 py-2 rounded-lg transition',
-            currentView === 'dayGridMonth'
-              ? 'bg-blue-600 text-white'
-              : 'border border-gray-300 hover:bg-gray-50'
-          ]"
-        >
-          Mes
-        </button>
-        <button
-          @click="changeView('listWeek')"
-          :class="[
-            'px-3 py-2 rounded-lg transition',
-            currentView === 'listWeek'
-              ? 'bg-blue-600 text-white'
-              : 'border border-gray-300 hover:bg-gray-50'
-          ]"
-        >
-          Lista
+          <i class="fas fa-chevron-right text-[10px]"></i>
         </button>
       </div>
 
+      <!-- Título de Fecha -->
+      <h2 class="text-xs font-black text-gray-900 uppercase tracking-[0.2em] bg-white px-6 py-3 rounded-2xl border border-gray-50 shadow-sm">
+        {{ calendarTitle }}
+      </h2>
+
+      <!-- Vistas Compactas -->
+      <div class="flex items-center gap-1 bg-gray-50 p-1 rounded-2xl border border-gray-100">
+        <button
+          v-for="view in ['timeGridDay', 'timeGridWeek', 'dayGridMonth', 'listWeek']"
+          :key="view"
+          @click="changeView(view)"
+          :class="[
+            'px-4 py-2.5 rounded-xl text-[8px] font-black uppercase tracking-widest transition-all',
+            currentView === view
+              ? 'bg-white text-violet-600 shadow-md translate-y-[-1px]'
+              : 'text-gray-400 hover:text-gray-600 hover:bg-white/50'
+          ]"
+        >
+          {{ viewLabels[view] }}
+        </button>
+      </div>
     </div>
 
-    <!-- Loading -->
-    <div v-if="loading" class="text-center py-12">
-      <i class="fas fa-spinner fa-spin text-4xl text-blue-600 mb-4"></i>
-      <p class="text-gray-600">Cargando calendario...</p>
+    <!-- Loading Overlay -->
+    <div v-if="loading" class="flex-1 flex flex-col items-center justify-center py-20">
+      <div class="w-12 h-12 border-4 border-violet-100 border-t-violet-600 rounded-full animate-spin mb-6"></div>
+      <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Sincronizando Agenda...</p>
     </div>
 
-    <!-- Calendario -->
-    <div v-show="!loading" ref="calendarContainer"></div>
-
-    <!-- Leyenda -->
-    <div class="mt-6 pt-4 border-t border-gray-200">
-      <p class="text-sm font-medium text-gray-700 mb-3">Estados:</p>
-      <div class="flex flex-wrap gap-4">
-        <div v-for="estado in citasStore.estados" :key="estado.value" class="flex items-center gap-2">
-          <div 
-            class="w-4 h-4 rounded"
-            :style="{ backgroundColor: estado.color }"
-          ></div>
-          <span class="text-sm text-gray-700">{{ estado.label }}</span>
-        </div>
-      </div>
+    <!-- Calendario Full -->
+    <div v-show="!loading" class="flex-1 relative">
+      <div ref="calendarContainer" class="calendar-premium-wrapper"></div>
     </div>
 
   </div>
@@ -120,125 +78,62 @@ import { useCitasStore } from '@clinica/stores/citas'
 const citasStore = useCitasStore()
 const emit = defineEmits(['event-click', 'date-click', 'event-update'])
 
-// State
 const calendarContainer = ref(null)
 const calendar = ref(null)
 const calendarTitle = ref('')
 const currentView = ref('timeGridWeek')
 const loading = ref(false)
 
-// Control de carga
+const viewLabels = {
+  timeGridDay: 'Día',
+  timeGridWeek: 'Semana',
+  dayGridMonth: 'Mes',
+  listWeek: 'Lista'
+}
+
 let isLoadingDates = false
 let currentDateRange = { start: null, end: null }
 let loadTimeout = null
 
-// ==========================================
-// FUNCIONES DE EVENTOS
-// ==========================================
-
-function handleEventClick(info) {
-  emit('event-click', info.event.extendedProps)
-}
-
-function handleDateClick(info) {
-  emit('date-click', {
-    date: info.dateStr,
-    allDay: info.allDay
-  })
-}
-
+function handleEventClick(info) { emit('event-click', info.event.extendedProps) }
+function handleDateClick(info) { emit('date-click', { date: info.dateStr, allDay: info.allDay }) }
 function handleDateSelect(info) {
   const fecha = info.startStr.split('T')[0]
   const hora = info.startStr.split('T')[1]?.substring(0, 5) || '09:00'
-  
-  emit('date-click', {
-    date: fecha,
-    time: hora
-  })
-  
-  if (calendar.value) {
-    calendar.value.unselect()
-  }
+  emit('date-click', { date: fecha, time: hora })
+  if (calendar.value) calendar.value.unselect()
 }
 
 function handleEventDrop(info) {
   const { event } = info
   const start = event.start
   const end = event.end
-  
-  const citaId = event.id
   const nuevaFecha = start.toISOString().split('T')[0]
   const nuevaHora = start.toTimeString().substring(0, 5)
-  
   let duracionMinutos = 30
-  if (end) {
-    duracionMinutos = Math.round((end - start) / (1000 * 60))
-  }
-
-  emit('event-update', {
-    id: citaId,
-    fecha: nuevaFecha,
-    hora: nuevaHora,
-    duracion_minutos: duracionMinutos
-  })
+  if (end) duracionMinutos = Math.round((end - start) / (1000 * 60))
+  emit('event-update', { id: event.id, fecha: nuevaFecha, hora: nuevaHora, duracion_minutos: duracionMinutos })
 }
 
 function handleEventResize(info) {
   const { event } = info
-  const start = event.start
-  const end = event.end
-  
-  if (!end) return
-
-  const citaId = event.id
-  const duracionMinutos = Math.round((end - start) / (1000 * 60))
-
-  emit('event-update', {
-    id: citaId,
-    duracion_minutos: duracionMinutos
-  })
+  if (!event.end) return
+  const duracionMinutos = Math.round((event.end - event.start) / (1000 * 60))
+  emit('event-update', { id: event.id, duracion_minutos: duracionMinutos })
 }
 
-// ==========================================
-// FUNCIÓN CRÍTICA: CARGAR CITAS
-// ==========================================
-
 async function handleDatesSet(info) {
-  // Prevenir múltiples llamadas simultáneas
-  if (isLoadingDates) {
-    console.log('⏳ Ya cargando, omitiendo datesSet')
-    return
-  }
-
+  if (isLoadingDates) return
   const start = info.startStr.split('T')[0]
   const end = info.endStr.split('T')[0]
-
-  // Prevenir recarga del mismo rango
-  if (currentDateRange.start === start && currentDateRange.end === end) {
-    console.log('📅 Mismo rango, omitiendo')
-    updateTitle()
-    return
-  }
-
-  // Debounce: esperar 800ms antes de cargar
+  if (currentDateRange.start === start && currentDateRange.end === end) { updateTitle(); return }
   clearTimeout(loadTimeout)
-  
   loadTimeout = setTimeout(async () => {
     isLoadingDates = true
     currentDateRange = { start, end }
-    
-    console.log('📅 Cargando citas:', start, 'hasta', end)
-    
     try {
-      // Cargar del store
       await citasStore.fetchCitas(start, end)
-      
-      // Actualizar eventos del calendario
       await updateCalendarEvents()
-      
-      console.log('✅ Eventos actualizados:', citasStore.citas.length)
-    } catch (error) {
-      console.error('❌ Error al cargar citas:', error)
     } finally {
       isLoadingDates = false
       updateTitle()
@@ -246,83 +141,24 @@ async function handleDatesSet(info) {
   }, 800)
 }
 
-// ==========================================
-// ACTUALIZAR EVENTOS DEL CALENDARIO
-// ==========================================
-
 async function updateCalendarEvents() {
   if (!calendar.value) return
-
-  // Remover todos los eventos actuales
-  const allEvents = calendar.value.getEvents()
-  allEvents.forEach(event => event.remove())
-
-  // Agregar nuevos eventos
+  calendar.value.getEvents().forEach(event => event.remove())
   const eventos = citasStore.citasParaCalendario
-  
-  if (eventos && eventos.length > 0) {
-    eventos.forEach(evento => {
-      calendar.value.addEvent(evento)
-    })
-  }
+  if (eventos) eventos.forEach(evento => calendar.value.addEvent(evento))
 }
 
-// ==========================================
-// NAVEGACIÓN
-// ==========================================
-
-function handlePrev() {
-  if (calendar.value) {
-    calendar.value.prev()
-    updateTitle()
-  }
-}
-
-function handleNext() {
-  if (calendar.value) {
-    calendar.value.next()
-    updateTitle()
-  }
-}
-
-function handleToday() {
-  if (calendar.value) {
-    calendar.value.today()
-    updateTitle()
-  }
-}
-
-function changeView(view) {
-  if (calendar.value) {
-    calendar.value.changeView(view)
-    currentView.value = view
-    updateTitle()
-  }
-}
-
-function updateTitle() {
-  if (calendar.value) {
-    calendarTitle.value = calendar.value.view.title
-  }
-}
-
-// ==========================================
-// INICIALIZACIÓN DEL CALENDARIO
-// ==========================================
+function handlePrev() { if (calendar.value) { calendar.value.prev(); updateTitle() } }
+function handleNext() { if (calendar.value) { calendar.value.next(); updateTitle() } }
+function handleToday() { if (calendar.value) { calendar.value.today(); updateTitle() } }
+function changeView(view) { if (calendar.value) { calendar.value.changeView(view); currentView.value = view; updateTitle() } }
+function updateTitle() { if (calendar.value) calendarTitle.value = calendar.value.view.title }
 
 async function initCalendar() {
   loading.value = true
-  
   await nextTick()
-  
-  if (!calendarContainer.value) {
-    console.error('❌ Container no encontrado')
-    loading.value = false
-    return
-  }
-
+  if (!calendarContainer.value) { loading.value = false; return }
   try {
-    // Crear instancia del calendario
     calendar.value = new Calendar(calendarContainer.value, {
       plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin],
       initialView: currentView.value,
@@ -335,155 +171,103 @@ async function initCalendar() {
       slotLabelInterval: '01:00',
       allDaySlot: false,
       nowIndicator: true,
-      navLinks: true,
       editable: true,
       selectable: true,
       selectMirror: true,
       dayMaxEvents: true,
-      weekends: true,
-      businessHours: {
-        daysOfWeek: [1, 2, 3, 4, 5, 6],
-        startTime: '09:00',
-        endTime: '18:00'
-      },
-      // CRÍTICO: Eventos vacíos al inicio
       events: [],
-      // Event handlers
       eventClick: handleEventClick,
       dateClick: handleDateClick,
       select: handleDateSelect,
       datesSet: handleDatesSet,
       eventDrop: handleEventDrop,
       eventResize: handleEventResize,
-      eventTimeFormat: {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-      },
-      slotLabelFormat: {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-      },
-      // CRÍTICO: Sin refetch automático
-      eventSources: [],
-      loading: function(isLoading) {
-        console.log('📊 FullCalendar loading:', isLoading)
-      }
+      eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
+      slotLabelFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
     })
-
-    // Renderizar
     calendar.value.render()
-    
     updateTitle()
-    
-    console.log('✅ Calendario inicializado')
-    
     loading.value = false
-  } catch (error) {
-    console.error('❌ Error al inicializar calendario:', error)
-    loading.value = false
-  }
+  } catch (error) { loading.value = false }
 }
 
-// ==========================================
-// MÉTODO PÚBLICO: REFETCH
-// ==========================================
-
 async function refetch() {
-  if (isLoadingDates) {
-    console.log('⏳ Ya cargando, omitiendo refetch')
-    return
-  }
-
-  console.log('🔄 Refetch manual solicitado')
-  
-  // Forzar recarga del rango actual
+  if (isLoadingDates) return
   currentDateRange = { start: null, end: null }
-  
   if (calendar.value) {
     const view = calendar.value.view
-    const start = view.currentStart.toISOString().split('T')[0]
-    const end = view.currentEnd.toISOString().split('T')[0]
-    
-    await citasStore.fetchCitas(start, end)
+    await citasStore.fetchCitas(view.currentStart.toISOString().split('T')[0], view.currentEnd.toISOString().split('T')[0])
     await updateCalendarEvents()
   }
 }
 
-// ==========================================
-// LIFECYCLE
-// ==========================================
+onMounted(() => { initCalendar() })
+onUnmounted(() => { if (calendar.value) calendar.value.destroy(); clearTimeout(loadTimeout) })
 
-onMounted(async () => {
-  await initCalendar()
-})
-
-onUnmounted(() => {
-  if (calendar.value) {
-    calendar.value.destroy()
-  }
-  clearTimeout(loadTimeout)
-})
-
-// Exponer métodos
-defineExpose({
-  refetch,
-  getCalendar: () => calendar.value
-})
+defineExpose({ refetch, getCalendar: () => calendar.value })
 </script>
 
 <style>
-/* Estilos personalizados para FullCalendar */
+/* Estilos Master Agenda Premium - DentalCloud */
 .fc {
-  font-family: inherit;
+  font-family: 'Outfit', sans-serif !important;
+  --fc-border-color: #f1f5f9;
+  --fc-today-bg-color: #f8fafc;
 }
 
-.fc .fc-button {
-  background-color: #3B82F6;
-  border-color: #3B82F6;
-}
+.fc-header-toolbar { display: none !important; }
+.fc-theme-standard td, .fc-theme-standard th { border-color: #f1f5f9 !important; }
+.fc-timegrid-slot { height: 4em !important; }
 
-.fc .fc-button:hover {
-  background-color: #2563EB;
-  border-color: #2563EB;
-}
-
-.fc .fc-button-primary:not(:disabled).fc-button-active {
-  background-color: #1D4ED8;
-  border-color: #1D4ED8;
-}
-
-.fc-theme-standard td,
-.fc-theme-standard th {
-  border-color: #E5E7EB;
-}
-
-.fc-theme-standard .fc-scrollgrid {
-  border-color: #E5E7EB;
-}
-
-.fc .fc-timegrid-slot {
-  height: 2.5em;
-}
-
-.fc-event {
-  cursor: pointer;
+.fc-timegrid-slot-label {
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  color: #94a3b8 !important;
   border: none !important;
-  padding: 2px 4px;
 }
 
-.fc-event:hover {
-  opacity: 0.9;
+.fc-col-header-cell {
+  background: #f8fafc !important;
+  padding: 15px 0 !important;
+  border: none !important;
 }
 
-.fc-daygrid-event {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.fc-col-header-cell-cushion {
+  font-size: 11px !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  color: #1e293b !important;
 }
 
-.fc .fc-list-event:hover td {
-  background-color: #F3F4F6;
+/* Event Styling */
+.fc-v-event {
+  background-color: white !important;
+  border-radius: 1.2rem !important;
+  border: 1px solid rgba(0,0,0,0.03) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+  padding: 8px !important;
+  overflow: hidden !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
+
+.fc-v-event:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1) !important;
+  z-index: 50 !important;
+}
+
+.fc-event-main { color: inherit !important; padding: 0 !important; }
+.fc-event-time { font-size: 8px !important; font-weight: 900 !important; color: #94a3b8 !important; }
+.fc-event-title { font-size: 10px !important; font-weight: 900 !important; text-transform: uppercase !important; color: #1e293b !important; }
+
+/* Now Indicator */
+.fc-timegrid-now-indicator-line { border-color: #7c3aed !important; }
+.fc-timegrid-now-indicator-arrow { border-color: #7c3aed !important; }
+
+/* List View Tuning */
+.fc-list-event { cursor: pointer !important; border-radius: 1rem !important; }
+.fc-list-event-title { font-weight: 900!important; text-transform: uppercase !important; font-size: 10px !important; }
 </style>

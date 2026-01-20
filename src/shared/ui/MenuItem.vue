@@ -1,4 +1,4 @@
-<!-- components/admin/MenuItem.vue -->
+<!-- components/shared/MenuItem.vue -->
 <template>
   <router-link
     :to="to"
@@ -8,47 +8,55 @@
     <div
       @click="navigate"
       :class="[
-        'flex items-center gap-3 px-3 py-3 mb-1 rounded-lg cursor-pointer transition-all duration-200',
+        'group flex items-center gap-4 px-4 py-4 rounded-2xl cursor-pointer transition-all duration-500 relative overflow-hidden focus:outline-none',
         isActive 
-          ? 'bg-blue-700 text-white shadow-lg' 
-          : 'text-blue-100 hover:bg-blue-700/50 hover:text-white'
+          ? 'bg-white/5 text-white shadow-[0px_0px_20px_rgba(255,255,255,0.02)] border border-white/5 ring-1 ring-white/5' 
+          : 'text-gray-500 hover:bg-white/5 hover:text-white border border-transparent hover:border-white/5'
       ]"
     >
-      <!-- Icon -->
+      <!-- Active Indicator (Sutil) -->
+      <div 
+        v-if="isActive" 
+        class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-violet-500 rounded-r-full shadow-[0px_0px_10px_rgba(124,58,237,0.5)]"
+      ></div>
+
+      <!-- Icon Container -->
       <div 
         :class="[
-          'w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-200',
+          'w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 flex-shrink-0',
           isActive 
-            ? 'bg-white/20' 
-            : 'bg-transparent'
+            ? 'bg-violet-600 text-white shadow-lg shadow-violet-500/20 scale-110' 
+            : 'bg-transparent group-hover:scale-110'
         ]"
       >
-        <i :class="[icon, 'text-lg']"></i>
+        <i :class="[icon, 'text-xs transition-transform']"></i>
       </div>
 
-      <!-- Label (solo cuando sidebar está abierto) -->
-      <div v-if="isOpen" class="flex-1 flex items-center justify-between">
-        <span class="font-medium">{{ label }}</span>
+      <!-- Label -->
+      <div v-show="isOpen" class="flex-1 flex items-center justify-between overflow-hidden">
+        <span class="text-[10px] font-black uppercase tracking-[0.2em] whitespace-nowrap transition-transform" :class="isActive ? 'translate-x-1' : ''">
+          {{ label }}
+        </span>
         
-        <!-- Badge (opcional) -->
-        <span
+        <!-- Badge -->
+        <div
           v-if="badge"
           :class="[
-            'px-2 py-0.5 rounded-full text-xs font-bold',
+            'px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest transition-all',
             isActive 
-              ? 'bg-white text-blue-700' 
-              : 'bg-blue-600 text-white'
+              ? 'bg-violet-500/20 text-violet-400' 
+              : 'bg-white/5 text-gray-400 group-hover:text-white'
           ]"
         >
           {{ badge }}
-        </span>
+        </div>
       </div>
 
-      <!-- Badge small (cuando sidebar está contraído) -->
-      <span
+      <!-- Compact Badge Indicator -->
+      <div
         v-if="!isOpen && badge"
-        class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-blue-900"
-      ></span>
+        class="absolute top-3 right-3 w-2 h-2 bg-violet-600 rounded-full ring-4 ring-[#0a0a0a]"
+      ></div>
     </div>
   </router-link>
 </template>
@@ -57,26 +65,11 @@
 import { useRouter } from 'vue-router'
 
 const props = defineProps({
-  to: {
-    type: String,
-    required: true
-  },
-  icon: {
-    type: String,
-    required: true
-  },
-  label: {
-    type: String,
-    required: true
-  },
-  isOpen: {
-    type: Boolean,
-    default: true
-  },
-  badge: {
-    type: [Number, String],
-    default: null
-  }
+  to: { type: String, required: true },
+  icon: { type: String, required: true },
+  label: { type: String, required: true },
+  isOpen: { type: Boolean, default: true },
+  badge: { type: [Number, String], default: null }
 })
 
 const router = useRouter()
@@ -85,9 +78,3 @@ function navigate() {
   router.push(props.to)
 }
 </script>
-
-<style scoped>
-.router-link-active {
-  /* Estilos adicionales si es necesario */
-}
-</style>

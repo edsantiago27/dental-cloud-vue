@@ -1,164 +1,152 @@
 <!-- views/auth/Login.vue -->
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-    <div class="w-full max-w-md">
-      
-      <!-- Card Principal -->
-      <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
-        
-        <!-- Header con Logo -->
-        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-8 text-center">
-          <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-            <i class="fas fa-tooth text-4xl text-blue-600"></i>
-          </div>
-          <h1 class="text-3xl font-bold text-white mb-2">DentalCloud</h1>
-          <p class="text-blue-100 text-sm">Sistema de Gestión Dental</p>
+  <div class="min-h-screen flex items-center justify-center bg-[#0a0a0a] relative overflow-hidden font-sans">
+    <!-- Decoraciones de fondo (Animated gradients) -->
+    <div class="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-violet-600/10 rounded-full blur-[140px] animate-pulse"></div>
+    <div class="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[140px] animate-pulse" style="animation-delay: 3s"></div>
+
+    <div class="w-full max-w-lg p-6 relative z-10">
+      <!-- Header / Logo Area -->
+      <div class="text-center mb-10">
+        <div class="inline-flex items-center justify-center w-24 h-24 rounded-[2.5rem] bg-gradient-to-br from-violet-600 to-indigo-800 shadow-2xl shadow-violet-500/20 mb-8 group transition-transform hover:scale-110 duration-500">
+          <i class="fas fa-tooth text-4xl text-white"></i>
         </div>
+        <h1 class="text-5xl font-black text-white tracking-tighter mb-2 uppercase">DentalCloud</h1>
+        <div class="flex items-center justify-center gap-3">
+          <span class="h-[1px] w-12 bg-white/10"></span>
+          <span class="text-[10px] font-black text-violet-400 uppercase tracking-[0.4em]">Professional Clinic Management</span>
+          <span class="h-[1px] w-12 bg-white/10"></span>
+        </div>
+      </div>
 
-        <!-- Formulario -->
-        <div class="p-8">
-          
-          <!-- Título -->
-          <div class="mb-6">
-            <h2 class="text-2xl font-bold text-gray-800 mb-1">Iniciar Sesión</h2>
-            <p class="text-gray-600 text-sm">Ingresa tus credenciales para continuar</p>
+      <!-- Login Card (Glassmorphism) -->
+      <div class="bg-white/[0.03] border border-white/10 backdrop-blur-2xl rounded-[3rem] shadow-2xl overflow-hidden relative group">
+        <div class="absolute inset-0 bg-gradient-to-b from-white/[0.05] to-transparent pointer-events-none"></div>
+        
+        <div class="p-10 relative z-10">
+          <div class="mb-8">
+            <h2 class="text-2xl font-black text-white uppercase tracking-tight">Acceso Staff</h2>
+            <p class="text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">Ingresa los credenciales de tu clínica</p>
           </div>
 
-          <!-- Mensaje de Error -->
-          <div v-if="authStore.error" class="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
-            <div class="flex items-start gap-3">
-              <i class="fas fa-exclamation-circle text-red-500 text-xl mt-0.5"></i>
-              <div class="flex-1">
-                <h3 class="font-semibold text-red-800 text-sm mb-1">Error de Autenticación</h3>
-                <p class="text-red-700 text-sm">{{ authStore.error }}</p>
+          <!-- Error Alert (Modern) -->
+          <transition 
+            enter-active-class="transition duration-300 ease-out"
+            enter-from-class="opacity-0 -translate-y-2"
+            enter-to-class="opacity-100 translate-y-0"
+            leave-active-class="transition duration-200 ease-in"
+            leave-from-class="opacity-100 translate-y-0"
+            leave-to-class="opacity-0 -translate-y-2"
+          >
+            <div v-if="authStore.error" class="mb-8 bg-red-500/10 border border-red-500/20 rounded-2xl p-4 flex items-center gap-4">
+              <div class="w-10 h-10 bg-red-500 text-white rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-red-500/20">
+                <i class="fas fa-exclamation-triangle"></i>
               </div>
-              <button 
-                @click="authStore.clearError" 
-                class="text-red-400 hover:text-red-600 transition"
-              >
+              <p class="text-xs font-bold text-red-500 uppercase tracking-tight flex-1">{{ authStore.error }}</p>
+              <button @click="authStore.clearError" class="p-2 text-red-500/50 hover:text-red-500">
                 <i class="fas fa-times"></i>
               </button>
             </div>
-          </div>
+          </transition>
 
-          <form @submit.prevent="handleLogin" class="space-y-5">
-            
-            <!-- Slug de Clínica -->
-            <div>
-              <label for="clinica_slug" class="block text-sm font-semibold text-gray-700 mb-2">
-                <i class="fas fa-clinic-medical text-blue-600 mr-2"></i>
-                Clínica
-              </label>
-              <input
-                id="clinica_slug"
-                v-model="form.clinica_slug"
-                type="text"
-                required
-                placeholder="slug-de-tu-clinica"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                :disabled="authStore.loading"
-              >
-              <p class="text-xs text-gray-500 mt-1">
-                <i class="fas fa-info-circle mr-1"></i>
-                Ejemplo: clinica-dental-centro
-              </p>
-            </div>
-
-            <!-- Email -->
-            <div>
-              <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
-                <i class="fas fa-envelope text-blue-600 mr-2"></i>
-                Correo Electrónico
-              </label>
-              <input
-                id="email"
-                v-model="form.email"
-                type="email"
-                required
-                placeholder="tu@email.com"
-                autocomplete="email"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                :disabled="authStore.loading"
-              >
-            </div>
-
-            <!-- Password -->
-            <div>
-              <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
-                <i class="fas fa-lock text-blue-600 mr-2"></i>
-                Contraseña
-              </label>
-              <div class="relative">
+          <form @submit.prevent="handleLogin" class="space-y-6">
+            <!-- Clinic Identifier -->
+            <div class="space-y-2">
+              <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-1">Identificador de Clínica</label>
+              <div class="relative group/input">
+                <i class="fas fa-clinic-medical absolute left-6 top-1/2 -translate-y-1/2 text-gray-500 transition-colors group-focus-within/input:text-violet-500"></i>
                 <input
-                  id="password"
-                  v-model="form.password"
-                  :type="showPassword ? 'text' : 'password'"
+                  v-model="form.clinica_slug"
+                  type="text"
                   required
-                  placeholder="••••••••"
-                  autocomplete="current-password"
-                  class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                  placeholder="SLUG-DE-TU-CLINICA"
+                  class="w-full pl-14 pr-6 py-5 bg-white/[0.05] border border-white/5 focus:bg-white/[0.08] focus:border-violet-500/50 focus:ring-4 focus:ring-violet-500/10 rounded-2xl text-[11px] font-black text-white uppercase tracking-[0.1em] transition-all outline-none"
                   :disabled="authStore.loading"
-                  @keyup.enter="handleLogin"
                 >
-                <button
-                  type="button"
-                  @click="showPassword = !showPassword"
-                  class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
-                  tabindex="-1"
-                >
-                  <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Email -->
+              <div class="space-y-2">
+                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-1">Email</label>
+                <div class="relative group/input">
+                  <i class="fas fa-envelope absolute left-6 top-1/2 -translate-y-1/2 text-gray-500 transition-colors group-focus-within/input:text-violet-500"></i>
+                  <input
+                    v-model="form.email"
+                    type="email"
+                    required
+                    placeholder="CORREO@EJEMPLO.COM"
+                    class="w-full pl-14 pr-6 py-5 bg-white/[0.05] border border-white/5 focus:bg-white/[0.08] focus:border-violet-500/50 focus:ring-4 focus:ring-violet-500/10 rounded-2xl text-[11px] font-black text-white uppercase tracking-[0.1em] transition-all outline-none"
+                    :disabled="authStore.loading"
+                  >
+                </div>
+              </div>
+
+              <!-- Password -->
+              <div class="space-y-2">
+                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-1">Contraseña</label>
+                <div class="relative group/input">
+                  <i class="fas fa-lock absolute left-6 top-1/2 -translate-y-1/2 text-gray-500 transition-colors group-focus-within/input:text-violet-500"></i>
+                  <input
+                    v-model="form.password"
+                    :type="showPassword ? 'text' : 'password'"
+                    required
+                    placeholder="••••••••"
+                    class="w-full pl-14 pr-14 py-5 bg-white/[0.05] border border-white/5 focus:bg-white/[0.08] focus:border-violet-500/50 focus:ring-4 focus:ring-violet-500/10 rounded-2xl text-[11px] font-black text-white transition-all outline-none"
+                    :disabled="authStore.loading"
+                  >
+                  <button
+                    type="button"
+                    @click="showPassword = !showPassword"
+                    class="absolute right-5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
+                  >
+                    <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                  </button>
+                </div>
               </div>
             </div>
 
             <!-- Recordar sesión -->
-            <div class="flex items-center justify-between">
-              <label class="flex items-center cursor-pointer">
-                <input
-                  v-model="form.remember"
-                  type="checkbox"
-                  class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-                >
-                <span class="ml-2 text-sm text-gray-700">Recordar sesión</span>
+            <div class="flex items-center justify-between px-2">
+              <label class="flex items-center gap-3 cursor-pointer group">
+                <div class="relative w-5 h-5 flex items-center justify-center border-2 border-white/10 rounded-lg bg-white/5 transition-all group-hover:border-violet-500/50">
+                  <input
+                    v-model="form.remember"
+                    type="checkbox"
+                    class="peer opacity-0 absolute inset-0 cursor-pointer"
+                  >
+                  <i class="fas fa-check text-[10px] text-white opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                </div>
+                <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest group-hover:text-gray-300 transition-colors">Recordar Sesión</span>
               </label>
-              
-              <!-- <a href="#" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                ¿Olvidaste tu contraseña?
-              </a> -->
             </div>
 
-            <!-- Botón de Login -->
+            <!-- Login Button -->
             <button
               type="submit"
               :disabled="authStore.loading"
-              class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+              class="w-full py-6 bg-white text-black rounded-[1.8rem] text-[11px] font-black uppercase tracking-[0.2em] shadow-2xl shadow-white/5 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 mt-4"
             >
-              <span v-if="!authStore.loading" class="flex items-center justify-center gap-2">
-                <i class="fas fa-sign-in-alt"></i>
-                <span>Iniciar Sesión</span>
-              </span>
-              <span v-else class="flex items-center justify-center gap-2">
-                <i class="fas fa-spinner fa-spin"></i>
-                <span>Autenticando...</span>
-              </span>
+              <div v-if="authStore.loading" class="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
+              <span v-if="!authStore.loading">Autenticar Sistema</span>
+              <span v-else>Procesando...</span>
+              <i v-if="!authStore.loading" class="fas fa-chevron-right text-[10px] mt-0.5"></i>
             </button>
-
           </form>
-
         </div>
-
       </div>
 
-      <!-- Footer -->
-      <div class="mt-6 text-center">
-        <p class="text-sm text-gray-600">
-          DentalCloud © {{ currentYear }}
+      <!-- Footer Info -->
+      <div class="mt-12 flex flex-col md:flex-row items-center justify-between gap-6 px-4">
+        <p class="text-[9px] font-bold text-gray-600 uppercase tracking-[0.3em]">
+          DentalCloud Intelligent Systems &copy; {{ currentYear }}
         </p>
-        <p class="text-xs text-gray-500 mt-1">
-          Sistema de Gestión para Clínicas Dentales
-        </p>
+        <div class="flex items-center gap-6">
+          <a href="#" class="text-[9px] font-bold text-gray-500 hover:text-violet-400 uppercase tracking-widest transition-colors">Soporte</a>
+          <a href="#" class="text-[9px] font-bold text-gray-500 hover:text-violet-400 uppercase tracking-widest transition-colors">Seguridad</a>
+        </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -166,12 +154,11 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@shared/stores/auth'  // ⭐ CAMBIO AQUÍ
+import { useAuthStore } from '@shared/stores/auth'
 
 const router = useRouter()
 const authStore = useAuthStore()
 
-// Form state
 const form = ref({
   clinica_slug: '',
   email: '',
@@ -180,12 +167,9 @@ const form = ref({
 })
 
 const showPassword = ref(false)
-
 const currentYear = computed(() => new Date().getFullYear())
 
-// Handle login
 async function handleLogin() {
-  // ⭐ CAMBIO: Usar loginClinica en lugar de login
   const result = await authStore.loginClinica({
     clinica_slug: form.value.clinica_slug,
     email: form.value.email,
@@ -193,11 +177,24 @@ async function handleLogin() {
   })
 
   if (result.success) {
-    console.log('✅ Login exitoso, redirigiendo a dashboard...')
     router.push('/dashboard')
-  } else {
-    console.log('❌ Login fallido:', result.message)
-    // El error ya está en authStore.error
   }
 }
 </script>
+
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap');
+
+.font-sans {
+  font-family: 'Outfit', sans-serif;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 0.15; }
+}
+
+.animate-pulse {
+  animation: pulse 10s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+</style>
