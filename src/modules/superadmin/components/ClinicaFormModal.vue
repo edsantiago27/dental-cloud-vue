@@ -107,9 +107,9 @@
                 class="w-full px-6 py-4 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/5 rounded-2xl focus:bg-white dark:focus:bg-[#1a1a1a] focus:ring-2 focus:ring-violet-600/20 dark:focus:ring-orange-500/20 text-sm font-bold transition-all outline-none text-gray-900 dark:text-white appearance-none cursor-pointer"
               >
                 <option value="" disabled>Seleccionar plan...</option>
-                <option value="1">Plan Básico</option>
-                <option value="2">Plan Profesional</option>
-                <option value="3">Plan Enterprise</option>
+                <option v-for="plan in planesDisponibles" :key="plan.id" :value="plan.id">
+                  {{ plan.nombre }} - {{ formatCurrency(plan.precio_mensual) }}/mes
+                </option>
               </select>
             </div>
 
@@ -211,6 +211,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useSuperAdminClinicasStore } from '@superadmin/stores/clinicas'
+import { useSuperAdminPlanesStore } from '@superadmin/stores/planes'
 
 const props = defineProps({
   clinica: {
@@ -222,6 +223,13 @@ const props = defineProps({
 const emit = defineEmits(['close', 'saved'])
 
 const clinicasStore = useSuperAdminClinicasStore()
+const planesStore = useSuperAdminPlanesStore()
+
+const planesDisponibles = computed(() => planesStore.planes)
+
+function formatCurrency(value) {
+  return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(value)
+}
 
 const form = ref({
   nombre: '',
@@ -258,6 +266,10 @@ onMounted(() => {
       razon_social: props.clinica.razon_social || '',
       estado: props.clinica.estado || 'activa'
     }
+  }
+  // Cargar planes si no están cargados
+  if (planesStore.planes.length === 0) {
+    planesStore.fetchPlanes()
   }
 })
 

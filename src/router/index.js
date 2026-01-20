@@ -5,7 +5,6 @@ import { useAuthStore } from '@shared/stores/auth'
 // Importar rutas de módulos
 import { superAdminRoutes } from '@superadmin/router'
 import { pacienteRoutes } from '@paciente/router'
-import { demoRoutes } from '@demo/router'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -85,10 +84,28 @@ const router = createRouter({
           meta: { title: 'Presupuestos' }
         },
         {
+          path: 'recetas',
+          name: 'clinica-recetas',
+          component: () => import('@clinica/views/Recetas.vue'),
+          meta: { title: 'Recetas' }
+        },
+        {
+          path: 'laboratorio',
+          name: 'clinica-laboratorio',
+          component: () => import('@clinica/views/Laboratorio.vue'),
+          meta: { title: 'Laboratorio' }
+        },
+        {
           path: 'facturacion',
           name: 'clinica-facturacion',
           component: () => import('@clinica/views/FacturacionDashboard.vue'),
           meta: { title: 'Facturación' }
+        },
+        {
+          path: 'caja',
+          name: 'clinica-caja',
+          component: () => import('@clinica/views/Caja.vue'),
+          meta: { title: 'Caja Diaria' }
         },
         {
           path: 'facturacion/cuentas',
@@ -112,6 +129,12 @@ const router = createRouter({
       roles: ['super_admin', 'admin_clinica']
            }
         },
+        {
+          path: 'inventario',
+          name: 'clinica-inventario',
+          component: () => import('@clinica/views/Inventario.vue'),
+          meta: { title: 'Almacén Central' }
+        },
 
         // Usuarios y Configuración
         {
@@ -119,6 +142,18 @@ const router = createRouter({
           name: 'clinica-usuarios',
           component: () => import('@clinica/views/Usuarios.vue'),
           meta: { title: 'Usuarios' }
+        },
+        {
+          path: 'audit',
+          name: 'clinica-audit',
+          component: () => import('@clinica/views/AuditLogs.vue'),
+          meta: { title: 'Bitácora de Auditoría', roles: ['admin'] }
+        },
+        {
+          path: 'consentimientos',
+          name: 'clinica-consentimientos',
+          component: () => import('@clinica/views/Consentimientos.vue'),
+          meta: { title: 'Consentimientos Informados', roles: ['admin', 'profesional'] }
         },
         {
           path: 'configuracion',
@@ -144,7 +179,6 @@ const router = createRouter({
     // ⚙️ MÓDULO SUPERADMIN
     // ============================================
     ...superAdminRoutes,
-    ...demoRoutes,
 
     // ============================================
     // 🔀 REDIRECCIONES

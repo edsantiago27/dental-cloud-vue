@@ -146,6 +146,175 @@
         </form>
       </div>
 
+      <!-- Tab: Pagos -->
+      <div v-if="tabActual === 'pagos'" class="space-y-8">
+        <div>
+          <h3 class="text-xl font-black text-gray-900 dark:text-white tracking-tight uppercase">Pasarelas de Pago</h3>
+          <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1">Configura cómo reciben pagos las clínicas</p>
+        </div>
+        
+        <form @submit.prevent="guardarPagos" class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">Pasarela Activa</label>
+              <select
+                v-model="formPagos.pasarela"
+                class="w-full px-6 py-4 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/5 rounded-2xl focus:bg-white dark:focus:bg-[#1a1a1a] focus:ring-2 focus:ring-violet-600/20 dark:focus:ring-orange-500/20 text-sm font-bold transition-all outline-none text-gray-900 dark:text-white"
+              >
+                <option value="none">Ninguna (Solo Efectivo/Manual)</option>
+                <option value="stripe">Stripe</option>
+                <option value="transbank">Transbank (Webpay Plus)</option>
+                <option value="mercadopago">MercadoPago</option>
+                <option value="flow">Flow</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">Moneda Base</label>
+              <select
+                v-model="formPagos.moneda"
+                class="w-full px-6 py-4 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/5 rounded-2xl focus:bg-white dark:focus:bg-[#1a1a1a] focus:ring-2 focus:ring-violet-600/20 dark:focus:ring-orange-500/20 text-sm font-bold transition-all outline-none text-gray-900 dark:text-white"
+              >
+                <option value="CLP">CLP (Peso Chileno)</option>
+                <option value="USD">USD (Dólar Americano)</option>
+                <option value="EUR">EUR (Euro)</option>
+                <option value="UF">UF (Unidad de Fomento)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Stripe Config -->
+          <div v-if="formPagos.pasarela === 'stripe'" class="bg-gray-50 dark:bg-white/5 p-6 rounded-3xl border border-transparent dark:border-white/5 space-y-4">
+             <div class="flex items-center gap-3 mb-2">
+                <i class="fab fa-stripe text-3xl text-[#635BFF]"></i>
+                <h4 class="text-sm font-black text-gray-900 dark:text-white">Credenciales Stripe</h4>
+             </div>
+             <div class="grid grid-cols-1 gap-4">
+                <div>
+                  <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">Public Key (PK)</label>
+                  <input v-model="formPagos.stripe_public_key" type="text" class="w-full px-6 py-4 bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-white/10 rounded-2xl text-sm font-bold outline-none text-gray-900 dark:text-white">
+                </div>
+                <div>
+                  <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">Secret Key (SK)</label>
+                  <input v-model="formPagos.stripe_secret_key" type="password" class="w-full px-6 py-4 bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-white/10 rounded-2xl text-sm font-bold outline-none text-gray-900 dark:text-white">
+                </div>
+             </div>
+          </div>
+
+          <!-- Transbank Config -->
+          <div v-if="formPagos.pasarela === 'transbank'" class="bg-gray-50 dark:bg-white/5 p-6 rounded-3xl border border-transparent dark:border-white/5 space-y-4">
+             <div class="flex items-center gap-3 mb-2">
+                <i class="fas fa-credit-card text-2xl text-[#d9006c]"></i>
+                <h4 class="text-sm font-black text-gray-900 dark:text-white">Credenciales Transbank</h4>
+             </div>
+             <div class="grid grid-cols-1 gap-4">
+                <div>
+                  <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">Código de Comercio</label>
+                  <input v-model="formPagos.transbank_commerce_code" type="text" class="w-full px-6 py-4 bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-white/10 rounded-2xl text-sm font-bold outline-none text-gray-900 dark:text-white">
+                </div>
+                <div>
+                  <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">API Key Secret</label>
+                  <input v-model="formPagos.transbank_api_key" type="password" class="w-full px-6 py-4 bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-white/10 rounded-2xl text-sm font-bold outline-none text-gray-900 dark:text-white">
+                </div>
+             </div>
+          </div>
+
+          <div class="flex justify-end pt-6 border-t border-gray-50 dark:border-white/5">
+            <button
+              type="submit"
+              class="px-10 py-4 bg-violet-600 dark:bg-orange-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-violet-200 dark:shadow-orange-500/20 hover:scale-105 active:scale-95 transition-all"
+            >
+              <i class="fas fa-save mr-2"></i> Guardar Cambios
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Tab: Integraciones -->
+      <div v-if="tabActual === 'integraciones'" class="space-y-8">
+        <div>
+          <h3 class="text-xl font-black text-gray-900 dark:text-white tracking-tight uppercase">Integraciones Externas</h3>
+          <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1">Conecta con servicios de terceros</p>
+        </div>
+        
+        <form @submit.prevent="guardarIntegraciones" class="space-y-6">
+          
+          <!-- WhatsApp -->
+          <div class="bg-gray-50 dark:bg-white/5 p-6 rounded-3xl border border-transparent dark:border-white/5 space-y-4">
+             <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-3">
+                    <i class="fab fa-whatsapp text-3xl text-[#25D366]"></i>
+                    <div>
+                        <h4 class="text-sm font-black text-gray-900 dark:text-white">WhatsApp Business API</h4>
+                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Powered by Meta</p>
+                    </div>
+                </div>
+                <div 
+                  @click="formIntegraciones.whatsapp_enabled = !formIntegraciones.whatsapp_enabled"
+                  class="w-12 h-6 bg-gray-200 dark:bg-white/10 rounded-full relative transition-colors cursor-pointer" 
+                  :class="{ 'bg-[#25D366]': formIntegraciones.whatsapp_enabled }"
+                >
+                  <div class="w-4 h-4 bg-white rounded-full absolute top-1 transition-all" :class="formIntegraciones.whatsapp_enabled ? 'left-7' : 'left-1'"></div>
+                </div>
+             </div>
+             
+             <div v-if="formIntegraciones.whatsapp_enabled" class="grid grid-cols-1 gap-4 pt-4 border-t border-gray-200 dark:border-white/10 animate-fade-in-up">
+                <div>
+                  <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">Phone Number ID</label>
+                  <input v-model="formIntegraciones.whatsapp_phone_number_id" type="text" class="w-full px-6 py-4 bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-white/10 rounded-2xl text-sm font-bold outline-none text-gray-900 dark:text-white">
+                </div>
+                <div>
+                  <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">Permanent Access Token</label>
+                  <input v-model="formIntegraciones.whatsapp_token" type="password" class="w-full px-6 py-4 bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-white/10 rounded-2xl text-sm font-bold outline-none text-gray-900 dark:text-white">
+                </div>
+             </div>
+          </div>
+
+          <!-- Google Calendar -->
+          <div 
+             class="bg-gray-50 dark:bg-white/5 p-6 rounded-3xl border border-transparent dark:border-white/5 space-y-4 transition-all"
+             :class="{ 'opacity-50 grayscale': !formIntegraciones.google_calendar_enabled, 'opacity-100': formIntegraciones.google_calendar_enabled }"
+          >
+             <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-3">
+                    <i class="fab fa-google text-2xl text-gray-900 dark:text-white"></i>
+                    <div>
+                        <h4 class="text-sm font-black text-gray-900 dark:text-white">Google Calendar</h4>
+                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Sincronización bidireccional</p>
+                    </div>
+                </div>
+                <div 
+                  @click="formIntegraciones.google_calendar_enabled = !formIntegraciones.google_calendar_enabled"
+                  class="w-12 h-6 bg-gray-200 dark:bg-white/10 rounded-full relative transition-colors cursor-pointer" 
+                  :class="{ 'bg-violet-600 dark:bg-orange-500': formIntegraciones.google_calendar_enabled }"
+                >
+                  <div class="w-4 h-4 bg-white rounded-full absolute top-1 transition-all" :class="formIntegraciones.google_calendar_enabled ? 'left-7' : 'left-1'"></div>
+                </div>
+             </div>
+             
+             <div v-if="formIntegraciones.google_calendar_enabled" class="grid grid-cols-1 gap-4 pt-4 border-t border-gray-200 dark:border-white/10 animate-fade-in-up">
+                <div>
+                  <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">Client ID</label>
+                  <input v-model="formIntegraciones.google_client_id" type="text" class="w-full px-6 py-4 bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-white/10 rounded-2xl text-sm font-bold outline-none text-gray-900 dark:text-white">
+                </div>
+                <div>
+                  <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">Client Secret</label>
+                  <input v-model="formIntegraciones.google_client_secret" type="password" class="w-full px-6 py-4 bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-white/10 rounded-2xl text-sm font-bold outline-none text-gray-900 dark:text-white">
+                </div>
+             </div>
+          </div>
+
+          <div class="flex justify-end pt-6 border-t border-gray-50 dark:border-white/5">
+            <button
+              type="submit"
+              class="px-10 py-4 bg-violet-600 dark:bg-orange-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-violet-200 dark:shadow-orange-500/20 hover:scale-105 active:scale-95 transition-all"
+            >
+              <i class="fas fa-save mr-2"></i> Guardar Cambios
+            </button>
+          </div>
+        </form>
+      </div>
+
       <!-- Tab: Facturación -->
       <div v-if="tabActual === 'facturacion'" class="space-y-8">
         <div>
@@ -327,12 +496,16 @@ const tabActual = ref('general')
 const tabs = [
   { id: 'general', label: 'General', icon: 'fas fa-cog' },
   { id: 'email', label: 'Email (SMTP)', icon: 'fas fa-envelope' },
+  { id: 'pagos', label: 'Pasarelas de Pago', icon: 'fas fa-credit-card' },
+  { id: 'integraciones', label: 'Integraciones (API)', icon: 'fas fa-plug' },
   { id: 'facturacion', label: 'Facturación', icon: 'fas fa-file-invoice' },
   { id: 'notificaciones', label: 'Notificaciones', icon: 'fas fa-bell' }
 ]
 
 const formGeneral = ref({})
 const formEmail = ref({})
+const formPagos = ref({})
+const formIntegraciones = ref({})
 const formFacturacion = ref({})
 const formNotificaciones = ref({})
 
@@ -359,6 +532,20 @@ async function guardarFacturacion() {
   }
 }
 
+async function guardarPagos() {
+  const result = await configuracionStore.actualizarConfiguracion('pagos', formPagos.value)
+  if (result.success) {
+    alert('Configuración de pagos guardada exitosamente')
+  }
+}
+
+async function guardarIntegraciones() {
+  const result = await configuracionStore.actualizarConfiguracion('integraciones', formIntegraciones.value)
+  if (result.success) {
+    alert('Configuración de integraciones guardada exitosamente')
+  }
+}
+
 async function guardarNotificaciones() {
   const result = await configuracionStore.actualizarConfiguracion('notificaciones', formNotificaciones.value)
   if (result.success) {
@@ -377,6 +564,8 @@ onMounted(async () => {
   await configuracionStore.fetchConfiguracion()
   formGeneral.value = { ...config.value.general }
   formEmail.value = { ...config.value.email }
+  formPagos.value = { ...config.value.pagos }
+  formIntegraciones.value = { ...config.value.integraciones }
   formFacturacion.value = { ...config.value.facturacion }
   formNotificaciones.value = { ...config.value.notificaciones }
 })

@@ -98,17 +98,52 @@
         :is-open="isOpen"
       />
 
-      <!-- Sección: Administración -->
+      <MenuItem
+        to="/recetas"
+        icon="fas fa-file-prescription"
+        label="Recetas"
+        :is-open="isOpen"
+      />
+      
+      <MenuItem
+        to="/laboratorio"
+        icon="fas fa-microscope"
+        label="Laboratorio"
+        :is-open="isOpen"
+        :locked="!authStore.hasModule('laboratorio')"
+        @click="handleLockedClick('Laboratorio')"
+      />
+
+      <MenuItem
+        to="/consentimientos"
+        icon="fas fa-file-contract"
+        label="Firmas"
+        :is-open="isOpen"
+        :locked="!authStore.hasModule('consentimientos')"
+        @click="handleLockedClick('Consentimientos')"
+      />
+
       <div v-if="isOpen" class="px-5 py-6">
         <p class="text-[9px] font-black text-white/30 uppercase tracking-[0.3em]">Administración</p>
       </div>
       <div v-else class="h-px bg-white/5 mx-6 my-6"></div>
 
       <MenuItem
+        to="/caja"
+        icon="fas fa-cash-register"
+        label="Caja Diaria"
+        :is-open="isOpen"
+        :locked="!authStore.hasModule('caja')"
+        @click="handleLockedClick('Caja Diaria')"
+      />
+
+      <MenuItem
         to="/facturacion"
         icon="fas fa-file-invoice-dollar"
         label="Finanzas"
         :is-open="isOpen"
+        :locked="!authStore.hasModule('facturacion')"
+        @click="handleLockedClick('Finanzas')"
       />
 
       <MenuItem
@@ -116,6 +151,17 @@
         icon="fas fa-chart-pie"
         label="Reportes"
         :is-open="isOpen"
+        :locked="!authStore.hasModule('reportes_basicos')"
+        @click="handleLockedClick('Reportes')"
+      />
+
+      <MenuItem
+        to="/inventario"
+        icon="fas fa-boxes"
+        label="Almacén"
+        :is-open="isOpen"
+        :locked="!authStore.hasModule('inventario')"
+        @click="handleLockedClick('Inventario')"
       />
 
       <!-- Sector inferior: Configuración -->
@@ -129,8 +175,15 @@
         <MenuItem
           v-if="authStore.isAdmin"
           to="/usuarios"
+          icon="fas fa-users-cog"
+          label="Staff"
+          :is-open="isOpen"
+        />
+        <MenuItem
+          v-if="authStore.isAdmin"
+          to="/audit"
           icon="fas fa-shield-alt"
-          label="Seguridad"
+          label="Auditoría"
           :is-open="isOpen"
         />
       </div>
@@ -146,16 +199,24 @@
           :class="isOpen ? 'fas fa-chevron-left' : 'fas fa-chevron-right'" 
           class="text-xs text-gray-400 group-hover:text-white transition-transform group-hover:scale-110"
         ></i>
-        <span v-if="isOpen" class="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 group-hover:text-white transition-colors">CONTRAER MENÚ</span>
       </button>
     </div>
+
+    <!-- Upgrade Modal -->
+    <UpgradePlanModal
+      v-if="upgradeModalOpen"
+      :feature-name="lockedFeatureName"
+      @close="upgradeModalOpen = false"
+      @upgrade="upgradeModalOpen = false; /* TODO: Redirigir a billing */"
+    />
   </aside>
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useAuthStore } from '@shared/stores/auth'
 import MenuItem from './MenuItem.vue'
+import UpgradePlanModal from './UpgradePlanModal.vue'
 import { useConfiguracionStore } from '@clinica/stores/configuracion'
 
 const configuracionStore = useConfiguracionStore()
@@ -179,6 +240,14 @@ function handleToggle() {
 // Stats / Badges
 const newPatientsCount = computed(() => 5)
 const todayAppointments = computed(() => 8)
+
+const upgradeModalOpen = ref(false)
+const lockedFeatureName = ref('')
+
+function handleLockedClick(feature) {
+  lockedFeatureName.value = feature
+  upgradeModalOpen.value = true
+}
 
 onMounted(async () => {
   if (!configuracionStore.configuracion.nombre) {

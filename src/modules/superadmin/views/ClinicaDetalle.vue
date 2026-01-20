@@ -208,11 +208,11 @@
           <div class="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
             <div
               class="h-full bg-orange-600 transition-all"
-              :style="{ width: calcularPorcentaje(uso.almacenamiento, (clinica.plan?.max_almacenamiento || 0) * 1024 * 1024 * 1024) + '%' }"
+              :style="{ width: calcularPorcentaje(uso.almacenamiento, (clinica.plan?.max_almacenamiento_gb || 0) * 1024 * 1024 * 1024) + '%' }"
             ></div>
           </div>
           <p class="text-xs text-gray-400 mt-1">
-            {{ clinica.plan?.max_almacenamiento ? `de ${clinica.plan.max_almacenamiento}GB` : 'Ilimitado' }}
+            {{ clinica.plan?.max_almacenamiento_gb ? `de ${clinica.plan.max_almacenamiento_gb}GB` : 'Ilimitado' }}
           </p>
         </div>
 

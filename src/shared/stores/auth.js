@@ -45,6 +45,31 @@ export const useAuthStore = defineStore('auth', () => {
   const isClinicaUser = computed(() => userType.value === 'clinica')
   const isPacienteUser = computed(() => userType.value === 'paciente')
   
+  // Checking de Módulos (Feature Gating)
+  const hasModule = (moduleKey) => {
+    if (!clinica.value || !clinica.value.plan) return false
+    // Si es Enterprise o Admin del sistema, acceso total (opcional)
+    // if (clinica.value.plan.slug === 'enterprise') return true 
+    
+    // Verificar en la lista de módulos habilitados del plan
+    // El backend puede enviar esto como un array de strings o objeto bool
+    const plan = clinica.value.plan
+    
+    // Check 1: Propiedad directa mod_X en el plan
+    if (plan[`mod_${moduleKey}`] === true || plan[`mod_${moduleKey}`] === 1) return true
+    
+    // Check 2: Propiedad legacy modulo_X
+    if (plan[`modulo_${moduleKey}`] === true || plan[`modulo_${moduleKey}`] === 1) return true
+    
+    // Check 3: Si viene como array de "modulos_habilitados" (depende de backend)
+    if (Array.isArray(plan.modulos_habilitados)) {
+       // A veces es array de nombres legibles, a veces de keys. Asumimos keys por ahora o checkeamos ambos
+       return plan.modulos_habilitados.includes(moduleKey) || plan.modulos_habilitados.includes(`mod_${moduleKey}`)
+    }
+
+    return false
+  }
+  
   // Paciente tiene múltiples clínicas
   const hasMultipleClinics = computed(() => clinicas.value.length > 1)
 
@@ -303,10 +328,15 @@ export const useAuthStore = defineStore('auth', () => {
       const response = await api.get('/me')
       const data = response.data
 
-      // Actualizar usuario
+      // Actualizar usuario y clínica
       if (data.user || data.data) {
         user.value = data.user || data.data
         localStorage.setItem('user', JSON.stringify(user.value))
+      }
+      
+      if (data.clinica) {
+        clinica.value = data.clinica
+        localStorage.setItem('clinica', JSON.stringify(clinica.value))
       }
 
       console.log('✅ Usuario actualizado')
@@ -452,6 +482,7 @@ export const useAuthStore = defineStore('auth', () => {
     isClinicaUser,
     isPacienteUser,
     hasMultipleClinics,
+    hasModule,
     
     // Actions
     loginClinica,

@@ -90,7 +90,7 @@
               </div>
               <div class="flex-1">
                 <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Almacenamiento</p>
-                <p class="text-sm font-black text-gray-900 dark:text-white">{{ plan.max_almacenamiento || '5' }} GB <span class="text-[10px] font-bold opacity-50 uppercase ml-1">Cloud Space</span></p>
+                <p class="text-sm font-black text-gray-900 dark:text-white">{{ plan.max_almacenamiento_gb || '5' }} GB <span class="text-[10px] font-bold opacity-50 uppercase ml-1">Cloud Space</span></p>
               </div>
             </div>
           </div>
@@ -103,11 +103,11 @@
                 v-for="modulo in modulosDisponibles" 
                 :key="modulo.key"
                 class="px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-tight transition-all"
-                :class="plan.modulos?.[modulo.key] 
+                :class="plan[modulo.key] 
                   ? 'bg-violet-50 dark:bg-orange-500/10 text-violet-600 dark:text-orange-500' 
                   : 'bg-gray-50 dark:bg-white/5 text-gray-300 dark:text-gray-700'"
                >
-                 <i :class="[plan.modulos?.[modulo.key] ? 'fas fa-check-circle' : 'fas fa-minus-circle', 'mr-1.5']"></i>
+                 <i :class="[plan[modulo.key] ? 'fas fa-check-circle' : 'fas fa-minus-circle', 'mr-1.5']"></i>
                  {{ modulo.label }}
                </span>
              </div>
@@ -172,12 +172,12 @@ const planParaEditar = ref(null)
 const modalConfirm = ref({ show: false, title: '', message: '', type: 'danger', onConfirm: null })
 
 const modulosDisponibles = [
-  { key: 'agenda', label: 'Calendario' },
-  { key: 'historia_clinica', label: 'E-Medical' },
-  { key: 'facturacion', label: 'Billing' },
-  { key: 'inventario', label: 'Stock' },
-  { key: 'reportes', label: 'BI' },
-  { key: 'whatsapp', label: 'Social' }
+  { key: 'mod_agenda', label: 'Calendario' },
+  { key: 'mod_historia_clinica', label: 'E-Medical' },
+  { key: 'mod_facturacion', label: 'Billing' },
+  { key: 'mod_inventario', label: 'Stock' },
+  { key: 'mod_reportes_basicos', label: 'BI' },
+  { key: 'mod_whatsapp', label: 'Social' }
 ]
 
 const planesList = computed(() => planesStore.planes)

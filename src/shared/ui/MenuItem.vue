@@ -9,6 +9,7 @@
       @click="navigate"
       :class="[
         'group flex items-center gap-4 px-4 py-4 rounded-2xl cursor-pointer transition-all duration-500 relative overflow-hidden focus:outline-none',
+        locked ? 'opacity-50 cursor-not-allowed hover:bg-transparent' : 
         isActive 
           ? 'bg-white/5 text-white shadow-[0px_0px_20px_rgba(255,255,255,0.02)] border border-white/5 ring-1 ring-white/5' 
           : 'text-gray-500 hover:bg-white/5 hover:text-white border border-transparent hover:border-white/5'

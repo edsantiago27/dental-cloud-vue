@@ -155,10 +155,10 @@ const quickStats = computed(() => [
 const quickLinks = [
   { to: '/pacientes', label: 'Pacientes', icon: 'fas fa-users', bg: 'bg-violet-50', text: 'text-violet-600' },
   { to: '/calendario', label: 'Agenda', icon: 'fas fa-calendar-plus', bg: 'bg-emerald-50', text: 'text-emerald-600' },
-  { to: '/profesionales', label: 'Staff', icon: 'fas fa-user-md', bg: 'bg-blue-50', text: 'text-blue-600' },
+  { to: '/laboratorio', label: 'Laboratorio', icon: 'fas fa-microscope', bg: 'bg-blue-50', text: 'text-blue-600' },
   { to: '/facturacion', label: 'Finanzas', icon: 'fas fa-wallet', bg: 'bg-orange-50', text: 'text-orange-600' },
-  { to: '/tratamientos', label: 'Servicios', icon: 'fas fa-tooth', bg: 'bg-pink-50', text: 'text-pink-600' },
-  { to: '/configuracion', label: 'Ajustes', icon: 'fas fa-cog', bg: 'bg-gray-100', text: 'text-gray-600' }
+  { to: '/caja', label: 'Caja', icon: 'fas fa-cash-register', bg: 'bg-emerald-50', text: 'text-emerald-600' },
+  { to: '/inventario', label: 'Almacén', icon: 'fas fa-boxes', bg: 'bg-amber-50', text: 'text-amber-600' }
 ]
 
 async function handleRefresh() {
