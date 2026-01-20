@@ -14,7 +14,8 @@ export default defineConfig({
       '@shared': fileURLToPath(new URL('./src/shared', import.meta.url)),
       '@clinica': fileURLToPath(new URL('./src/modules/clinica', import.meta.url)),
       '@paciente': fileURLToPath(new URL('./src/modules/paciente', import.meta.url)),
-      '@superadmin': fileURLToPath(new URL('./src/modules/superadmin', import.meta.url))
+      '@superadmin': fileURLToPath(new URL('./src/modules/superadmin', import.meta.url)),
+      '@demo': fileURLToPath(new URL('./src/modules/demo', import.meta.url))
     }
   },
   server: {

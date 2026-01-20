@@ -5,6 +5,7 @@ import { useAuthStore } from '@shared/stores/auth'
 // Importar rutas de módulos
 import { superAdminRoutes } from '@superadmin/router'
 import { pacienteRoutes } from '@paciente/router'
+import { demoRoutes } from '@demo/router'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -137,6 +138,7 @@ const router = createRouter({
     // ⚙️ MÓDULO SUPERADMIN
     // ============================================
     ...superAdminRoutes,
+    ...demoRoutes,
 
     // ============================================
     // 🔀 REDIRECCIONES
