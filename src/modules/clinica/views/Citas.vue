@@ -144,6 +144,7 @@
       ref="calendarRef"
       @event-click="handleEventClick"
       @date-click="handleDateClick"
+      @event-update="handleEventUpdate"
     />
 
     <!-- Modal Formulario Nueva Cita -->
@@ -263,6 +264,22 @@ function handleDateClick(info) {
   fechaPreseleccionada.value = info.date
   horaPreseleccionada.value = info.time || '09:00'
   showFormModal.value = true
+}
+
+async function handleEventUpdate(updatedData) {
+  const { id, ...data } = updatedData
+  
+  const result = await citasStore.updateCita(id, data)
+  
+  if (result.success) {
+    notify.success('Cita reagendada correctamente', 'Cita actualizada')
+  } else {
+    notify.error(result.message || 'Error al reagendar')
+    // Si falla, refrescar el calendario para volver al estado anterior
+    if (calendarRef.value) {
+      calendarRef.value.refetch()
+    }
+  }
 }
 
 function handleSaved() {

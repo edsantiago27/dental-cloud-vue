@@ -135,7 +135,10 @@
     </div>
 
     <!-- Lista Simple -->
-    <CitasCalendarSimple @event-click="handleEventClick" />
+    <CitasCalendarSimple 
+      @event-click="handleEventClick" 
+      @reagendar="openEditModal"
+    />
 
     <!-- Modal Nueva Cita -->
     <CitaFormModal

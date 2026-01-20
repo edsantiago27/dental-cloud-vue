@@ -199,6 +199,14 @@
                 Cerrar
               </button>
               <button
+                v-if="cita.estado !== 'completada' && cita.estado !== 'cancelada'"
+                @click="handleEdit"
+                class="px-6 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition"
+              >
+                <i class="fas fa-calendar-alt mr-2"></i>
+                Reagendar
+              </button>
+              <button
                 v-if="cita.estado !== 'completada'"
                 @click="handleEdit"
                 class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition"

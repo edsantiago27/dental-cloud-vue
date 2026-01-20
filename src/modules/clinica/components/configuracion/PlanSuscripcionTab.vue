@@ -42,12 +42,12 @@
             
             <div class="text-right">
               <div class="text-4xl font-bold text-gray-900">
-                {{ formatCurrency(suscripcion.plan.preciomensual) }}
+                {{ formatCurrency(suscripcion.plan.precio_mensual) }}
               </div>
               <div class="text-sm text-gray-500">por mes</div>
-              <div v-if="suscripcion.plan.precioanual" class="mt-1">
+              <div v-if="suscripcion.plan.precio_anual" class="mt-1">
                 <span class="text-xs text-green-600 font-semibold">
-                  {{ formatCurrency(suscripcion.plan.precioanual) }}/año
+                  {{ formatCurrency(suscripcion.plan.precio_anual) }}/año
                 </span>
               </div>
             </div>
@@ -59,7 +59,7 @@
               <i class="fas fa-calendar-alt text-blue-600 text-xl"></i>
               <div>
                 <div class="text-xs text-gray-500 uppercase">Inicio</div>
-                <div class="font-semibold text-gray-900">{{ formatDate(suscripcion.suscripcion.fechainicio) }}</div>
+                <div class="font-semibold text-gray-900">{{ formatDate(suscripcion.suscripcion.fecha_inicio) }}</div>
               </div>
             </div>
             
@@ -67,7 +67,7 @@
               <i class="fas fa-calendar-check text-green-600 text-xl"></i>
               <div>
                 <div class="text-xs text-gray-500 uppercase">Renovación</div>
-                <div class="font-semibold text-gray-900">{{ formatDate(suscripcion.suscripcion.fechafin) }}</div>
+                <div class="font-semibold text-gray-900">{{ formatDate(suscripcion.suscripcion.fecha_fin) }}</div>
               </div>
             </div>
             
@@ -78,10 +78,10 @@
                 <div 
                   :class="[
                     'font-bold',
-                    suscripcion.suscripcion.diasrestantes < 7 ? 'text-red-600' : 'text-gray-900'
+                    suscripcion.suscripcion.dias_restantes < 7 ? 'text-red-600' : 'text-gray-900'
                   ]"
                 >
-                  {{ suscripcion.suscripcion.diasrestantes }} días
+                  {{ suscripcion.suscripcion.dias_restantes }} días
                 </div>
               </div>
             </div>
@@ -233,14 +233,14 @@
               :key="plan.id"
               :class="[
                 'relative rounded-lg border-2 p-6 transition hover:shadow-xl',
-                plan.espopular 
+                plan.es_popular 
                   ? 'border-blue-500 bg-blue-50' 
                   : 'border-gray-200 bg-white hover:border-blue-300'
               ]"
             >
               <!-- Popular Badge -->
               <div 
-                v-if="plan.espopular" 
+                v-if="plan.es_popular" 
                 class="absolute -top-3 left-1/2 transform -translate-x-1/2"
               >
                 <span class="bg-blue-600 text-white px-4 py-1 rounded-full text-xs font-bold flex items-center gap-1">
@@ -255,36 +255,36 @@
                 
                 <div class="mb-4">
                   <div class="text-4xl font-bold text-gray-900">
-                    {{ formatCurrency(plan.preciomensual) }}
+                    {{ formatCurrency(plan.precio_mensual) }}
                   </div>
                   <div class="text-sm text-gray-500">por mes</div>
                 </div>
               </div>
 
               <ul class="space-y-2 mb-6 text-sm">
-                <li v-if="plan.maxusuarios !== -1" class="flex items-center gap-2">
+                <li v-if="plan.max_usuarios !== -1" class="flex items-center gap-2">
                   <i class="fas fa-check text-green-600"></i>
-                  <span>{{ plan.maxusuarios }} usuarios</span>
+                  <span>{{ plan.max_usuarios }} usuarios</span>
                 </li>
-                <li v-if="plan.maxprofesionales !== -1" class="flex items-center gap-2">
+                <li v-if="plan.max_profesionales !== -1" class="flex items-center gap-2">
                   <i class="fas fa-check text-green-600"></i>
-                  <span>{{ plan.maxprofesionales }} profesionales</span>
+                  <span>{{ plan.max_profesionales }} profesionales</span>
                 </li>
-                <li v-if="plan.maxpacientes !== -1" class="flex items-center gap-2">
+                <li v-if="plan.max_pacientes !== -1" class="flex items-center gap-2">
                   <i class="fas fa-check text-green-600"></i>
-                  <span>{{ plan.maxpacientes }} pacientes</span>
+                  <span>{{ plan.max_pacientes }} pacientes</span>
                 </li>
-                <li v-if="plan.maxcitasmes" class="flex items-center gap-2">
+                <li v-if="plan.max_citas_mes" class="flex items-center gap-2">
                   <i class="fas fa-check text-green-600"></i>
-                  <span>{{ plan.maxcitasmes }} citas/mes</span>
+                  <span>{{ plan.max_citas_mes }} citas/mes</span>
                 </li>
                 <li class="flex items-center gap-2">
                   <i class="fas fa-check text-green-600"></i>
-                  <span>{{ (plan.maxalmacenamientomb / 1024).toFixed(1) }} GB almacenamiento</span>
+                  <span>{{ (plan.max_almacenamiento_mb / 1024).toFixed(1) }} GB almacenamiento</span>
                 </li>
-                <li v-if="plan.tiposoporte" class="flex items-center gap-2">
+                <li v-if="plan.tipo_soporte" class="flex items-center gap-2">
                   <i class="fas fa-check text-green-600"></i>
-                  <span>Soporte {{ plan.tiposoporte }}</span>
+                  <span>Soporte {{ plan.tipo_soporte }}</span>
                 </li>
               </ul>
 

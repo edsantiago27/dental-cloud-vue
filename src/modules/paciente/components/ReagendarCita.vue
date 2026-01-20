@@ -200,7 +200,11 @@ function formatHora(hora) {
 }
 
 async function cargarHorarios() {
-  if (!form.value.fecha) return
+  if (!form.value.fecha || form.value.fecha.length < 10) return
+
+  // Validar año mínimo razonable (evitar años como 0002 mientras se escribe)
+  const year = parseInt(form.value.fecha.split('-')[0])
+  if (year < 2024 || year > 2100) return
 
   loadingHorarios.value = true
   form.value.hora = '' // Reset hora seleccionada

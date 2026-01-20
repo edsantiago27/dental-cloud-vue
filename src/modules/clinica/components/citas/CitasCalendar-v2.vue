@@ -118,7 +118,7 @@ import esLocale from '@fullcalendar/core/locales/es'
 import { useCitasStore } from '@clinica/stores/citas'
 
 const citasStore = useCitasStore()
-const emit = defineEmits(['event-click', 'date-click'])
+const emit = defineEmits(['event-click', 'date-click', 'event-update'])
 
 // State
 const calendarContainer = ref(null)
@@ -159,6 +159,44 @@ function handleDateSelect(info) {
   if (calendar.value) {
     calendar.value.unselect()
   }
+}
+
+function handleEventDrop(info) {
+  const { event } = info
+  const start = event.start
+  const end = event.end
+  
+  const citaId = event.id
+  const nuevaFecha = start.toISOString().split('T')[0]
+  const nuevaHora = start.toTimeString().substring(0, 5)
+  
+  let duracionMinutos = 30
+  if (end) {
+    duracionMinutos = Math.round((end - start) / (1000 * 60))
+  }
+
+  emit('event-update', {
+    id: citaId,
+    fecha: nuevaFecha,
+    hora: nuevaHora,
+    duracion_minutos: duracionMinutos
+  })
+}
+
+function handleEventResize(info) {
+  const { event } = info
+  const start = event.start
+  const end = event.end
+  
+  if (!end) return
+
+  const citaId = event.id
+  const duracionMinutos = Math.round((end - start) / (1000 * 60))
+
+  emit('event-update', {
+    id: citaId,
+    duracion_minutos: duracionMinutos
+  })
 }
 
 // ==========================================
@@ -298,7 +336,7 @@ async function initCalendar() {
       allDaySlot: false,
       nowIndicator: true,
       navLinks: true,
-      editable: false,
+      editable: true,
       selectable: true,
       selectMirror: true,
       dayMaxEvents: true,
@@ -315,6 +353,8 @@ async function initCalendar() {
       dateClick: handleDateClick,
       select: handleDateSelect,
       datesSet: handleDatesSet,
+      eventDrop: handleEventDrop,
+      eventResize: handleEventResize,
       eventTimeFormat: {
         hour: '2-digit',
         minute: '2-digit',

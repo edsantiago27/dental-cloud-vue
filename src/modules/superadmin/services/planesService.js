@@ -7,6 +7,12 @@ export async function getPlanes(params = {}) {
   return response.data
 }
 
+// Obtener módulos disponibles
+export async function getModulosDisponibles() {
+  const response = await api.get('/superadmin/planes/modulos-disponibles')
+  return response.data
+}
+
 // Obtener un plan
 export async function getPlan(id) {
   const response = await api.get(`/superadmin/planes/${id}`)
@@ -45,6 +51,7 @@ export async function desactivarPlan(id) {
 
 export default {
   getPlanes,
+  getModulosDisponibles,
   getPlan,
   crearPlan,
   actualizarPlan,

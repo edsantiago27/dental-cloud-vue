@@ -365,10 +365,18 @@ async function cargarDatos() {
     if (result.success) {
       clinica.value = result.data
 
-      // Cargar uso de recursos
-      const usoRes = await clinicasService.getUso(id)
-      if (usoRes.success) {
-        uso.value = usoRes.data
+      // El backend YA devuelve estadísticas en response.data.estadisticas
+      // Vamos a usar esos datos directamente del store
+      const fullResponse = await clinicasService.getClinica(id)
+      if (fullResponse.success && fullResponse.data.estadisticas) {
+        // Mapear estadísticas del backend a formato esperado
+        uso.value = {
+          pacientes: fullResponse.data.estadisticas.pacientes || 0,
+          profesionales: fullResponse.data.estadisticas.profesionales || 0,
+          usuarios: fullResponse.data.estadisticas.usuarios || 0,
+          citas_mes: fullResponse.data.estadisticas.citas_mes || 0,
+          almacenamiento: 0 // El backend no devuelve esto aún, usar 0
+        }
       }
 
       // Suscripción actual

@@ -226,7 +226,11 @@ async function irAPaso2() {
 }
 
 async function cargarHorarios() {
-  if (!form.value.fecha || !form.value.profesional_id) return
+  if (!form.value.fecha || !form.value.profesional_id || form.value.fecha.length < 10) return
+
+  // Validar año mínimo razonable (evitar años como 0002 mientras se escribe)
+  const year = parseInt(form.value.fecha.split('-')[0])
+  if (year < 2024 || year > 2100) return
 
   loadingHorarios.value = true
   form.value.hora = '' // Reset hora seleccionada

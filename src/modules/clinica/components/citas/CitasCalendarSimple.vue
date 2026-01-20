@@ -79,11 +79,18 @@
                   {{ cita.profesional?.nombre }} {{ cita.profesional?.apellido }}
                 </p>
               </div>
-              <div class="text-right">
+              <div class="text-right flex flex-col items-end justify-between">
                 <p class="text-sm text-gray-600">
                   <i class="fas fa-clock mr-1"></i>
                   {{ cita.duracion_minutos || cita.tratamiento?.duracion_estimada || 30 }} min
                 </p>
+                <button 
+                  @click.stop="emit('reagendar', cita)"
+                  class="mt-2 px-3 py-1 text-xs border border-blue-600 text-blue-600 rounded hover:bg-blue-600 hover:text-white transition flex items-center gap-1"
+                >
+                  <i class="fas fa-calendar-alt"></i>
+                  Reagendar
+                </button>
               </div>
             </div>
           </div>
@@ -127,6 +134,13 @@
                 <p class="text-sm text-gray-600 mt-1">
                   {{ cita.tratamiento?.nombre }}
                 </p>
+                <button 
+                  @click.stop="emit('reagendar', cita)"
+                  class="mt-2 px-3 py-1 text-xs border border-blue-600 text-blue-600 rounded hover:bg-blue-600 hover:text-white transition flex items-center gap-1"
+                >
+                  <i class="fas fa-calendar-alt"></i>
+                  Reagendar
+                </button>
               </div>
             </div>
           </div>
@@ -167,6 +181,12 @@
                 </p>
                 <p class="text-xs text-gray-600">{{ cita.tratamiento?.nombre }}</p>
               </div>
+              <button 
+                @click.stop="emit('reagendar', cita)"
+                class="px-3 py-1 text-xs text-blue-600 hover:bg-blue-50 rounded transition"
+              >
+                Reagendar
+              </button>
             </div>
           </div>
         </div>
@@ -196,7 +216,7 @@ import { computed, onMounted } from 'vue'
 import { useCitasStore } from '@clinica/stores/citas'
 
 const citasStore = useCitasStore()
-const emit = defineEmits(['event-click'])
+const emit = defineEmits(['event-click', 'reagendar'])
 
 // Computed
 const citasHoy = computed(() => {

@@ -34,7 +34,7 @@
           'border-blue-500': plan.nombre === 'Profesional',
           'border-green-500': plan.nombre === 'Básico',
           'border-gray-300': !['Enterprise', 'Profesional', 'Básico'].includes(plan.nombre),
-          'opacity-60': !plan.activo
+          'opacity-60': plan.estado !== 'activo'
         }"
       >
         
@@ -54,10 +54,10 @@
               <p class="text-sm opacity-90 mt-1">{{ plan.descripcion }}</p>
             </div>
             <span
-              v-if="!plan.activo"
+              v-if="plan.estado !== 'activo'"
               class="px-2 py-1 text-xs bg-white bg-opacity-20 rounded-full"
             >
-              Inactivo
+              {{ plan.estado === 'descontinuado' ? 'Descontinuado' : 'Inactivo' }}
             </span>
           </div>
           
@@ -158,7 +158,7 @@
           </button>
 
           <button
-            v-if="plan.activo"
+            v-if="plan.estado === 'activo'"
             @click="confirmarDesactivar(plan)"
             class="px-4 py-2 text-orange-700 bg-orange-50 border border-orange-300 rounded-lg hover:bg-orange-100 transition text-sm"
           >

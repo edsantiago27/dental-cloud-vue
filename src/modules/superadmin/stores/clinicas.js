@@ -114,8 +114,11 @@ export const useSuperAdminClinicasStore = defineStore('superadminClinicas', () =
       const response = await clinicasService.getClinica(id)
       
       if (response.success && response.data) {
-        clinicaActual.value = response.data
-        return { success: true, data: response.data }
+        // El backend devuelve { data: { clinica: {}, estadisticas: {}, usuarios: [], ... } }
+        // Necesitamos extraer solo la clínica
+        const clinicaData = response.data.clinica || response.data
+        clinicaActual.value = clinicaData
+        return { success: true, data: clinicaData }
       }
 
       return { success: false, message: response.message }
@@ -327,7 +330,7 @@ export const useSuperAdminClinicasStore = defineStore('superadminClinicas', () =
 
     // Actions
     fetchClinicas,
-    //fetchEstadisticas,
+    fetchEstadisticas,
     fetchClinica,
     crearClinica,
     actualizarClinica,

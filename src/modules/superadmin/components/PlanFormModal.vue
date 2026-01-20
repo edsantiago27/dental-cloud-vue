@@ -6,7 +6,7 @@
 
     <!-- Modal -->
     <div class="flex min-h-screen items-center justify-center p-4">
-      <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-3xl transform transition-all max-h-[90vh] overflow-y-auto">
+      <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-4xl transform transition-all max-h-[90vh] overflow-y-auto">
         
         <!-- Header -->
         <div class="sticky top-0 bg-white flex items-center justify-between p-6 border-b border-gray-200 rounded-t-xl z-10">
@@ -22,8 +22,14 @@
           </button>
         </div>
 
+        <!-- Loading State -->
+        <div v-if="loadingInicial" class="p-12 text-center">
+          <i class="fas fa-spinner fa-spin text-4xl text-blue-600 mb-4"></i>
+          <p class="text-gray-500">Cargando configuración...</p>
+        </div>
+
         <!-- Body -->
-        <form @submit.prevent="handleSubmit" class="p-6">
+        <form v-else @submit.prevent="handleSubmit" class="p-6">
           
           <div class="space-y-6">
             
@@ -78,10 +84,10 @@
             <div class="bg-green-50 p-4 rounded-lg">
               <h4 class="font-semibold text-gray-900 mb-4">
                 <i class="fas fa-dollar-sign text-green-600 mr-2"></i>
-                Precios
+                Precios y Configuración
               </h4>
               
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- Precio Mensual -->
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1">
@@ -93,7 +99,6 @@
                     min="0"
                     required
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="29990"
                   >
                 </div>
 
@@ -108,12 +113,37 @@
                     min="0"
                     required
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="299990"
                   >
                   <p v-if="form.precio_mensual && form.precio_anual" class="text-xs text-green-600 mt-1">
                     <i class="fas fa-check-circle mr-1"></i>
                     Descuento: {{ calcularDescuento() }}%
                   </p>
+                </div>
+
+                 <!-- Días Trial -->
+                 <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Días de Prueba
+                  </label>
+                  <input
+                    v-model.number="form.dias_trial"
+                    type="number"
+                    min="0"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                </div>
+
+                <!-- Tipo Soporte -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Nivel Soporte
+                  </label>
+                  <select v-model="form.tipo_soporte" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                      <option value="email">Email</option>
+                      <option value="chat">Chat</option>
+                      <option value="telefono">Teléfono</option>
+                      <option value="dedicado">Dedicado</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -125,105 +155,110 @@
                 Límites de Recursos
               </h4>
               
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- Max Pacientes -->
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">
-                    Máximo Pacientes
-                  </label>
-                  <input
-                    v-model.number="form.max_pacientes"
-                    type="number"
-                    min="0"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="0 = ilimitado"
-                  >
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Max Pacientes</label>
+                  <input v-model.number="form.max_pacientes" type="number" min="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="0 = ilimitado">
                 </div>
-
                 <!-- Max Profesionales -->
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">
-                    Máximo Profesionales
-                  </label>
-                  <input
-                    v-model.number="form.max_profesionales"
-                    type="number"
-                    min="0"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="0 = ilimitado"
-                  >
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Max Profesionales</label>
+                  <input v-model.number="form.max_profesionales" type="number" min="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="0 = ilimitado">
                 </div>
-
-                <!-- Max Almacenamiento -->
+                <!-- Max Usuarios -->
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">
-                    Almacenamiento (GB)
-                  </label>
-                  <input
-                    v-model.number="form.max_almacenamiento"
-                    type="number"
-                    min="0"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="0 = ilimitado"
-                  >
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Max Usuarios</label>
+                  <input v-model.number="form.max_usuarios" type="number" min="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="0 = ilimitado">
+                </div>
+                <!-- Almacenamiento -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Almacenamiento (MB)</label>
+                  <input v-model.number="form.max_almacenamiento_mb" type="number" min="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="0 = ilimitado">
+                </div>
+                 <!-- Limite Emails -->
+                 <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Límite Email/Mes</label>
+                  <input v-model.number="form.limite_emails_mes" type="number" min="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="0 = ilimitado">
+                </div>
+                 <!-- Limite SMS -->
+                 <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Límite SMS/Mes</label>
+                  <input v-model.number="form.limite_sms_mes" type="number" min="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="0 = ilimitado">
+                </div>
+                  <!-- Limite Whatsapp -->
+                  <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Límite WP/Mes</label>
+                  <input v-model.number="form.limite_whatsapp_mes" type="number" min="0" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="0 = ilimitado">
                 </div>
               </div>
-
-              <p class="text-xs text-gray-500 mt-2">
-                <i class="fas fa-info-circle mr-1"></i>
-                Ingresa 0 o deja vacío para recursos ilimitados
-              </p>
+              <p class="text-xs text-gray-500 mt-2"><i class="fas fa-info-circle mr-1"></i> Ingresa 0 para ilimitado</p>
             </div>
 
-            <!-- Módulos -->
-            <div class="bg-purple-50 p-4 rounded-lg">
-              <h4 class="font-semibold text-gray-900 mb-4">
-                <i class="fas fa-puzzle-piece text-purple-600 mr-2"></i>
-                Módulos Incluidos
-              </h4>
+            <!-- Módulos Dinámicos -->
+            <div class="space-y-4">
+              <h4 class="font-semibold text-gray-900 border-b pb-2">Módulos del Sistema</h4>
               
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <label
-                  v-for="modulo in modulosDisponibles"
-                  :key="modulo.key"
-                  class="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-lg cursor-pointer hover:bg-purple-50 transition"
-                >
-                  <input
-                    v-model="form.modulos[modulo.key]"
-                    type="checkbox"
-                    class="w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
-                  >
-                  <div>
-                    <p class="font-medium text-gray-900 text-sm">{{ modulo.label }}</p>
-                    <p class="text-xs text-gray-500">{{ modulo.descripcion }}</p>
+              <div v-for="(categoria, catKey) in modulosDisponibles" :key="catKey" class="bg-gray-50 p-4 rounded-lg">
+                  <h5 class="text-sm font-bold text-gray-700 uppercase mb-3 flex items-center">
+                    {{ categoria.nombre }}
+                  </h5>
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      <label 
+                          v-for="(info, key) in categoria.modulos" 
+                          :key="key"
+                          class="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition"
+                          :class="{'ring-2 ring-blue-500 border-transparent': form[key]}"
+                      >
+                          <input 
+                              v-model="form[key]" 
+                              type="checkbox" 
+                              class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                          >
+                          <div class="flex items-center gap-2">
+                              <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
+                                  <i :class="`fas ${info.icono} text-sm`"></i>
+                              </div>
+                              <span class="text-sm font-medium text-gray-700">{{ info.nombre }}</span>
+                          </div>
+                      </label>
                   </div>
-                </label>
               </div>
             </div>
 
-            <!-- Estado -->
-            <div class="bg-gray-50 p-4 rounded-lg">
-              <h4 class="font-semibold text-gray-900 mb-4">Estado</h4>
-              
+            <!-- Estado y Visibilidad -->
+            <div class="bg-gray-50 p-4 rounded-lg flex items-center gap-6">
               <label class="flex items-center gap-3 cursor-pointer">
-                <input
-                  v-model="form.activo"
-                  type="checkbox"
-                  class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                >
+                <input v-model="form.estado" true-value="activo" false-value="inactivo" type="checkbox" class="w-5 h-5 text-green-600 rounded">
                 <div>
                   <p class="font-medium text-gray-900">Plan Activo</p>
-                  <p class="text-sm text-gray-500">El plan estará disponible para nuevas clínicas</p>
+                  <p class="text-xs text-gray-500">Disponible para nuevas clínicas</p>
+                </div>
+              </label>
+              
+               <label class="flex items-center gap-3 cursor-pointer">
+                <input v-model="form.es_publico" type="checkbox" class="w-5 h-5 text-blue-600 rounded">
+                <div>
+                  <p class="font-medium text-gray-900">Público</p>
+                  <p class="text-xs text-gray-500">Visible en Landing Page</p>
+                </div>
+              </label>
+
+               <label class="flex items-center gap-3 cursor-pointer">
+                <input v-model="form.es_popular" type="checkbox" class="w-5 h-5 text-yellow-500 rounded">
+                <div>
+                  <p class="font-medium text-gray-900">Destacado</p>
+                  <p class="text-xs text-gray-500">Etiqueta "Más Popular"</p>
                 </div>
               </label>
             </div>
 
             <!-- Error Message -->
             <div v-if="errorMessage" class="p-4 bg-red-50 border border-red-200 rounded-lg">
-              <div class="flex items-center gap-2 text-red-800">
-                <i class="fas fa-exclamation-circle"></i>
-                <span class="text-sm">{{ errorMessage }}</span>
-              </div>
+                <div class="flex items-center gap-2 text-red-800">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span class="text-sm">{{ errorMessage }}</span>
+                </div>
             </div>
 
           </div>
@@ -231,7 +266,7 @@
         </form>
 
         <!-- Footer -->
-        <div class="sticky bottom-0 bg-white flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-200 rounded-b-xl">
+        <div class="sticky bottom-0 bg-white flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-200 rounded-b-xl z-10">
           <button
             type="button"
             @click="$emit('close')"
@@ -241,7 +276,7 @@
           </button>
           <button
             @click="handleSubmit"
-            :disabled="loading"
+            :disabled="loading || loadingInicial"
             class="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
           >
             <i v-if="loading" class="fas fa-spinner fa-spin mr-2"></i>
@@ -252,13 +287,13 @@
 
       </div>
     </div>
-
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useSuperAdminPlanesStore } from '@superadmin/stores/planes'
+import planesService from '@superadmin/services/planesService'
 
 const props = defineProps({
   plan: {
@@ -268,10 +303,19 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['close', 'saved'])
-
 const planesStore = useSuperAdminPlanesStore()
 
-const form = ref({
+const loading = ref(false)
+const loadingInicial = ref(true)
+const errorMessage = ref('')
+const modulosDisponibles = ref({})
+const isEdit = computed(() => !!props.plan)
+
+// Formulario reactivo
+const form = ref({})
+
+// Inicializar formulario con valores por defecto
+const initForm = () => ({
   nombre: '',
   slug: '',
   descripcion: '',
@@ -279,33 +323,55 @@ const form = ref({
   precio_anual: 0,
   max_pacientes: 0,
   max_profesionales: 0,
-  max_almacenamiento: 0,
-  modulos: {
-    agenda: true,
-    historia_clinica: true,
-    facturacion: true,
-    inventario: false,
-    reportes: true,
-    whatsapp: false,
-    recordatorios: true
-  },
-  activo: true
+  max_usuarios: 0,
+  max_almacenamiento_mb: 0,
+  limite_emails_mes: 0,
+  limite_sms_mes: 0,
+  limite_whatsapp_mes: 0,
+  dias_trial: 14,
+  tipo_soporte: 'email',
+  es_publico: true,
+  es_popular: false,
+  estado: 'activo',
+  // Los módulos se llenarán dinámicamente, pero inicializamos algunos base
+  mod_dashboard: true,
+  mod_pacientes: true
 })
 
-const loading = ref(false)
-const errorMessage = ref('')
+onMounted(async () => {
+  try {
+    // 1. Cargar metadatos de módulos desde el backend
+    const response = await planesService.getModulosDisponibles()
+    if (response.success) {
+      modulosDisponibles.value = response.data
+    }
+  } catch (error) {
+    console.error('Error cargando módulos:', error)
+    errorMessage.value = 'Error al cargar la configuración de módulos'
+  } finally {
+    loadingInicial.value = false
+    
+    // 2. Inicializar form
+    if (props.plan) {
+      cargarDatosEdicion()
+    } else {
+      form.value = initForm()
+    }
+  }
+})
 
-const isEdit = computed(() => !!props.plan)
-
-const modulosDisponibles = [
-  { key: 'agenda', label: 'Agenda y Citas', descripcion: 'Calendario de citas' },
-  { key: 'historia_clinica', label: 'Historia Clínica', descripcion: 'Fichas médicas digitales' },
-  { key: 'facturacion', label: 'Facturación', descripcion: 'Emisión de facturas' },
-  { key: 'inventario', label: 'Inventario', descripcion: 'Control de stock' },
-  { key: 'reportes', label: 'Reportes', descripcion: 'Analytics y reportes' },
-  { key: 'whatsapp', label: 'WhatsApp', descripcion: 'Integración WhatsApp' },
-  { key: 'recordatorios', label: 'Recordatorios', descripcion: 'Recordatorios automáticos' }
-]
+function cargarDatosEdicion() {
+  // Copiar propiedades base
+  form.value = { ...initForm(), ...props.plan }
+  
+  // Asegurarse de que los booleanos sean booleanos reales
+  // El backend devuelve 1/0 a veces, dependiendo del driver PDO
+  Object.keys(form.value).forEach(key => {
+    if (key.startsWith('mod_') || key.startsWith('portal_') || key.startsWith('es_')) {
+      form.value[key] = !!form.value[key] // cast to boolean
+    }
+  })
+}
 
 function calcularDescuento() {
   if (!form.value.precio_mensual || !form.value.precio_anual) return 0
@@ -314,54 +380,20 @@ function calcularDescuento() {
   return Math.round(descuento)
 }
 
-onMounted(() => {
-  if (props.plan) {
-    // Modo edición - cargar datos
-    form.value = {
-      nombre: props.plan.nombre || '',
-      slug: props.plan.slug || '',
-      descripcion: props.plan.descripcion || '',
-      precio_mensual: props.plan.precio_mensual || 0,
-      precio_anual: props.plan.precio_anual || 0,
-      max_pacientes: props.plan.max_pacientes || 0,
-      max_profesionales: props.plan.max_profesionales || 0,
-      max_almacenamiento: props.plan.max_almacenamiento || 0,
-      modulos: props.plan.modulos || {
-        agenda: true,
-        historia_clinica: true,
-        facturacion: true,
-        inventario: false,
-        reportes: true,
-        whatsapp: false,
-        recordatorios: true
-      },
-      activo: props.plan.activo !== undefined ? props.plan.activo : true
-    }
-  }
-})
-
 async function handleSubmit() {
   errorMessage.value = ''
   loading.value = true
 
   try {
-    // Generar slug automático si está vacío
+    // Auto-generar slug
     if (!form.value.slug && form.value.nombre) {
-      form.value.slug = form.value.nombre
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '')
+      form.value.slug = form.value.nombre.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
     }
 
     let result
-
     if (isEdit.value) {
-      // Actualizar plan
       result = await planesStore.actualizarPlan(props.plan.id, form.value)
     } else {
-      // Crear nuevo plan
       result = await planesStore.crearPlan(form.value)
     }
 
@@ -371,8 +403,8 @@ async function handleSubmit() {
       errorMessage.value = result.message || 'Error al guardar plan'
     }
   } catch (error) {
-    console.error('Error submitting form:', error)
-    errorMessage.value = 'Error al procesar la solicitud'
+    console.error('Error:', error)
+    errorMessage.value = 'Error inesperado al procesar la solicitud'
   } finally {
     loading.value = false
   }

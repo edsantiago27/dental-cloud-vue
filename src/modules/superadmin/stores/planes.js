@@ -13,7 +13,7 @@ export const useSuperAdminPlanesStore = defineStore('superadminPlanes', () => {
 
   // Getters
   const planesActivos = computed(() => {
-    return planes.value.filter(p => p.activo)
+    return planes.value.filter(p => p.estado === 'activo')
   })
 
   const planesOrdenados = computed(() => {
@@ -148,17 +148,17 @@ export const useSuperAdminPlanesStore = defineStore('superadminPlanes', () => {
     error.value = null
 
     try {
-      const response = await planesService.activar(id)
+      const response = await planesService.activarPlan(id)
       
       if (response.success) {
         // Actualizar estado en la lista
         const plan = planes.value.find(p => p.id === id)
         if (plan) {
-          plan.activo = true
+          plan.estado = 'activo'
         }
 
         if (planActual.value?.id === id) {
-          planActual.value.activo = true
+          planActual.value.estado = 'activo'
         }
 
         return { success: true, message: response.message }
@@ -179,17 +179,17 @@ export const useSuperAdminPlanesStore = defineStore('superadminPlanes', () => {
     error.value = null
 
     try {
-      const response = await planesService.desactivar(id)
+      const response = await planesService.desactivarPlan(id)
       
       if (response.success) {
         // Actualizar estado en la lista
         const plan = planes.value.find(p => p.id === id)
         if (plan) {
-          plan.activo = false
+          plan.estado = 'inactivo'
         }
 
         if (planActual.value?.id === id) {
-          planActual.value.activo = false
+          planActual.value.estado = 'inactivo'
         }
 
         return { success: true, message: response.message }

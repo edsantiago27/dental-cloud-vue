@@ -86,6 +86,21 @@ export async function getEstadisticasClinica(id) {
   const response = await api.get(`superadmin/clinicas/${id}/estadisticas`);
   return response.data;
 }
+
+// Estadísticas generales de clínicas (stub - pendiente implementación backend)
+export async function getEstadisticas() {
+  // Por ahora retornamos valores mock para evitar errores
+  return {
+    success: true,
+    data: {
+      total: 0,
+      activas: 0,
+      suspendidas: 0,
+      trial: 0
+    }
+  }
+}
+
 export default {
   getClinicas,
   getClinica,
