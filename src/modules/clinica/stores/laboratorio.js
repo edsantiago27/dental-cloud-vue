@@ -132,6 +132,59 @@ export const useLaboratorioStore = defineStore('laboratorio', {
       }
     },
 
+    async fetchOrdenesInternas() {
+      this.loading = true
+      try {
+        const response = await laboratorioService.getOrdenesInternas()
+        if (response.success) {
+           // Si devolvemos todas las órdenes para el kanban sin paginación
+          this.ordenes = response.data
+        }
+        return response
+      } catch (err) {
+        console.error(err)
+        return { success: false }
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async updateEtapaOrden(id, etapa) {
+      try {
+        const response = await laboratorioService.updateEtapa(id, etapa)
+        if (response.success) {
+          // Actualizar localmente para feedback inmediato
+          const index = this.ordenes.findIndex(o => o.id === id)
+          if (index !== -1) {
+             this.ordenes[index].etapa_produccion = etapa
+             // Actualizar estado general si aplica
+             if (etapa === 'terminado') this.ordenes[index].estado = 'completado'
+          }
+          return { success: true }
+        }
+        return { success: false }
+      } catch (err) {
+        return { success: false }
+      }
+    },
+
+    async assignTechnician(id, tecnicoId) {
+       try {
+        const response = await laboratorioService.assignTechnician(id, tecnicoId)
+        if (response.success) {
+             const index = this.ordenes.findIndex(o => o.id === id)
+             if (index !== -1) {
+                this.ordenes[index].tecnico_asignado_id = tecnicoId
+                this.ordenes[index].tecnico = response.data.tecnico
+             }
+             return { success: true }
+        }
+        return { success: false }
+       } catch (err) {
+        return { success: false }
+       }
+    },
+
     setFiltros(filtros) {
         this.filtros = { ...this.filtros, ...filtros }
         this.fetchOrdenes()

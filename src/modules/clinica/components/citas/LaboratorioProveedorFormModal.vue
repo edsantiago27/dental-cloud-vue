@@ -77,6 +77,22 @@
             ></textarea>
           </div>
 
+          <!-- Switch Es Interno -->
+          <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
+            <div class="flex items-center">
+                <input 
+                  id="es_interno" 
+                  type="checkbox" 
+                  v-model="form.es_interno"
+                  class="w-5 h-5 text-violet-600 border-gray-300 rounded focus:ring-violet-500"
+                >
+            </div>
+            <label for="es_interno" class="flex-1 cursor-pointer">
+                <span class="block text-sm font-bold text-gray-900">Laboratorio Interno (In-House)</span>
+                <span class="block text-[10px] text-gray-400">Marque esta casilla si este laboratorio es parte de su misma clínica y gestiona la producción internamente.</span>
+            </label>
+          </div>
+
           <div class="flex items-center justify-end gap-6 pt-6">
             <button 
               type="button" 
@@ -124,6 +140,7 @@ const form = ref({
   telefono: '',
   email: '',
   direccion: '',
+  es_interno: false,
   estado: 'activo'
 })
 

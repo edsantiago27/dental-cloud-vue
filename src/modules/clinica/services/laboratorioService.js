@@ -50,5 +50,23 @@ export default {
   async deleteLaboratorio(id) {
     const response = await api.delete(`/laboratorio/proveedores/${id}`)
     return response.data
+  },
+
+  /**
+   * Laboratorio Interno (Kanban)
+   */
+  async getOrdenesInternas() {
+    const response = await api.get('/laboratorio/interno/kanban')
+    return response.data
+  },
+
+  async updateEtapa(id, etapa_produccion) {
+    const response = await api.patch(`/laboratorio/ordenes/${id}/etapa`, { etapa_produccion })
+    return response.data
+  },
+
+  async assignTechnician(id, tecnico_id) {
+    const response = await api.patch(`/laboratorio/ordenes/${id}/asignar`, { tecnico_id })
+    return response.data
   }
 }

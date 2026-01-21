@@ -33,6 +33,13 @@
             >
                 <i class="fas fa-building mr-2"></i> Proveedores
             </button>
+            <button 
+                @click="activeTab = 'interno'"
+                class="px-6 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all"
+                :class="activeTab === 'interno' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-400 hover:text-gray-600'"
+            >
+                <i class="fas fa-industry mr-2"></i> Producción Interna
+            </button>
         </div>
 
         <button
@@ -192,6 +199,15 @@
            </div>
        </div>
 
+       <div v-else-if="activeTab === 'interno'">
+           <LaboratorioKanban 
+             :ordenes="labStore.ordenes" 
+             :tecnicos="usuariosClinica"
+             @update-etapa="handleUpdateEtapa"
+             @assign-technician="handleAssignTechnician"
+           />
+       </div>
+
        <div v-else>
            <LaboratorioProveedorList @edit="openEditProveedor" />
        </div>
@@ -231,6 +247,7 @@ import LaboratorioFormModal from '@clinica/components/citas/LaboratorioFormModal
 import LaboratorioStatusModal from '@clinica/components/citas/LaboratorioStatusModal.vue'
 import LaboratorioProveedorList from '@clinica/components/citas/LaboratorioProveedorList.vue'
 import LaboratorioProveedorFormModal from '@clinica/components/citas/LaboratorioProveedorFormModal.vue'
+import LaboratorioKanban from '@clinica/components/laboratorio/LaboratorioKanban.vue'
 
 const labStore = useLaboratorioStore()
 const notify = useNotification()
@@ -298,7 +315,52 @@ function openEditProveedor(lab) {
 onMounted(() => {
   labStore.fetchOrdenes()
   labStore.fetchLaboratorios()
+  fetchUsuarios() // Necesitamos usuarios para el selector de técnicos
 })
+
+import usuariosService from '@clinica/services/usuariosService'
+
+const usuariosClinica = ref([]) // Se llenará con la API
+
+async function fetchUsuarios() {
+    try {
+        const response = await usuariosService.getUsuarios({ per_page: 100 }) // Traer todos para el select
+        // La respuesta de axios estandar es response.data -> { success: true, data: { data: [], ... } }
+        // Si usamos paginación de Laravel: response.data.data es el objeto Paginator, y .data es el array
+        if (response.data && response.data.data && Array.isArray(response.data.data.data)) {
+            usuariosClinica.value = response.data.data.data
+        } else if (response.data && Array.isArray(response.data.data)) {
+             // Caso sin paginación o diferente estructura
+             usuariosClinica.value = response.data.data
+        } else {
+             usuariosClinica.value = []
+        }
+    } catch (err) {
+        console.error('Error cargando usuarios', err)
+        usuariosClinica.value = []
+    }
+}
+
+import { watch } from 'vue'
+watch(activeTab, (newTab) => {
+    if (newTab === 'interno') {
+        labStore.fetchOrdenesInternas()
+    } else if (newTab === 'ordenes') {
+        labStore.fetchOrdenes()
+    }
+})
+
+async function handleUpdateEtapa({ id, etapa }) {
+    const res = await labStore.updateEtapaOrden(id, etapa)
+    if (res.success) notify.success('Etapa actualizada')
+    else notify.error('Error al actualizar etapa')
+}
+
+async function handleAssignTechnician({ id, tecnicoId }) {
+    const res = await labStore.assignTechnician(id, tecnicoId)
+    if (res.success) notify.success('Técnico asignado')
+    else notify.error('Error al asignar técnico')
+}
 </script>
 
 <style scoped>
