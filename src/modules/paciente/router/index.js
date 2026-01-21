@@ -58,6 +58,12 @@ export const pacienteRoutes = [
     beforeEnter: redirectIfAuthenticated,
     meta: { title: 'Recuperar Contraseña', requiresAuth: false }
   },
+  {
+    path: '/:clinicaSlug/reserva-express',
+    name: 'paciente-reserva-express',
+    component: () => import('../views/GuestAgenda.vue'),
+    meta: { title: 'Reserva de Hora', requiresAuth: false }
+  },
   
   // ============================================
   // 🔐 RUTAS PROTEGIDAS DE PACIENTE

@@ -14,6 +14,7 @@ export const useConfiguracionStore = defineStore('configuracion', () => {
     telefono: '',
     email: '',
     sitio_web: '',
+    slug: '', // ⭐ URL amigable
     
     // Datos Fiscales
     rut: '',

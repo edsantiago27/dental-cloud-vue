@@ -54,6 +54,9 @@
       <!-- Datos Fiscales -->
       <DatosFiscalesTab v-show="activeTab === 'fiscales'" />
 
+      <!-- 🆕 Portal Paciente (Marketing) -->
+      <PortalPacienteTab v-show="activeTab === 'marketing'" />
+
       <!-- 🆕 Plan y Suscripción -->
       <PlanSuscripcionTab v-show="activeTab === 'plan'" />
 
@@ -69,6 +72,7 @@ import DatosGeneralesTab from '@clinica/components/configuracion/DatosGeneralesT
 import LogoBrandingTab from '@clinica/components/configuracion/LogoBrandingTab.vue'
 import HorariosPreferenciasTab from '@clinica/components/configuracion/HorariosPreferenciasTab.vue'
 import DatosFiscalesTab from '@clinica/components/configuracion/DatosFiscalesTab.vue'
+import PortalPacienteTab from '@clinica/components/configuracion/PortalPacienteTab.vue'
 import PlanSuscripcionTab from '@clinica/components/configuracion/PlanSuscripcionTab.vue'
 
 const configuracionStore = useConfiguracionStore()
@@ -80,7 +84,8 @@ const tabs = [
   { id: 'branding', label: 'Logo y Branding', icon: 'fas fa-palette' },
   { id: 'horarios', label: 'Horarios y Preferencias', icon: 'fas fa-clock' },
   { id: 'fiscales', label: 'Datos Fiscales', icon: 'fas fa-file-invoice' },
-  { id: 'plan', label: 'Plan y Suscripción', icon: 'fas fa-crown' } // 🆕 Nuevo tab
+  { id: 'marketing', label: 'Portal Paciente', icon: 'fas fa-qrcode' }, // 🆕 Marketing
+  { id: 'plan', label: 'Plan y Suscripción', icon: 'fas fa-crown' }
 ]
 
 onMounted(async () => {
