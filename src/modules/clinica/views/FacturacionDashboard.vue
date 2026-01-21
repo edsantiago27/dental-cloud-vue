@@ -44,48 +44,62 @@
     <!-- Contenido -->
     <div v-else>
 
-      <!-- KPIs Principales -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <!-- Ingresos del Mes -->
-        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-md p-6 text-white">
-          <div class="flex items-center justify-between mb-2">
-            <p class="text-sm font-medium text-blue-100">Ingresos del Mes</p>
-            <i class="fas fa-dollar-sign text-2xl text-blue-200"></i>
+      <!-- Dashboard de Facturación Moderno -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Columna de KPIs (Izquierda) -->
+        <div class="lg:col-span-1 grid grid-cols-1 gap-4">
+          <!-- Card: Ingresos Totales -->
+          <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between group overflow-hidden relative">
+            <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-indigo-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-700"></div>
+            <div class="relative z-10">
+              <p class="text-xs font-black uppercase tracking-widest text-indigo-400 mb-1">Ingresos del Mes</p>
+              <h3 class="text-3xl font-black text-gray-900 leading-none mb-1">{{ formatMonto(dashboard.ingresos_mes) }}</h3>
+              <div class="flex items-center text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full w-fit">
+                <i class="fas fa-chart-line mr-1"></i>
+                +12.5% vs mes ant.
+              </div>
+            </div>
+            <div class="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-100 relative z-10">
+              <i class="fas fa-dollar-sign text-xl"></i>
+            </div>
           </div>
-          <p class="text-3xl font-bold">{{ formatMonto(dashboard.ingresos_mes) }}</p>
-          <p class="text-xs text-blue-100 mt-2">Total generado</p>
+
+          <!-- Card: Cobrado -->
+          <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between group overflow-hidden relative">
+            <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-emerald-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-700"></div>
+            <div class="relative z-10">
+              <p class="text-xs font-black uppercase tracking-widest text-emerald-400 mb-1">Efectivo Cobrado</p>
+              <h3 class="text-3xl font-black text-gray-900 leading-none mb-1">{{ formatMonto(dashboard.cobrado_mes) }}</h3>
+              <div class="flex items-center text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full w-fit">
+                <i class="fas fa-check-circle mr-1"></i>
+                {{ Math.round((dashboard.cobrado_mes / (dashboard.ingresos_mes || 1)) * 100) }}% recaudo
+              </div>
+            </div>
+            <div class="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-100 relative z-10">
+              <i class="fas fa-hand-holding-usd text-xl"></i>
+            </div>
+          </div>
+
+          <!-- Card: Pendiente -->
+          <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between group overflow-hidden relative">
+            <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-rose-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-700"></div>
+            <div class="relative z-10">
+              <p class="text-xs font-black uppercase tracking-widest text-rose-400 mb-1">Cuentas por Cobrar</p>
+              <h3 class="text-3xl font-black text-gray-900 leading-none mb-1">{{ formatMonto(dashboard.pendiente_mes) }}</h3>
+              <div class="flex items-center text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full w-fit">
+                <i class="fas fa-clock mr-1"></i>
+                {{ dashboard.cuentas_pendientes }} pendientes
+              </div>
+            </div>
+            <div class="w-12 h-12 bg-rose-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-rose-100 relative z-10">
+              <i class="fas fa-hourglass-half text-xl"></i>
+            </div>
+          </div>
         </div>
 
-        <!-- Cobrado -->
-        <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-md p-6 text-white">
-          <div class="flex items-center justify-between mb-2">
-            <p class="text-sm font-medium text-green-100">Cobrado</p>
-            <i class="fas fa-check-circle text-2xl text-green-200"></i>
-          </div>
-          <p class="text-3xl font-bold">{{ formatMonto(dashboard.cobrado_mes) }}</p>
-          <p class="text-xs text-green-100 mt-2">Pagos recibidos</p>
-        </div>
-
-        <!-- Pendiente -->
-        <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg shadow-md p-6 text-white">
-          <div class="flex items-center justify-between mb-2">
-            <p class="text-sm font-medium text-orange-100">Por Cobrar</p>
-            <i class="fas fa-clock text-2xl text-orange-200"></i>
-          </div>
-          <p class="text-3xl font-bold">{{ formatMonto(dashboard.pendiente_mes) }}</p>
-          <p class="text-xs text-orange-100 mt-2">Cuentas pendientes</p>
-        </div>
-
-        <!-- Total Cuentas -->
-        <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-md p-6 text-white">
-          <div class="flex items-center justify-between mb-2">
-            <p class="text-sm font-medium text-purple-100">Cuentas Activas</p>
-            <i class="fas fa-file-invoice text-2xl text-purple-200"></i>
-          </div>
-          <p class="text-3xl font-bold">{{ dashboard.total_cuentas }}</p>
-          <p class="text-xs text-purple-100 mt-2">
-            {{ dashboard.cuentas_pendientes }} pendientes
-          </p>
+        <!-- Gráfico de Evolución (Derecha) -->
+        <div class="lg:col-span-2">
+          <FacturacionChart :data="chartData" />
         </div>
       </div>
 
@@ -375,6 +389,7 @@ import CrearFinanciamientoModal from '@clinica/components/facturacion/CrearFinan
 import VerFinanciamientoModal from '@clinica/components/facturacion/VerFinanciamientoModal.vue'
 import PagarCuotaModal from '@clinica/components/facturacion/PagarCuotaModal.vue'
 import VerPagoModal from '@clinica/components/facturacion/VerPagoModal.vue'
+import FacturacionChart from '@clinica/components/facturacion/FacturacionChart.vue'
 
 const facturacionStore = useFacturacionStore()
 const notify = useNotification()
@@ -446,6 +461,18 @@ const tabs = computed(() => [
 
 // Computed
 const dashboard = computed(() => facturacionStore.dashboard)
+
+const chartData = computed(() => {
+  const history = dashboard.value.historial || []
+  if (history.length === 0) return null
+  
+  return {
+    labels: history.map(h => h.label),
+    facturado: history.map(h => h.facturado),
+    cobrado: history.map(h => h.cobrado)
+  }
+})
+
 const cuentas = computed(() => facturacionStore.cuentas.slice(0, 10))
 const pagos = computed(() => facturacionStore.pagos.slice(0, 10))
 const financiamientos = computed(() => facturacionStore.financiamientos)

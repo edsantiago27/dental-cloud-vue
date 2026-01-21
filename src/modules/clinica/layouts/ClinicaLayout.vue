@@ -37,6 +37,8 @@
       </footer>
 
     </div>
+    <!-- Botón de Soporte WhatsApp -->
+    <SupportFloatingButton />
 
   </div>
 </template>
@@ -46,6 +48,7 @@ import { ref, computed } from 'vue'
 import { useAuthStore } from '@shared/stores/auth'
 import Sidebar from '@shared/ui/Sidebar.vue'
 import Header from '@shared/ui/Header.vue'
+import SupportFloatingButton from '@shared/ui/SupportFloatingButton.vue'
 
 const authStore = useAuthStore()
 

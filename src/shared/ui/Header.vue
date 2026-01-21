@@ -68,14 +68,19 @@
              </div>
              <!-- List -->
              <div class="space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
-                <div v-for="notif in notifications" :key="notif.id" class="flex gap-4 p-4 rounded-3xl bg-gray-50/50 hover:bg-gray-50 transition-colors group cursor-pointer">
-                  <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-xs flex-shrink-0" :class="getNotifBg(notif.type)">
-                    <i :class="getNotifIcon(notif.type)"></i>
+                <div 
+                  v-for="notif in notifications" 
+                  :key="notif.id" 
+                  class="flex gap-4 p-4 rounded-3xl bg-gray-50/50 hover:bg-gray-50 transition-colors group cursor-pointer"
+                  @click="router.push('/notificaciones'); notificationsOpen = false"
+                >
+                  <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-xs flex-shrink-0" :class="getNotifBg(notif.data?.tipo)">
+                    <i :class="getNotifIcon(notif.data?.tipo)"></i>
                   </div>
                   <div class="flex-1 min-w-0">
-                    <p class="text-[11px] font-black text-gray-900 uppercase tracking-tight mb-1">{{ notif.title }}</p>
-                    <p class="text-[10px] font-bold text-gray-500 leading-relaxed line-clamp-2 uppercase tracking-tight opacity-70">{{ notif.message }}</p>
-                    <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest mt-2">{{ notif.time }}</p>
+                    <p class="text-[11px] font-black text-gray-900 uppercase tracking-tight mb-1 line-clamp-1">{{ notif.data?.tipo?.replace('_', ' ') || 'Sistema' }}</p>
+                    <p class="text-[10px] font-bold text-gray-500 leading-relaxed line-clamp-2 uppercase tracking-tight opacity-70">{{ notif.data?.mensaje }}</p>
+                    <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest mt-2">{{ formatTime(notif.created_at) }}</p>
                   </div>
                 </div>
              </div>
@@ -144,10 +149,12 @@
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@shared/stores/auth'
+import { useNotificationsStore } from '@clinica/stores/notificaciones'
 
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+const notificationsStore = useNotificationsStore()
 
 defineEmits(['toggle-sidebar'])
 
@@ -181,13 +188,8 @@ const pageSubtitle = computed(() => {
   return subtitles[route.path]
 })
 
-const notifications = ref([
-  { id: 1, type: 'cita', title: 'Nueva Cita Agendada', message: 'Juan Pérez - Hoy a las 14:00 por Evaluación General', time: 'Hace 5 MIN' },
-  { id: 2, type: 'pago', title: 'Abono Recibido', message: 'María González ha registrado un abono de $150.000', time: 'Hace 1 HR' },
-  { id: 3, type: 'alert', title: 'Stock Crítico', message: 'Los Guantes de Nitrilo (M) han llegado al límite mínimo', time: 'Hace 2 HRS' }
-])
-
-const unreadNotifications = computed(() => notifications.value.length)
+const notifications = computed(() => notificationsStore.notificaciones)
+const unreadNotifications = computed(() => notificationsStore.unreadCount)
 
 function toggleUserMenu() {
   userMenuOpen.value = !userMenuOpen.value
@@ -200,16 +202,30 @@ function toggleNotifications() {
 }
 
 function markAllAsRead() {
-  notifications.value = []
+  // En un sistema real esto llamaria a una API para marcar todas
+  // Por ahora dejamos que el usuario las limpie logicamente en el store o simplemente cerramos
   notificationsOpen.value = false
 }
 
 function getNotifIcon(type) {
-  return type === 'cita' ? 'fas fa-calendar' : type === 'pago' ? 'fas fa-wallet' : 'fas fa-exclamation-circle'
+  if (!type) return 'fas fa-info-circle'
+  return type === 'cita_proxima' ? 'fas fa-calendar' : type === 'pago_recibido' ? 'fas fa-wallet' : 'fas fa-exclamation-circle'
 }
 
 function getNotifBg(type) {
-  return type === 'cita' ? 'bg-blue-50 text-blue-600' : type === 'pago' ? 'bg-emerald-50 text-emerald-600' : 'bg-orange-50 text-orange-600'
+  if (!type) return 'bg-gray-50 text-gray-600'
+  return type === 'cita_proxima' ? 'bg-blue-50 text-blue-600' : type === 'pago_recibido' ? 'bg-emerald-50 text-emerald-600' : 'bg-orange-50 text-orange-600'
+}
+
+function formatTime(date) {
+  const now = new Date()
+  const then = new Date(date)
+  const diffInSeconds = Math.floor((now - then) / 1000)
+
+  if (diffInSeconds < 60) return 'Ahora'
+  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} min`
+  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} h`
+  return then.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
 }
 
 async function handleLogout() {

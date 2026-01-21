@@ -48,6 +48,14 @@
         :is-open="isOpen"
       />
 
+      <MenuItem
+        to="/notificaciones"
+        icon="fas fa-bell"
+        label="Notificaciones"
+        :is-open="isOpen"
+        :badge="notificationsStore.unreadCount > 0 ? notificationsStore.unreadCount : null"
+      />
+
       <!-- Sección: Gestión -->
       <div v-if="isOpen" class="px-5 py-6">
         <p class="text-[9px] font-black text-white/30 uppercase tracking-[0.3em]">Gestión Clínica</p>
@@ -218,9 +226,11 @@ import { useAuthStore } from '@shared/stores/auth'
 import MenuItem from './MenuItem.vue'
 import UpgradePlanModal from './UpgradePlanModal.vue'
 import { useConfiguracionStore } from '@clinica/stores/configuracion'
+import { useNotificationsStore } from '@clinica/stores/notificaciones'
 
 const configuracionStore = useConfiguracionStore()
 const authStore = useAuthStore()
+const notificationsStore = useNotificationsStore()
 
 // Props
 defineProps({
@@ -253,6 +263,9 @@ onMounted(async () => {
   if (!configuracionStore.configuracion.nombre) {
     await configuracionStore.fetchConfiguracion()
   }
+  
+  // Iniciar notificaciones
+  notificationsStore.startPolling()
 })
 </script>
 

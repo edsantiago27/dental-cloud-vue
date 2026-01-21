@@ -220,7 +220,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue', 'created'])
+const emit = defineEmits(['update:modelValue', 'saved'])
 
 const facturacionStore = useFacturacionStore()
 const pacientesStore = usePacientesStore()
@@ -365,7 +365,7 @@ async function handleSubmit() {
     console.groupEnd()
 
     if (response.success) {
-      emit('created', response.data)
+      emit('saved', response.data)
       handleClose()
       resetForm()
     } else {

@@ -253,6 +253,30 @@ export const useFacturacionStore = defineStore('facturacion', {
       }
     },
 
+    async emitirDTE(id, tipoDTE = 39) {
+      this.loading = true
+      try {
+        const response = await facturacionService.emitirDTE(id, tipoDTE)
+
+        if (response.success) {
+          const index = this.cuentas.findIndex(c => c.id === id)
+          if (index !== -1) {
+            this.cuentas[index] = response.data
+          }
+          if (this.cuentaActual && this.cuentaActual.id === id) {
+            this.cuentaActual = response.data
+          }
+        }
+
+        return response
+      } catch (error) {
+        console.error('Error al emitir DTE:', error)
+        return { success: false, message: error.message }
+      } finally {
+        this.loading = false
+      }
+    },
+
     // ==========================================
     // PAGOS
     // ==========================================

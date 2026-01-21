@@ -207,11 +207,11 @@ const props = defineProps({
   },
   cuenta: {
     type: Object,
-    required: true
+    default: null
   }
 })
 
-const emit = defineEmits(['update:modelValue', 'registered'])
+const emit = defineEmits(['update:modelValue', 'saved'])
 
 const facturacionStore = useFacturacionStore()
 
@@ -265,7 +265,7 @@ async function handleSubmit() {
     const response = await facturacionStore.registrarPago(form.value)
 
     if (response.success) {
-      emit('registered', response.data)
+      emit('saved', response.data)
       handleClose()
       resetForm()
     } else {

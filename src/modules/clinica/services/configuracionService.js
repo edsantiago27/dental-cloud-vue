@@ -54,11 +54,20 @@ export default {
     return response.data
   },
 
-  /**
-   * Actualizar datos fiscales
-   */
   async updateFiscales(data) {
     const response = await api.put('/configuracion/fiscales', data)
+    return response.data
+  },
+
+  /**
+   * Subir certificado digital
+   */
+  async uploadCertificado(formData) {
+    const response = await api.post('/configuracion/certificado', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
     return response.data
   }
 }

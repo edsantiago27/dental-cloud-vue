@@ -41,6 +41,12 @@ const router = createRouter({
           meta: { title: 'Dashboard' }
         },
         {
+          path: 'notificaciones',
+          name: 'clinica-notificaciones',
+          component: () => import('@clinica/views/Notificaciones.vue'),
+          meta: { title: 'Notificaciones' }
+        },
+        {
           path: 'pacientes',
           name: 'clinica-pacientes',
           component: () => import('@clinica/views/Pacientes.vue'),

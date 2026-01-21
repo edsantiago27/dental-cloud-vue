@@ -19,6 +19,12 @@ export const useConfiguracionStore = defineStore('configuracion', () => {
     // Datos Fiscales
     rut: '',
     razon_social: '',
+    facturacion_electronica: {
+      habilitado: false,
+      proveedor: 'simpleapi',
+      ambiente: 'certificacion',
+      api_key: ''
+    },
     
     // Branding
     logo: null,
@@ -109,7 +115,14 @@ export const useConfiguracionStore = defineStore('configuracion', () => {
           ...response.data,
           // Convertir valores booleanos si vienen como 0/1
           recordatorios_activos: response.data.recordatorios_activos === 1 || response.data.recordatorios_activos === true,
-          whatsapp_activo: response.data.whatsapp_activo === 1 || response.data.whatsapp_activo === true
+          whatsapp_activo: response.data.whatsapp_activo === 1 || response.data.whatsapp_activo === true,
+          
+          facturacion_electronica: response.data.facturacion_electronica || {
+              habilitado: false,
+              proveedor: 'simpleapi',
+              ambiente: 'certificacion',
+              api_key: ''
+          }
         }
         
         console.log('✅ Logo cargado:', {
@@ -314,6 +327,9 @@ export const useConfiguracionStore = defineStore('configuracion', () => {
       if (response.success && response.data) {
         configuracion.value.rut = response.data.rut
         configuracion.value.razon_social = response.data.razon_social
+        if (response.data.facturacion_electronica) {
+            configuracion.value.facturacion_electronica = response.data.facturacion_electronica
+        }
         
         return { success: true, data: response.data }
       }
@@ -322,6 +338,46 @@ export const useConfiguracionStore = defineStore('configuracion', () => {
     } catch (err) {
       console.error('❌ Error al actualizar datos fiscales:', err)
       error.value = err.response?.data?.message || 'Error al actualizar datos fiscales'
+      return { success: false, message: error.value }
+    } finally {
+      loading.value = false
+    }
+  }
+
+  /**
+   * Subir certificado digital
+   */
+  async function uploadCertificado(file, password = '') {
+    loading.value = true
+    error.value = null
+
+    try {
+      const formData = new FormData()
+      formData.append('certificado', file)
+      if (password) {
+        formData.append('password', password)
+      }
+
+      const response = await configuracionService.uploadCertificado(formData)
+      
+      console.log('✅ Certificado actualizado:', response)
+
+      if (response.success && response.data) {
+        // Actualizar el path en el estado
+        if (configuracion.value.facturacion_electronica) {
+          configuracion.value.facturacion_electronica.certificado_path = response.data.certificado_path
+          if (password) {
+            configuracion.value.facturacion_electronica.certificado_password = password
+          }
+        }
+        
+        return { success: true, data: response.data }
+      }
+
+      return { success: false, message: response.message }
+    } catch (err) {
+      console.error('❌ Error al subir certificado:', err)
+      error.value = err.response?.data?.message || 'Error al subir certificado'
       return { success: false, message: error.value }
     } finally {
       loading.value = false
@@ -352,6 +408,7 @@ export const useConfiguracionStore = defineStore('configuracion', () => {
     updateHorarios,
     updatePreferencias,
     updateFiscales,
+    uploadCertificado,
     clearError
   }
 })

@@ -77,6 +77,14 @@ export default {
   },
 
   /**
+   * Emitir DTE (Factura/Boleta) para la cuenta
+   */
+  async emitirDTE(id, tipoDTE = 39) {
+    const response = await api.post(`/facturacion/cuentas/${id}/emitir-dte`, { tipo_dte: tipoDTE })
+    return response.data
+  },
+
+  /**
    * Obtener cuenta de un paciente específico
    */
   async getCuentaPaciente(pacienteId) {

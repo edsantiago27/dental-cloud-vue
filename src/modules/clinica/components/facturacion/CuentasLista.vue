@@ -47,6 +47,12 @@
             <p v-if="cuenta.concepto" class="text-xs text-gray-500 mt-1">
               {{ cuenta.concepto }}
             </p>
+            <div v-if="cuenta.dte_estado" class="mt-2 flex items-center gap-1">
+              <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-50 text-indigo-600 border border-indigo-100 uppercase tracking-tighter">
+                <i class="fas fa-file-invoice mr-1 opacity-70"></i>
+                DTE Folio: {{ cuenta.dte_folio }}
+              </span>
+            </div>
           </div>
         </div>
 

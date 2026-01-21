@@ -41,6 +41,15 @@
             <span v-if="hasActiveFilters" class="ml-2 w-2 h-2 bg-blue-600 rounded-full inline-block"></span>
           </button>
 
+          <!-- Importar -->
+          <button
+            @click="showImportModal = true"
+            class="px-4 py-2 border border-blue-200 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition flex items-center gap-2"
+          >
+            <i class="fas fa-file-import"></i>
+            <span>Importar</span>
+          </button>
+
           <!-- Nuevo Tratamiento -->
           <button
             @click="openNewModal"
@@ -139,6 +148,14 @@
       @saved="handleSaved"
     />
 
+    <!-- Modal Importación -->
+    <ImportarMasivoModal 
+      v-model="showImportModal" 
+      type="tratamientos" 
+      title="Tratamientos"
+      @saved="tratamientosStore.fetchTratamientos()"
+    />
+
   </div>
 </template>
 
@@ -148,6 +165,7 @@ import { useTratamientosStore } from '@clinica/stores/tratamientos'
 import { useNotification } from '@shared/composables/useNotification'
 import TratamientosList from '@clinica/components/tratamientos/TratamientosList.vue'
 import TratamientoFormModal from '@clinica/components/tratamientos/TratamientoFormModal.vue'
+import ImportarMasivoModal from '@clinica/components/shared/ImportarMasivoModal.vue'
 
 const tratamientosStore = useTratamientosStore()
 const notify = useNotification()
@@ -157,6 +175,7 @@ const searchQuery = ref('')
 const showFilters = ref(false)
 const showFormModal = ref(false)
 const showEditModal = ref(false)
+const showImportModal = ref(false)
 const selectedTratamiento = ref(null)
 
 const filters = ref({

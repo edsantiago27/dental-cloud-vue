@@ -16,6 +16,13 @@
 
       <div class="flex items-center gap-3">
         <button
+          @click="showImportModal = true"
+          class="flex items-center gap-3 px-6 py-4 bg-white border border-gray-200 rounded-2xl text-[10px] font-black text-gray-600 uppercase tracking-widest hover:bg-gray-50 transition-all shadow-sm"
+        >
+          <i class="fas fa-file-import text-blue-500"></i>
+          Importar
+        </button>
+        <button
           @click="openNewModal"
           class="flex items-center gap-3 px-8 py-4 bg-violet-600 border border-violet-500 rounded-2xl text-[10px] font-black text-white uppercase tracking-widest hover:shadow-2xl hover:scale-105 transition-all shadow-lg shadow-violet-500/20 group"
         >
@@ -124,6 +131,14 @@
     <PacienteViewModal v-model="showPerfilModal" :paciente="selectedPaciente" @edit="openEditModal" />
     <PacienteViewModal v-model="showPacienteViewModal" :paciente="selectedPaciente" @edit="handleEditPaciente" @agendar="handleAgendarCita" />
     <CitaFormModal v-model="showCitaFormModal" :cita="editingCita" :initialData="citaFormData" @created="handleCitaCreated" @updated="handleCitaUpdated" />
+    
+    <!-- Modal Importación -->
+    <ImportarMasivoModal 
+      v-model="showImportModal" 
+      type="pacientes" 
+      title="Pacientes"
+      @saved="pacientesStore.fetchPacientes()"
+    />
   </div>
 </template>
 
@@ -136,6 +151,7 @@ import PacientesList from '@clinica/components/pacientes/PacientesList.vue'
 import PacienteFormModal from '@clinica/components/pacientes/PacienteFormModal.vue'
 import PacienteViewModal from '@clinica/components/pacientes/PacienteViewModal.vue'
 import CitaFormModal from '@clinica/components/citas/CitaFormModal.vue'
+import ImportarMasivoModal from '@clinica/components/shared/ImportarMasivoModal.vue'
 
 const pacientesStore = usePacientesStore()
 const notify = useNotification()
@@ -149,6 +165,7 @@ const showEditModal = ref(false)
 const showPacienteViewModal = ref(false)
 const selectedPaciente = ref(null)
 const showCitaFormModal = ref(false)
+const showImportModal = ref(false)
 const citaFormData = ref({})
 const editingCita = ref(null)
 

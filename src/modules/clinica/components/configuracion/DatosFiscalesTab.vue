@@ -44,6 +44,149 @@
 
       </div>
 
+      <hr class="my-6 border-gray-100">
+
+      <h4 class="text-md font-bold text-gray-800 mb-4 flex items-center gap-2">
+         <i class="fas fa-bolt text-amber-500"></i> Facturación Electrónica
+      </h4>
+
+      <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+         
+         <!-- Switch Habilitar -->
+         <div class="flex items-center gap-4 mb-6">
+            <div class="flex items-center">
+                <input 
+                  id="facturacion_activa" 
+                  type="checkbox" 
+                  v-model="form.facturacion_electronica.habilitado"
+                  class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                >
+            </div>
+            <label for="facturacion_activa" class="flex-1 cursor-pointer">
+                <span class="block text-sm font-bold text-gray-900">Habilitar Facturación Electrónica</span>
+                <span class="block text-xs text-gray-500">Permite emitir documentos tributarios DTE directamente desde el sistema.</span>
+            </label>
+         </div>
+
+         <div v-if="form.facturacion_electronica.habilitado" class="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
+             <!-- Proveedor -->
+             <div>
+               <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Proveedor Servicios</label>
+               <select 
+                 v-model="form.facturacion_electronica.proveedor"
+                 class="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+               >
+                  <option value="simpleapi">SimpleAPI (Recomendado)</option>
+                  <option value="sii" disabled>SII Gratuito (Próximamente)</option>
+                  <option value="libre_dte" disabled>LibreDTE (Próximamente)</option>
+               </select>
+             </div>
+
+             <!-- Ambiente -->
+             <div>
+               <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Ambiente</label>
+               <select 
+                 v-model="form.facturacion_electronica.ambiente"
+                 class="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+               >
+                  <option value="certificacion">Certificación / Pruebas</option>
+                  <option value="produccion">Producción</option>
+               </select>
+             </div>
+
+             <!-- API Key -->
+             <div class="md:col-span-2">
+               <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">API Key / Token</label>
+               <div class="relative">
+                   <input 
+                     v-model="form.facturacion_electronica.api_key"
+                     :type="showKey ? 'text' : 'password'"
+                     class="w-full pl-4 pr-12 py-3 bg-white border border-gray-300 rounded-lg text-sm font-mono focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                     placeholder="Ingrese su llave de API entregada por el proveedor"
+                   >
+                   <button 
+                     type="button"
+                     @click="showKey = !showKey"
+                     class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                   >
+                      <i class="fas" :class="showKey ? 'fa-eye-slash' : 'fa-eye'"></i>
+                   </button>
+               </div>
+               <p class="text-xs text-gray-500 mt-2">
+                 <i class="fas fa-lock mr-1"></i> Esta llave se almacena de forma segura.
+               </p>
+             </div>
+
+             <!-- Certificado Digital -->
+             <div class="md:col-span-2 mt-4 pt-4 border-t border-gray-200">
+               <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Certificado Digital (.pfx / .p12)</label>
+               
+               <div v-if="form.facturacion_electronica.certificado_path" class="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <i class="fas fa-certificate text-green-600"></i>
+                    <div>
+                      <span class="block text-xs font-bold text-green-800">Certificado Cargado</span>
+                      <span class="block text-[10px] text-green-600">El sistema ya cuenta con un certificado vigente.</span>
+                    </div>
+                  </div>
+                  <button 
+                    type="button" 
+                    @click="triggerFileSelect"
+                    class="text-[10px] font-black uppercase text-blue-600 hover:underline"
+                  >
+                    Actualizar
+                  </button>
+               </div>
+
+               <div v-else class="mb-4">
+                  <button 
+                    type="button"
+                    @click="triggerFileSelect"
+                    class="w-full py-8 border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center hover:border-blue-500 hover:bg-blue-50 transition-all group"
+                  >
+                    <i class="fas fa-upload text-2xl text-gray-300 group-hover:text-blue-500 mb-2"></i>
+                    <span class="text-xs font-bold text-gray-400 group-hover:text-blue-700">Seleccionar archivo .pfx o .p12</span>
+                  </button>
+               </div>
+
+               <input 
+                 ref="fileInput"
+                 type="file" 
+                 class="hidden" 
+                 accept=".pfx,.p12"
+                 @change="handleFileChange"
+               >
+
+               <!-- Password Certificado -->
+               <div v-if="certFile" class="mt-4 p-4 bg-amber-50 rounded-xl border border-amber-200 animate-fade-in">
+                  <div class="flex items-center gap-2 mb-3">
+                    <i class="fas fa-key text-amber-500"></i>
+                    <span class="text-xs font-bold text-amber-900">Archivo seleccionado: {{ certFile.name }}</span>
+                  </div>
+                  <label class="block text-[10px] font-black text-amber-700 uppercase tracking-widest mb-1">Contraseña del Certificado</label>
+                  <div class="flex gap-2">
+                    <input 
+                      v-model="certPassword"
+                      type="password"
+                      class="flex-1 px-4 py-2 bg-white border border-amber-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-amber-500"
+                      placeholder="Ingrese la contraseña"
+                    >
+                    <button 
+                      type="button"
+                      @click="uploadCert"
+                      :disabled="loadingCert"
+                      class="px-6 py-2 bg-amber-600 text-white text-[10px] font-black uppercase rounded-lg hover:bg-amber-700 transition-all disabled:opacity-50"
+                    >
+                      {{ loadingCert ? 'Subiendo...' : 'Cargar' }}
+                    </button>
+                  </div>
+                  <p class="text-[9px] text-amber-600 mt-2">Es necesaria para que el sistema pueda firmar los documentos.</p>
+               </div>
+             </div>
+         </div>
+
+      </div>
+
       <!-- Info adicional -->
       <div class="mt-6 p-4 bg-blue-50 rounded-lg">
         <div class="flex gap-3">
@@ -92,17 +235,67 @@ const configuracionStore = useConfiguracionStore()
 const notify = useNotification()
 
 const loading = ref(false)
+const loadingCert = ref(false)
+const showKey = ref(false)
+const fileInput = ref(null)
+const certFile = ref(null)
+const certPassword = ref('')
 
 const form = ref({
   rut: '',
-  razon_social: ''
+  razon_social: '',
+  facturacion_electronica: {
+      habilitado: false,
+      proveedor: 'simpleapi',
+      ambiente: 'certificacion',
+      api_key: '',
+      certificado_path: ''
+  }
 })
+
+function triggerFileSelect() {
+  fileInput.value.click()
+}
+
+function handleFileChange(e) {
+  const file = e.target.files[0]
+  if (file) {
+    certFile.value = file
+  }
+}
+
+async function uploadCert() {
+  if (!certFile.value) return
+  
+  loadingCert.value = true
+  try {
+    const res = await configuracionStore.uploadCertificado(certFile.value, certPassword.value)
+    if (res.success) {
+      notify.success('Certificado subido correctamente')
+      certFile.value = null
+      certPassword.value = ''
+    } else {
+      notify.error(res.message || 'Error al subir certificado')
+    }
+  } catch (error) {
+    notify.error('Error al subir certificado')
+  } finally {
+    loadingCert.value = false
+  }
+}
 
 // Cargar datos actuales
 watch(() => configuracionStore.configuracion, (config) => {
   form.value = {
     rut: config.rut || '',
-    razon_social: config.razon_social || ''
+    razon_social: config.razon_social || '',
+    facturacion_electronica: config.facturacion_electronica ? { ...config.facturacion_electronica } : {
+        habilitado: false,
+        proveedor: 'simpleapi',
+        ambiente: 'certificacion',
+        api_key: '',
+        certificado_path: ''
+    }
   }
 }, { immediate: true })
 
@@ -126,9 +319,21 @@ async function handleSubmit() {
 }
 
 function handleReset() {
+  const config = configuracionStore.configuracion;
   form.value = {
-    rut: configuracionStore.configuracion.rut || '',
-    razon_social: configuracionStore.configuracion.razon_social || ''
+    rut: config.rut || '',
+    razon_social: config.razon_social || '',
+    facturacion_electronica: config.facturacion_electronica ? { ...config.facturacion_electronica } : {
+        habilitado: false,
+        proveedor: 'simpleapi',
+        ambiente: 'certificacion',
+        api_key: ''
+    }
   }
 }
 </script>
+
+<style scoped>
+@keyframes fade-in { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fade-in { animation: fade-in 0.3s ease-out forwards; }
+</style>
