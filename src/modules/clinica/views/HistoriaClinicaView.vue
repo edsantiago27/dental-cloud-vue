@@ -129,6 +129,14 @@
         />
       </transition>
 
+      <!-- Odontodiagrama (Enterprise) -->
+      <transition name="fade" mode="out-in">
+        <Odontodiagrama
+          v-if="activeTab === 'odontodiagrama'"
+          :paciente-id="pacienteId"
+        />
+      </transition>
+
     </div>
 
     <!-- Quick Stats (Footer) -->
@@ -172,6 +180,7 @@ import Odontograma from '@clinica/components/historiaClinica/Odontograma.vue'
 import TimelineTratamientos from '@clinica/components/historiaClinica/TimelineTratamientos.vue'
 import FichaMedica from '@clinica/components/historiaClinica/FichaMedica.vue'
 import ArchivosClinica from '@clinica/components/historiaClinica/ArchivosClinica.vue'
+import Odontodiagrama from '@clinica/components/historiaClinica/Odontodiagrama.vue'
 
 const route = useRoute()
 const pacientesStore = usePacientesStore()
@@ -191,6 +200,11 @@ const tabs = [
     id: 'odontograma',
     label: 'Odontograma',
     icon: 'fas fa-tooth'
+  },
+  {
+    id: 'odontodiagrama',
+    label: 'Odontodiagrama',
+    icon: 'fas fa-teeth-open'
   },
   {
     id: 'timeline',
