@@ -205,12 +205,53 @@ async function recargarReportes() {
 }
 
 function exportarExcel() {
-  toast.info('Funcionalidad de exportar en desarrollo')
-  // TODO: Implementar exportación a Excel
+  toast.info('Generando archivo Excel...')
+  reportesStore.downloadCitasExcel(filtros.value)
+    .then(() => toast.success('Excel descargado correctamente'))
+    .catch(() => toast.error('Error al generar Excel'))
 }
 
 function imprimirReporte() {
-  window.print()
+  // Generar vista de impresión profesional
+  const printWindow = window.open('', '_blank')
+  const resumenData = resumen.value
+  
+  // Construir HTML evitando conflictos con el parser de Vue
+  const htmlParts = [
+    '<!DOCTYPE html>',
+    '<html>',
+    '<head>',
+    '<title>Reporte de Clínica<' + '/title>',
+    '<style>',
+    'body { font-family: "Segoe UI", sans-serif; padding: 40px; color: #333; }',
+    'h1 { color: #1e40af; border-bottom: 2px solid #1e40af; padding-bottom: 10px; }',
+    '.kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 30px 0; }',
+    '.kpi-card { background: #f8fafc; padding: 20px; border-radius: 8px; text-align: center; }',
+    '.kpi-value { font-size: 32px; font-weight: bold; color: #1e40af; }',
+    '.kpi-label { font-size: 12px; color: #64748b; text-transform: uppercase; margin-top: 5px; }',
+    '.footer { margin-top: 40px; font-size: 11px; color: #94a3b8; text-align: center; }',
+    '@media print { body { padding: 0; } }',
+    '<' + '/style>',
+    '<' + '/head>',
+    '<body>',
+    '<h1>📊 Reporte de Estadísticas<' + '/h1>',
+    '<p>Período: ' + (filtros.value.periodo || 'Mes actual') + '<' + '/p>',
+    '<div class="kpi-grid">',
+    '<div class="kpi-card"><div class="kpi-value">' + (resumenData.citas_mes || 0) + '<' + '/div><div class="kpi-label">Citas del Mes<' + '/div><' + '/div>',
+    '<div class="kpi-card"><div class="kpi-value">' + (resumenData.citas_completadas || 0) + '<' + '/div><div class="kpi-label">Completadas<' + '/div><' + '/div>',
+    '<div class="kpi-card"><div class="kpi-value">' + (resumenData.total_pacientes || 0) + '<' + '/div><div class="kpi-label">Pacientes Activos<' + '/div><' + '/div>',
+    '<div class="kpi-card"><div class="kpi-value">' + (resumenData.pacientes_nuevos_mes || 0) + '<' + '/div><div class="kpi-label">Pacientes Nuevos<' + '/div><' + '/div>',
+    '<div class="kpi-card"><div class="kpi-value">' + (resumenData.tasa_completacion || 0) + '%<' + '/div><div class="kpi-label">Tasa de Asistencia<' + '/div><' + '/div>',
+    '<div class="kpi-card"><div class="kpi-value">$' + (resumenData.ingresos_mes || 0).toLocaleString() + '<' + '/div><div class="kpi-label">Ingresos del Mes<' + '/div><' + '/div>',
+    '<' + '/div>',
+    '<div class="footer">Generado el ' + new Date().toLocaleDateString('es-CL') + ' a las ' + new Date().toLocaleTimeString('es-CL') + '<' + '/div>',
+    '<scr' + 'ipt>setTimeout(function() { window.print(); }, 500);<' + '/scr' + 'ipt>',
+    '<' + '/body>',
+    '<' + '/html>'
+  ]
+  
+  printWindow.document.write(htmlParts.join('\n'))
+  printWindow.document.close()
 }
 
 // Lifecycle

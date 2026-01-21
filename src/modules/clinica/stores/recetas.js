@@ -102,6 +102,20 @@ export const useRecetasStore = defineStore('recetas', {
         buscar: ''
       }
       this.fetchRecetas()
+    },
+
+    async downloadPdf(id) {
+      try {
+        await recetasService.downloadPdf(id)
+        return { success: true }
+      } catch (err) {
+        console.error('Error descargando PDF:', err)
+        return { success: false, message: 'Error al descargar PDF' }
+      }
+    },
+
+    getPdfUrl(id) {
+      return recetasService.getPdfUrl(id)
     }
   }
 })

@@ -30,5 +30,57 @@ export const reportesService = {
   async getDiasPopulares(params = {}) {
     const { data } = await api.get('/reportes/dias-populares', { params })
     return data
+  },
+
+  /**
+   * Descargar reporte de citas en Excel
+   */
+  async downloadCitasExcel(params = {}) {
+    const response = await api.get('/export/citas', {
+      params,
+      responseType: 'blob'
+    })
+    
+    const blob = new Blob([response.data], { 
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+    })
+    const url = window.URL.createObjectURL(blob)
+    
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `reporte_citas_${new Date().toISOString().split('T')[0]}.xlsx`
+    document.body.appendChild(link)
+    link.click()
+    
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
+    
+    return { success: true }
+  },
+
+  /**
+   * Descargar reporte de pacientes en Excel
+   */
+  async downloadPacientesExcel(params = {}) {
+    const response = await api.get('/export/pacientes', {
+      params,
+      responseType: 'blob'
+    })
+    
+    const blob = new Blob([response.data], { 
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+    })
+    const url = window.URL.createObjectURL(blob)
+    
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `reporte_pacientes_${new Date().toISOString().split('T')[0]}.xlsx`
+    document.body.appendChild(link)
+    link.click()
+    
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
+    
+    return { success: true }
   }
 }

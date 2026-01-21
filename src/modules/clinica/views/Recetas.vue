@@ -203,9 +203,14 @@ function formatDate(date) {
   return new Date(date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
-function downloadPDF(receta) {
-  const url = recetasStore.getPdfUrl(receta.id)
-  window.open(url, '_blank')
+async function downloadPDF(receta) {
+  notify.info('Descargando PDF...')
+  const result = await recetasStore.downloadPdf(receta.id)
+  if (result.success) {
+    notify.success('PDF descargado exitosamente')
+  } else {
+    notify.error(result.message || 'Error al descargar PDF')
+  }
 }
 
 onMounted(() => {

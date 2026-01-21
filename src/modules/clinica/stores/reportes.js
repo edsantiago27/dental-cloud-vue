@@ -279,6 +279,19 @@ export const useReportesStore = defineStore('reportes', () => {
     error.value = null
   }
 
+  /**
+   * Descargar reporte de citas en Excel
+   */
+  async function downloadCitasExcel(params = {}) {
+    try {
+      await reportesService.downloadCitasExcel(params)
+      return { success: true }
+    } catch (err) {
+      console.error('Error downloadCitasExcel:', err)
+      throw err
+    }
+  }
+
   // =============================================
   // RETURN (Public API)
   // =============================================
@@ -311,6 +324,7 @@ export const useReportesStore = defineStore('reportes', () => {
     fetchTodosLosReportes,
     actualizarFiltros,
     resetFiltros,
-    clearData
+    clearData,
+    downloadCitasExcel
   }
 })

@@ -74,24 +74,24 @@
       </div>
 
       <div v-else class="space-y-4">
-        <div 
-          v-for="item in presupuestosStore.presupuestos" 
-          :key="item.id"
-          class="group bg-gray-50/30 hover:bg-white p-6 rounded-[2rem] border border-transparent hover:border-gray-100 hover:shadow-2xl hover:scale-[1.01] transition-all flex flex-col lg:flex-row lg:items-center justify-between gap-6 cursor-pointer"
-          @click="openViewModal(item)"
-        >
+        <template v-for="item in presupuestosStore.presupuestos" :key="item?.id || Math.random()">
+          <div 
+            v-if="item"
+            class="group bg-gray-50/30 hover:bg-white p-6 rounded-[2rem] border border-transparent hover:border-gray-100 hover:shadow-2xl hover:scale-[1.01] transition-all flex flex-col lg:flex-row lg:items-center justify-between gap-6 cursor-pointer"
+            @click="openViewModal(item)"
+          >
           <div class="flex items-center gap-6 flex-1 min-w-0">
              <div class="w-16 h-16 bg-white rounded-2xl flex flex-col items-center justify-center border border-gray-100 group-hover:border-violet-100 transition-colors">
                 <span class="text-[8px] font-black text-gray-400 uppercase">Folio</span>
                 <span class="text-sm font-black text-gray-900 tracking-tighter">#{{ item.id }}</span>
              </div>
-             <div class="min-w-0 flex-1">
+              <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-3 mb-1">
-                   <h4 class="text-sm font-black text-gray-900 uppercase tracking-tight truncate">{{ item.paciente?.nombre }} {{ item.paciente?.apellido }}</h4>
+                   <h4 class="text-sm font-black text-gray-900 uppercase tracking-tight truncate">{{ item.paciente?.nombre || 'Paciente' }} {{ item.paciente?.apellido || 'N/A' }}</h4>
                    <span class="px-2 py-0.5 bg-violet-50 text-violet-600 text-[8px] font-black uppercase rounded-lg">{{ item.plan?.nombre || 'General' }}</span>
                 </div>
-                <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{{ formatDate(item.fecha) }} • Emitido por Dr. {{ item.emitido_por || 'DentalCloud' }}</p>
-             </div>
+                <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{{ formatDate(item.fecha) }} • Emitido por {{ item.emitido_por || 'DentalCloud' }}</p>
+              </div>
           </div>
 
           <div class="flex items-center gap-8">
@@ -114,7 +114,8 @@
                 </button>
              </div>
           </div>
-        </div>
+          </div>
+        </template>
       </div>
     </div>
 

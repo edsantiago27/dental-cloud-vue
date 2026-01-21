@@ -29,8 +29,8 @@
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             
-            <!-- Nombre -->
-            <div class="md:col-span-2">
+            <!-- Nombre y Razón Social -->
+            <div>
               <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">
                 Nombre de la Clínica *
               </label>
@@ -40,6 +40,19 @@
                 required
                 class="w-full px-6 py-4 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/5 rounded-2xl focus:bg-white dark:focus:bg-[#1a1a1a] focus:ring-2 focus:ring-violet-600/20 dark:focus:ring-orange-500/20 text-sm font-bold transition-all outline-none text-gray-900 dark:text-white"
                 placeholder="Ej. Clínica Dental Sonrisa"
+              >
+            </div>
+
+            <div>
+              <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">
+                Razón Social *
+              </label>
+              <input
+                v-model="form.razon_social"
+                type="text"
+                required
+                class="w-full px-6 py-4 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/5 rounded-2xl focus:bg-white dark:focus:bg-[#1a1a1a] focus:ring-2 focus:ring-violet-600/20 dark:focus:ring-orange-500/20 text-sm font-bold transition-all outline-none text-gray-900 dark:text-white"
+                placeholder="Ej. Dental Cloud SpA"
               >
             </div>
 
@@ -146,6 +159,18 @@
 
                 <div>
                   <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">
+                    Apellido del Admin *
+                  </label>
+                  <input
+                    v-model="form.admin_apellido"
+                    type="text"
+                    required
+                    class="w-full px-6 py-4 bg-gray-50 dark:bg-white/5 border border-transparent dark:border-white/5 rounded-2xl focus:bg-white dark:focus:bg-[#1a1a1a] focus:ring-2 focus:ring-violet-600/20 dark:focus:ring-orange-500/20 text-sm font-bold transition-all outline-none text-gray-900 dark:text-white"
+                  >
+                </div>
+
+                <div>
+                  <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">
                     Email del Admin *
                   </label>
                   <input
@@ -169,6 +194,18 @@
                     placeholder="Mínimo 8 caracteres"
                   >
                 </div>
+              </div>
+            </div>
+
+            <!-- Activación Inmediata -->
+            <div v-if="!isEdit" class="md:col-span-2 flex items-center gap-3 p-4 bg-violet-50 dark:bg-orange-500/5 rounded-2xl border border-violet-100 dark:border-orange-500/10 mb-2">
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" v-model="form.activar_inmediatamente" class="sr-only peer">
+                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-white/10 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-violet-600 dark:peer-checked:bg-orange-500"></div>
+              </label>
+              <div>
+                <span class="text-xs font-black text-gray-900 dark:text-white block uppercase tracking-tight">Activar inmediatamente</span>
+                <span class="text-[10px] text-gray-500 dark:text-gray-400">Saltar el periodo de trial de 30 días</span>
               </div>
             </div>
 
@@ -245,7 +282,8 @@ const form = ref({
   admin_nombre: '',
   admin_apellido: '',
   admin_email: '',
-  admin_password: ''
+  admin_password: '',
+  activar_inmediatamente: false
 })
 
 const loading = ref(false)

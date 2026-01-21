@@ -43,7 +43,9 @@ export const useLaboratorioStore = defineStore('laboratorio', {
       try {
         const response = await laboratorioService.getOrdenes(this.filtros)
         if (response.success) {
-          this.ordenes = response.data.data || response.data
+          // Si es paginado, los datos están en response.data.data
+          const data = response.data.data || response.data
+          this.ordenes = Array.isArray(data) ? data : []
           this.total = response.data.total || this.ordenes.length
           // Actualizar lista de laboratorios si viene en la respuesta
           if (response.laboratorios) this.laboratorios = response.laboratorios
@@ -64,6 +66,45 @@ export const useLaboratorioStore = defineStore('laboratorio', {
       }
     },
 
+    async createLaboratorio(data) {
+      try {
+        const response = await laboratorioService.createLaboratorio(data)
+        if (response.success) {
+          await this.fetchLaboratorios()
+          return { success: true, data: response.data }
+        }
+        return { success: false, message: response.message }
+      } catch (err) {
+        return { success: false, message: 'Error al registrar laboratorio' }
+      }
+    },
+
+    async updateLaboratorio(id, data) {
+      try {
+        const response = await laboratorioService.updateLaboratorio(id, data)
+        if (response.success) {
+          await this.fetchLaboratorios()
+          return { success: true }
+        }
+        return { success: false }
+      } catch (err) {
+        return { success: false }
+      }
+    },
+
+    async deleteLaboratorio(id) {
+      try {
+        const response = await laboratorioService.deleteLaboratorio(id)
+        if (response.success) {
+          await this.fetchLaboratorios()
+          return { success: true }
+        }
+        return { success: false }
+      } catch (err) {
+        return { success: false }
+      }
+    },
+
     async createOrden(data) {
       this.loading = true
       try {
@@ -78,9 +119,9 @@ export const useLaboratorioStore = defineStore('laboratorio', {
       }
     },
 
-    async updateEstadoOrden(id, estado) {
+    async updateEstadoOrden(id, estado, fechaEntrega = null) {
       try {
-        const response = await laboratorioService.updateEstado(id, estado)
+        const response = await laboratorioService.updateEstado(id, estado, fechaEntrega)
         if (response.success) {
           await this.fetchOrdenes()
           return { success: true }

@@ -195,6 +195,48 @@
                 >
               </div>
 
+              <!-- Ciudad -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Ciudad
+                </label>
+                <input
+                  v-model="form.ciudad"
+                  type="text"
+                  class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Santiago"
+                >
+              </div>
+
+              <!-- Previsión -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Previsión
+                </label>
+                <select
+                  v-model="form.prevision"
+                  class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">Seleccionar</option>
+                  <option value="fonasa">Fonasa</option>
+                  <option value="isapre">Isapre</option>
+                  <option value="particular">Particular</option>
+                </select>
+              </div>
+
+              <!-- Ocupación -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Ocupación
+                </label>
+                <input
+                  v-model="form.ocupacion"
+                  type="text"
+                  class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Estudiante, Ingeniero, etc."
+                >
+              </div>
+
               <!-- Estado -->
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">
@@ -209,17 +251,30 @@
                 </select>
               </div>
 
-              <!-- Observaciones (Full Width) -->
+              <!-- Notas (Full Width) -->
               <div class="md:col-span-2">
                 <label class="block text-sm font-medium text-gray-700 mb-1">
-                  Observaciones
+                  Notas / Antecedentes
                 </label>
                 <textarea
-                  v-model="form.observaciones"
+                  v-model="form.notas"
                   rows="3"
                   class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Notas adicionales sobre el paciente..."
                 ></textarea>
+              </div>
+
+              <!-- Info Portal Access -->
+              <div v-if="!isEdit && form.email" class="md:col-span-2 bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-start gap-4 animate-fade-in">
+                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 flex-shrink-0">
+                  <i class="fas fa-key"></i>
+                </div>
+                <div>
+                  <h4 class="text-xs font-bold text-blue-900 uppercase tracking-wider mb-1">Acceso al Portal</h4>
+                  <p class="text-[10px] text-blue-700 leading-relaxed">
+                    Al guardar, se enviará un email con las credenciales de acceso. La contraseña temporal será los primeros 6 dígitos de su RUT.
+                  </p>
+                </div>
               </div>
 
             </div>
@@ -301,8 +356,11 @@ const form = ref({
   fecha_nacimiento: '',
   genero: '',
   direccion: '',
+  ciudad: '',
+  prevision: '',
+  ocupacion: '',
   estado: 'activo',
-  observaciones: ''
+  notas: ''
 })
 
 // Computed
@@ -373,8 +431,11 @@ function resetForm() {
     fecha_nacimiento: '',
     genero: '',
     direccion: '',
+    ciudad: '',
+    prevision: '',
+    ocupacion: '',
     estado: 'activo',
-    observaciones: ''
+    notas: ''
   }
   errorMessage.value = ''
   v$.value.$reset()
@@ -391,8 +452,11 @@ function loadPaciente() {
       fecha_nacimiento: props.paciente.fecha_nacimiento || '',
       genero: props.paciente.genero || '',
       direccion: props.paciente.direccion || '',
+      ciudad: props.paciente.ciudad || '',
+      prevision: props.paciente.prevision || '',
+      ocupacion: props.paciente.ocupacion || '',
       estado: props.paciente.estado || 'activo',
-      observaciones: props.paciente.observaciones || ''
+      notas: props.paciente.notas || props.paciente.observaciones || ''
     }
   }
 }

@@ -40,5 +40,15 @@ export default {
   async createLaboratorio(data) {
     const response = await api.post('/laboratorio/proveedores', data)
     return response.data
+  },
+
+  async updateLaboratorio(id, data) {
+    const response = await api.put(`/laboratorio/proveedores/${id}`, data)
+    return response.data
+  },
+
+  async deleteLaboratorio(id) {
+    const response = await api.delete(`/laboratorio/proveedores/${id}`)
+    return response.data
   }
 }

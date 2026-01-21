@@ -101,7 +101,7 @@ const fechaEntrega = ref(new Date().toISOString().split('T')[0])
 async function confirmarCambio() {
     loading.value = true
     try {
-        const res = await labStore.updateEstadoOrden(props.orden.id, nuevoEstado.value)
+        const res = await labStore.updateEstadoOrden(props.orden.id, nuevoEstado.value, fechaEntrega.value)
         if (res.success) {
             notify.success(`Estado de orden ${props.orden.numero_orden} actualizado a ${nuevoEstado.value}`)
             emit('success')

@@ -48,23 +48,23 @@ export const useAuthStore = defineStore('auth', () => {
   // Checking de Módulos (Feature Gating)
   const hasModule = (moduleKey) => {
     if (!clinica.value || !clinica.value.plan) return false
-    // Si es Enterprise o Admin del sistema, acceso total (opcional)
-    // if (clinica.value.plan.slug === 'enterprise') return true 
     
-    // Verificar en la lista de módulos habilitados del plan
-    // El backend puede enviar esto como un array de strings o objeto bool
     const plan = clinica.value.plan
     
+    // ⭐ Enterprise bypass - Acceso total para plan premium
+    const slug = plan.slug?.toLowerCase()
+    if (slug === 'enterprise' || slug === 'premium') return true
+    
     // Check 1: Propiedad directa mod_X en el plan
-    if (plan[`mod_${moduleKey}`] === true || plan[`mod_${moduleKey}`] === 1) return true
+    if (plan[`mod_${moduleKey}`] === true || plan[`mod_${moduleKey}`] === 1 || plan[`mod_${moduleKey}`] === '1') return true
     
     // Check 2: Propiedad legacy modulo_X
-    if (plan[`modulo_${moduleKey}`] === true || plan[`modulo_${moduleKey}`] === 1) return true
+    if (plan[`modulo_${moduleKey}`] === true || plan[`modulo_${moduleKey}`] === 1 || plan[`modulo_${moduleKey}`] === '1') return true
     
-    // Check 3: Si viene como array de "modulos_habilitados" (depende de backend)
+    // Check 3: modulos_habilitados (lowercase comparison)
     if (Array.isArray(plan.modulos_habilitados)) {
-       // A veces es array de nombres legibles, a veces de keys. Asumimos keys por ahora o checkeamos ambos
-       return plan.modulos_habilitados.includes(moduleKey) || plan.modulos_habilitados.includes(`mod_${moduleKey}`)
+       const keyLower = moduleKey.toLowerCase()
+       return plan.modulos_habilitados.some(m => m.toLowerCase() === keyLower || m.toLowerCase() === `mod_${keyLower}`)
     }
 
     return false

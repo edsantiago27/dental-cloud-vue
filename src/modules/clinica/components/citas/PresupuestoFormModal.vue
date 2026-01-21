@@ -197,7 +197,8 @@ const notify = useNotification()
 const loading = ref(false)
 const form = ref({
   paciente_id: null,
-  fecha_vencimiento: '',
+  fecha_emision: new Date().toISOString().split('T')[0],
+  fecha_vencimiento: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
   observaciones: '',
   items: []
 })
@@ -216,7 +217,12 @@ const totals = computed(() => {
 function close() { emit('update:modelValue', false) }
 
 function addTreatmentRow() {
-  form.value.items.push({ tratamiento_id: null, cantidad: 1, precio: 0 })
+  form.value.items.push({ 
+    tratamiento_id: null, 
+    descripcion: '', 
+    cantidad: 1, 
+    precio: 0 
+  })
 }
 
 function removeRow(index) {
@@ -226,16 +232,30 @@ function removeRow(index) {
 function onTreatmentChange(index) {
   const item = form.value.items[index]
   const tr = tratamientosStore.tratamientos.find(t => t.id === item.tratamiento_id)
-  if (tr) item.precio = tr.precio || 0
+  if (tr) {
+    item.precio = tr.precio || 0
+    item.descripcion = tr.nombre || ''
+  }
 }
 
 async function save() {
   loading.value = true
   try {
+    // Mapear items a la estructura que espera el backend
+    const itemsProcesados = form.value.items.map(item => ({
+      tratamiento_id: item.tratamiento_id,
+      descripcion: item.descripcion || 'Servicio dental',
+      cantidad: item.cantidad,
+      precio_unitario: item.precio, // El backend espera precio_unitario
+      total: item.precio * item.cantidad
+    }))
+
     const res = await presupuestosStore.createPresupuesto({
       ...form.value,
+      items: itemsProcesados,
       total: totals.value.total
     })
+    
     if (res.success) {
       notify.success('Presupuesto emitido correctamente')
       emit('saved')
@@ -252,7 +272,13 @@ async function save() {
 
 watch(() => props.modelValue, (val) => {
   if (val) {
-    form.value = { paciente_id: null, fecha_vencimiento: '', observaciones: '', items: [] }
+    form.value = { 
+      paciente_id: null, 
+      fecha_emision: new Date().toISOString().split('T')[0],
+      fecha_vencimiento: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      observaciones: '', 
+      items: [] 
+    }
     if (pacientesStore.pacientes.length === 0) pacientesStore.fetchPacientes()
     if (tratamientosStore.tratamientos.length === 0) tratamientosStore.fetchTratamientos()
   }

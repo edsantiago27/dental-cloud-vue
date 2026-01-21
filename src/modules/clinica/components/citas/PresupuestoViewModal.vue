@@ -167,8 +167,13 @@ function formatAmount(amount) {
 }
 
 async function downloadPDF() {
-  const url = presupuestosStore.getPdfUrl(props.presupuesto.id)
-  window.open(url, '_blank')
+  notify.info('Descargando PDF...')
+  const result = await presupuestosStore.downloadPdf(props.presupuesto.id)
+  if (result.success) {
+    notify.success('PDF descargado exitosamente')
+  } else {
+    notify.error(result.message || 'Error al descargar PDF')
+  }
 }
 
 async function sendEmail() {

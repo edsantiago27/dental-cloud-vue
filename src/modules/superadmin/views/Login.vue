@@ -61,7 +61,7 @@
                     v-model="email"
                     type="email"
                     required
-                    placeholder="admin@dentalcloud.cl"
+                    placeholder="contacto@opendevs.cl"
                     class="w-full pl-14 pr-6 py-5 bg-white/[0.05] border border-white/5 focus:bg-white/[0.08] focus:border-violet-500/50 focus:ring-4 focus:ring-violet-500/10 rounded-2xl text-[11px] font-black text-white uppercase tracking-[0.1em] transition-all outline-none"
                     :disabled="loading"
                   >

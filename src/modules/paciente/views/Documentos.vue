@@ -226,6 +226,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import VerDocumento from '@paciente/components/VerDocumento.vue'
+import api from '../services/api'
 
 // State
 const documentos = ref([])
@@ -327,19 +328,23 @@ function cerrarModalVer() {
 
 async function descargarDocumento(doc) {
   try {
-    // Aquí iría la lógica para descargar el documento
-    // Por ahora solo mostramos un alert
-    alert(`Descargando: ${doc.nombre}`)
+    const response = await api.get(`/paciente/documentos/${doc.tipo}/${doc.id}/descargar`, { 
+      responseType: 'blob' 
+    })
     
-    // Ejemplo de implementación:
-    // const response = await api.get(`/paciente/documentos/${doc.id}/descargar`, { responseType: 'blob' })
-    // const url = window.URL.createObjectURL(new Blob([response.data]))
-    // const link = document.createElement('a')
-    // link.href = url
-    // link.setAttribute('download', doc.nombre)
-    // document.body.appendChild(link)
-    // link.click()
-    // link.remove()
+    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const link = document.createElement('a')
+    link.href = url
+    
+    // Generar nombre de archivo amigable
+    const extension = '.pdf'
+    const nombreArchivo = `${doc.nombre.replace(/[^a-z0-9]/gi, '_').toLowerCase()}${extension}`
+    
+    link.setAttribute('download', nombreArchivo)
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    window.URL.revokeObjectURL(url)
   } catch (err) {
     console.error('Error descargar:', err)
     alert('Error al descargar el documento')
@@ -350,45 +355,10 @@ async function cargarDocumentos() {
   loading.value = true
 
   try {
-    // Endpoint: GET /paciente/documentos
-    // const response = await api.get('/paciente/documentos')
-    // if (response.data.success) {
-    //   documentos.value = response.data.data
-    // }
-
-    // Datos de ejemplo mientras se implementa el endpoint
-    documentos.value = [
-      {
-        id: 1,
-        nombre: 'Consentimiento Informado - Extracción',
-        tipo: 'consentimiento',
-        estado: 'firmado',
-        descripcion: 'Consentimiento para extracción de pieza 18',
-        fecha_emision: '2025-01-10',
-        profesional: { nombre: 'Dr. Juan', apellido: 'Pérez' },
-        tamanio: 245000
-      },
-      {
-        id: 2,
-        nombre: 'Presupuesto Tratamiento Ortodóncico',
-        tipo: 'presupuesto',
-        estado: 'pendiente',
-        descripcion: 'Presupuesto detallado de tratamiento de ortodoncia',
-        fecha_emision: '2025-01-12',
-        profesional: { nombre: 'Dra. María', apellido: 'González' },
-        tamanio: 180000
-      },
-      {
-        id: 3,
-        nombre: 'Receta Antibiótico',
-        tipo: 'receta',
-        estado: 'firmado',
-        descripcion: 'Amoxicilina 500mg',
-        fecha_emision: '2025-01-11',
-        profesional: { nombre: 'Dr. Juan', apellido: 'Pérez' },
-        tamanio: 95000
-      }
-    ]
+    const response = await api.get('/paciente/documentos')
+    if (response.data.success) {
+      documentos.value = response.data.data
+    }
   } catch (err) {
     console.error('Error cargar documentos:', err)
   } finally {

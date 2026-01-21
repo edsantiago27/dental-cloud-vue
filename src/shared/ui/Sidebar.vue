@@ -111,7 +111,7 @@
         label="Laboratorio"
         :is-open="isOpen"
         :locked="!authStore.hasModule('laboratorio')"
-        @click="handleLockedClick('Laboratorio')"
+        @lock-click="handleLockedClick('Laboratorio')"
       />
 
       <MenuItem
@@ -120,7 +120,7 @@
         label="Firmas"
         :is-open="isOpen"
         :locked="!authStore.hasModule('consentimientos')"
-        @click="handleLockedClick('Consentimientos')"
+        @lock-click="handleLockedClick('Consentimientos')"
       />
 
       <div v-if="isOpen" class="px-5 py-6">
@@ -134,7 +134,7 @@
         label="Caja Diaria"
         :is-open="isOpen"
         :locked="!authStore.hasModule('caja')"
-        @click="handleLockedClick('Caja Diaria')"
+        @lock-click="handleLockedClick('Caja Diaria')"
       />
 
       <MenuItem
@@ -143,7 +143,7 @@
         label="Finanzas"
         :is-open="isOpen"
         :locked="!authStore.hasModule('facturacion')"
-        @click="handleLockedClick('Finanzas')"
+        @lock-click="handleLockedClick('Finanzas')"
       />
 
       <MenuItem
@@ -152,7 +152,7 @@
         label="Reportes"
         :is-open="isOpen"
         :locked="!authStore.hasModule('reportes_basicos')"
-        @click="handleLockedClick('Reportes')"
+        @lock-click="handleLockedClick('Reportes')"
       />
 
       <MenuItem
@@ -161,7 +161,7 @@
         label="Almacén"
         :is-open="isOpen"
         :locked="!authStore.hasModule('inventario')"
-        @click="handleLockedClick('Inventario')"
+        @lock-click="handleLockedClick('Inventario')"
       />
 
       <!-- Sector inferior: Configuración -->

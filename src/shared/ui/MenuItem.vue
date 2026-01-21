@@ -70,12 +70,21 @@ const props = defineProps({
   icon: { type: String, required: true },
   label: { type: String, required: true },
   isOpen: { type: Boolean, default: true },
-  badge: { type: [Number, String], default: null }
+  badge: { type: [Number, String], default: null },
+  locked: { type: Boolean, default: false }
 })
 
+const emit = defineEmits(['lock-click'])
 const router = useRouter()
 
-function navigate() {
+function navigate(e) {
+  e.preventDefault()
+  e.stopPropagation()
+  
+  if (props.locked) {
+    emit('lock-click', props.label)
+    return
+  }
   router.push(props.to)
 }
 </script>

@@ -173,8 +173,13 @@ function formatDate(date) {
 }
 
 async function downloadPDF() {
-  const url = recetasStore.getPdfUrl(props.receta.id)
-  window.open(url, '_blank')
+  notify.info('Descargando PDF...')
+  const result = await recetasStore.downloadPdf(props.receta.id)
+  if (result.success) {
+    notify.success('PDF descargado exitosamente')
+  } else {
+    notify.error(result.message || 'Error al descargar PDF')
+  }
 }
 
 async function sendEmail() {

@@ -329,9 +329,22 @@ async function loadData() {
     try {
         if (pacientesStore.pacientes.length === 0) await pacientesStore.fetchPacientes()
         const res = await consentimientosService.getConsentimientos()
-        documentos.value = res.data
+        // Manejar respuesta paginada de Laravel o array directo
+        if (res.success && res.data) {
+            // Si es paginado (res.data tiene propiedad data que es array)
+            if (res.data.data && Array.isArray(res.data.data)) {
+                documentos.value = res.data.data
+            } else if (Array.isArray(res.data)) {
+                documentos.value = res.data
+            } else {
+                documentos.value = []
+            }
+        } else {
+            documentos.value = []
+        }
     } catch (e) {
-        console.error(e)
+        console.error('Error cargando consentimientos:', e)
+        documentos.value = []
     } finally {
         loading.value = false
     }

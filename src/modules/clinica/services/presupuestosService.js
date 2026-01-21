@@ -59,7 +59,33 @@ export default {
   },
 
   /**
-   * Generar URL para descarga de PDF
+   * Descargar PDF de presupuesto (con autenticación)
+   */
+  async downloadPdf(id) {
+    const response = await api.get(`/presupuestos/${id}/pdf`, {
+      responseType: 'blob'
+    })
+    
+    // Crear URL temporal para el blob
+    const blob = new Blob([response.data], { type: 'application/pdf' })
+    const url = window.URL.createObjectURL(blob)
+    
+    // Crear link temporal y disparar descarga
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `presupuesto-${id}.pdf`
+    document.body.appendChild(link)
+    link.click()
+    
+    // Limpiar
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
+    
+    return { success: true }
+  },
+
+  /**
+   * Generar URL para descarga de PDF (legacy - sin auth)
    */
   getPdfUrl(id) {
     return `${api.defaults.baseURL}/presupuestos/${id}/pdf`

@@ -35,8 +35,10 @@ export const usePresupuestosStore = defineStore('presupuestos', {
       try {
         const response = await presupuestosService.getAll(this.filtros)
         if (response.success) {
-          this.presupuestos = response.data
-          this.total = response.total || response.data.length
+          // Si es paginado, los datos están en response.data.data
+          const data = response.data.data || response.data
+          this.presupuestos = Array.isArray(data) ? data : []
+          this.total = response.data.total || this.presupuestos.length
         }
       } catch (err) {
         this.error = 'Error al cargar presupuestos'
@@ -86,6 +88,29 @@ export const usePresupuestosStore = defineStore('presupuestos', {
         return { success: false, message: response.message }
       } catch (err) {
         return { success: false }
+      }
+    },
+
+    async downloadPdf(id) {
+      try {
+        await presupuestosService.downloadPdf(id)
+        return { success: true }
+      } catch (err) {
+        console.error('Error descargando PDF:', err)
+        return { success: false, message: 'Error al descargar PDF' }
+      }
+    },
+
+    getPdfUrl(id) {
+      return presupuestosService.getPdfUrl(id)
+    },
+
+    async enviarEmail(id) {
+      try {
+        const response = await presupuestosService.enviarEmail(id)
+        return response
+      } catch (err) {
+        return { success: false, message: 'Error al enviar email' }
       }
     },
 
