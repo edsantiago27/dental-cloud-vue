@@ -481,6 +481,82 @@
         </form>
       </div>
 
+      <!-- Tab: Facturación SII (DTE) -->
+      <div v-if="tabActual === 'sii'" class="space-y-8">
+        <div>
+          <h3 class="text-xl font-black text-gray-900 dark:text-white tracking-tight uppercase">Facturación Electrónica (SimpleAPI)</h3>
+          <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mt-1">Configuración para emisión de DTEs ante el SII</p>
+        </div>
+        
+        <form @submit.prevent="guardarSii" class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+             
+             <!-- Credenciales API -->
+             <div class="bg-gray-50 dark:bg-white/5 p-6 rounded-3xl border border-transparent dark:border-white/5 space-y-4">
+                 <h4 class="text-sm font-black text-gray-900 dark:text-white uppercase">Credenciales SimpleAPI</h4>
+                 
+                 <div>
+                  <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">Ambiente</label>
+                  <div class="flex gap-4">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" v-model="formSii.simpleapi_env" value="0" class="text-violet-600 focus:ring-violet-500">
+                        <span class="text-sm font-bold text-gray-700 dark:text-gray-300">Certificación / Pruebas</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" v-model="formSii.simpleapi_env" value="1" class="text-violet-600 focus:ring-violet-500">
+                        <span class="text-sm font-bold text-gray-700 dark:text-gray-300">Producción</span>
+                    </label>
+                  </div>
+                 </div>
+
+                 <div>
+                  <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">API Key</label>
+                  <input v-model="formSii.simpleapi_key" type="password" class="w-full px-6 py-4 bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-white/10 rounded-2xl text-sm font-bold outline-none text-gray-900 dark:text-white" placeholder="Token de SimpleAPI">
+                 </div>
+
+                 <div>
+                  <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">RUT Emisor (Empresa SaaS)</label>
+                  <input v-model="formSii.simpleapi_rut_emisor" type="text" class="w-full px-6 py-4 bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-white/10 rounded-2xl text-sm font-bold outline-none text-gray-900 dark:text-white" placeholder="76.xxx.xxx-x">
+                 </div>
+             </div>
+
+             <!-- Certificados -->
+             <div class="bg-gray-50 dark:bg-white/5 p-6 rounded-3xl border border-transparent dark:border-white/5 space-y-4">
+                <h4 class="text-sm font-black text-gray-900 dark:text-white uppercase">Certificados Digitales</h4>
+                
+                <div>
+                  <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">Archivo PFX (Firma Digital)</label>
+                  <input type="file" ref="filePfx" accept=".pfx,.p12" class="w-full px-4 py-3 bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-white/10 rounded-2xl text-sm">
+                  <p class="text-[10px] text-gray-400 mt-1">Sube solo si deseas actualizarlo.</p>
+                </div>
+
+                <div>
+                  <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">Contraseña PFX</label>
+                  <input v-model="formSii.simpleapi_cert_password" type="password" class="w-full px-6 py-4 bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-white/10 rounded-2xl text-sm font-bold outline-none text-gray-900 dark:text-white">
+                </div>
+
+                <hr class="border-gray-200 dark:border-white/10">
+
+                <div>
+                  <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1">Archivo CAF (Folios SII)</label>
+                  <input type="file" ref="fileCaf" accept=".xml" class="w-full px-4 py-3 bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-white/10 rounded-2xl text-sm">
+                  <p class="text-[10px] text-gray-400 mt-1">Archivo XML de folios descargado del SII.</p>
+                </div>
+             </div>
+
+          </div>
+
+          <div class="flex justify-end pt-6 border-t border-gray-50 dark:border-white/5">
+            <button
+              type="submit"
+              class="px-10 py-4 bg-violet-600 dark:bg-orange-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-violet-200 dark:shadow-orange-500/20 hover:scale-105 active:scale-95 transition-all"
+            >
+              <i class="fas fa-save mr-2"></i> Guardar Credenciales
+            </button>
+          </div>
+        </form>
+      </div>
+
     </div>
 
   </div>
@@ -498,7 +574,8 @@ const tabs = [
   { id: 'email', label: 'Email (SMTP)', icon: 'fas fa-envelope' },
   { id: 'pagos', label: 'Pasarelas de Pago', icon: 'fas fa-credit-card' },
   { id: 'integraciones', label: 'Integraciones (API)', icon: 'fas fa-plug' },
-  { id: 'facturacion', label: 'Facturación', icon: 'fas fa-file-invoice' },
+  { id: 'facturacion', label: 'Ciclos Facturación', icon: 'fas fa-calendar-alt' },
+  { id: 'sii', label: 'Factura Electrónica', icon: 'fas fa-file-invoice-dollar' },
   { id: 'notificaciones', label: 'Notificaciones', icon: 'fas fa-bell' }
 ]
 
@@ -507,57 +584,70 @@ const formEmail = ref({})
 const formPagos = ref({})
 const formIntegraciones = ref({})
 const formFacturacion = ref({})
+const formSii = ref({ simpleapi_env: '0' })
 const formNotificaciones = ref({})
+
+const filePfx = ref(null)
+const fileCaf = ref(null)
 
 const config = computed(() => configuracionStore.config)
 
 async function guardarGeneral() {
   const result = await configuracionStore.actualizarConfiguracion('general', formGeneral.value)
-  if (result.success) {
-    alert('Configuración general guardada exitosamente')
-  }
+  if (result.success) alert('Configuración general guardada exitosamente')
 }
 
 async function guardarEmail() {
   const result = await configuracionStore.actualizarConfiguracion('email', formEmail.value)
-  if (result.success) {
-    alert('Configuración de email guardada exitosamente')
-  }
+  if (result.success) alert('Configuración de email guardada exitosamente')
 }
 
 async function guardarFacturacion() {
   const result = await configuracionStore.actualizarConfiguracion('facturacion', formFacturacion.value)
-  if (result.success) {
-    alert('Configuración de facturación guardada exitosamente')
-  }
+  if (result.success) alert('Configuración de ciclos guardada exitosamente')
 }
 
 async function guardarPagos() {
   const result = await configuracionStore.actualizarConfiguracion('pagos', formPagos.value)
-  if (result.success) {
-    alert('Configuración de pagos guardada exitosamente')
-  }
+  if (result.success) alert('Configuración de pagos guardada exitosamente')
 }
 
 async function guardarIntegraciones() {
   const result = await configuracionStore.actualizarConfiguracion('integraciones', formIntegraciones.value)
-  if (result.success) {
-    alert('Configuración de integraciones guardada exitosamente')
-  }
+  if (result.success) alert('Configuración de integraciones guardada exitosamente')
 }
 
 async function guardarNotificaciones() {
   const result = await configuracionStore.actualizarConfiguracion('notificaciones', formNotificaciones.value)
-  if (result.success) {
-    alert('Configuración de notificaciones guardada exitosamente')
-  }
+  if (result.success) alert('Configuración de notificaciones guardada exitosamente')
+}
+
+async function guardarSii() {
+    const formData = new FormData()
+    formData.append('simpleapi_key', formSii.value.simpleapi_key || '')
+    formData.append('simpleapi_env', formSii.value.simpleapi_env || '0')
+    formData.append('simpleapi_rut_emisor', formSii.value.simpleapi_rut_emisor || '')
+    formData.append('simpleapi_cert_password', formSii.value.simpleapi_cert_password || '')
+    
+    if (filePfx.value && filePfx.value.files[0]) {
+        formData.append('file_pfx', filePfx.value.files[0])
+    }
+    
+    if (fileCaf.value && fileCaf.value.files[0]) {
+        formData.append('file_caf', fileCaf.value.files[0])
+    }
+
+    const result = await configuracionStore.guardarFacturacionElectronica(formData)
+    if (result.success) {
+        alert('Configuración de Facturación Electrónica guardada exitosamente')
+    } else {
+        alert('Error: ' + result.message)
+    }
 }
 
 async function probarEmail() {
   const result = await configuracionStore.testEmailConfig()
-  if (result.success) {
-    alert('Email de prueba enviado correctamente.')
-  }
+  if (result.success) alert('Email de prueba enviado correctamente.')
 }
 
 onMounted(async () => {
@@ -568,6 +658,10 @@ onMounted(async () => {
   formIntegraciones.value = { ...config.value.integraciones }
   formFacturacion.value = { ...config.value.facturacion }
   formNotificaciones.value = { ...config.value.notificaciones }
+  
+  if (config.value.simpleapi) {
+      formSii.value = { ...config.value.simpleapi }
+  }
 })
 </script>
 

@@ -39,6 +39,17 @@ export async function guardarPagos(data) {
   return response.data
 }
 
+// Guardar configuración de facturación electrónica (SimpleAPI)
+export async function guardarFacturacion(data) {
+  // Nota: data debe ser FormData para subir archivos
+  const response = await api.post('/superadmin/configuracion/facturacion', data, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+  return response.data
+}
+
 // Guardar configuración de integraciones
 export async function guardarIntegraciones(data) {
   const response = await api.post('/superadmin/configuracion/integraciones', data)
@@ -81,7 +92,9 @@ export default {
   guardarGeneral,
   guardarEmail,
   testEmail,
+  testEmail,
   guardarPagos,
+  guardarFacturacion,
   guardarIntegraciones,
   guardarSeguridad,
   listarAdmins,

@@ -93,6 +93,28 @@ export const useSuperAdminConfiguracionStore = defineStore('superadminConfigurac
     }
   }
 
+  async function guardarFacturacionElectronica(formData) {
+    loading.value = true
+    error.value = null
+
+    try {
+      // Usar servicio específico para Facturación que soporta FormData y POST
+      const response = await configuracionService.guardarFacturacion(formData)
+      
+      if (response.success) {
+        return { success: true, message: response.message }
+      }
+
+      return { success: false, message: response.message }
+    } catch (err) {
+      console.error('Error saving DTE config:', err)
+      error.value = err.response?.data?.message || 'Error al guardar configuración DTE'
+      return { success: false, message: error.value }
+    } finally {
+      loading.value = false
+    }
+  }
+
   async function testEmailConfig() {
     loading.value = true
     error.value = null
@@ -127,6 +149,7 @@ export const useSuperAdminConfiguracionStore = defineStore('superadminConfigurac
     // Actions
     fetchConfiguracion,
     actualizarConfiguracion,
+    guardarFacturacionElectronica,
     testEmailConfig,
     clearError
   }

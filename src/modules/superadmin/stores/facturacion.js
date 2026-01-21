@@ -250,6 +250,36 @@ export const useSuperAdminFacturacionStore = defineStore('superadminFacturacion'
     }
   }
 
+  async function emitirDte(id) {
+    loading.value = true
+    error.value = null
+
+    try {
+      const response = await facturacionService.emitirDte(id)
+      
+      if (response.success) {
+        // Actualizar factura en la lista
+        const index = facturas.value.findIndex(f => f.id === id)
+        if (index !== -1) {
+            // Asumimos que response.data contiene datos del DTE como folio
+            facturas.value[index].dte_estado = 'generada'
+            if (response.data?.data?.folio) {
+                facturas.value[index].dte_folio = response.data.data.folio
+            }
+        }
+        return { success: true, message: response.message }
+      }
+
+      return { success: false, message: response.message }
+    } catch (err) {
+      console.error('Error emitting DTE:', err)
+      error.value = err.response?.data?.message || 'Error al emitir DTE'
+      return { success: false, message: error.value }
+    } finally {
+      loading.value = false
+    }
+  }
+
   async function resumenMensual(meses = 12) {
     try {
       const response = await facturacionService.resumenMensual(meses)
@@ -332,6 +362,7 @@ export const useSuperAdminFacturacionStore = defineStore('superadminFacturacion'
     anularFactura,
     enviarRecordatorio,
     generarMasivo,
+    emitirDte,
     resumenMensual,
     exportarFacturas,
     actualizarFiltros,

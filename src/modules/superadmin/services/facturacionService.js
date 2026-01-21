@@ -43,6 +43,12 @@ export async function enviarRecordatorio(id) {
   return response.data;
 }
 
+// Emitir DTE (Factura Electrónica) con SimpleAPI
+export async function emitirDte(id) {
+  const response = await api.post(`/superadmin/facturacion/${id}/emitir`)
+  return response.data
+}
+
 // Generar facturas masivas
 export async function generarMasivo() {
   const response = await api.post('/superadmin/facturacion/generar-masivo')

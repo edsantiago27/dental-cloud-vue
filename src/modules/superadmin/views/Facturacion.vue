@@ -113,6 +113,7 @@
                 <th class="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Documento</th>
                 <th class="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Clínica Emisora</th>
                 <th class="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Monto Neto</th>
+                <th class="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">SII</th>
                 <th class="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Tracking de Pago</th>
                 <th class="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Draft</th>
               </tr>
@@ -134,6 +135,20 @@
                 <td class="px-8 py-5">
                   <p class="text-sm font-black text-emerald-600 dark:text-emerald-500">{{ formatMoney(factura.total) }}</p>
                   <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-tight">{{ factura.suscripcion?.tipo }}</p>
+                </td>
+                <td class="px-8 py-5 text-center">
+                   <div v-if="factura.dte_estado === 'generada'" class="flex flex-col items-center">
+                     <span class="text-xs font-bold text-blue-600 dark:text-blue-400">Folio {{ factura.dte_folio }}</span>
+                     <span class="text-[9px] uppercase font-black text-gray-400">Emitida</span>
+                   </div>
+                   <button
+                     v-else-if="factura.estado === 'pagada' || factura.estado === 'pendiente'" 
+                     @click="emitirDte(factura)"
+                     class="px-3 py-1 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg text-[9px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-md"
+                   >
+                     <i class="fas fa-file-invoice mr-1"></i> Emitir
+                   </button>
+                   <span v-else class="text-[10px] text-gray-400">-</span>
                 </td>
                 <td class="px-8 py-5">
                   <div class="flex items-center gap-3">
@@ -308,9 +323,39 @@ function cambiarPagina(pagina) {
   if (pagina !== '...') facturacionStore.cambiarPagina(pagina)
 }
 
+function handleFacturaGenerada() {
+  facturacionStore.fetchFacturas()
+  facturacionStore.fetchEstadisticas()
+  modalNuevaFactura.value = false
+}
+
+function handleMasivoGenerado() {
+  facturacionStore.fetchFacturas()
+  facturacionStore.fetchEstadisticas()
+  modalGenerarMasivo.value = false
+}
+
+function handlePagoRegistrado() {
+  facturacionStore.fetchFacturas()
+  facturacionStore.fetchEstadisticas()
+  modalRegistrarPago.value = { show: false, factura: null }
+}
+
 function mostrarModalRegistrarPago(factura) {
   modalRegistrarPago.value = { show: true, factura }
 }
+
+async function emitirDte(factura) {
+  if (!confirm(`¿Estás seguro de emitir el DTE para la factura ${factura.numero}? Esto enviará el documento al SII.`)) return
+
+  const result = await facturacionStore.emitirDte(factura.id)
+  if (result.success) {
+    alert('Factura emitida exitosamente al SII')
+  } else {
+    alert('Error al emitir: ' + result.message)
+  }
+}
+
 
 onMounted(async () => {
   await facturacionStore.fetchFacturas()
