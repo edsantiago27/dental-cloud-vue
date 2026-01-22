@@ -10,6 +10,16 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     // ============================================
+    // 🌐 MARKETING / LANDING
+    // ============================================
+    {
+      path: '/',
+      name: 'landing',
+      component: () => import('@/views/marketing/LandingPage.vue'),
+      meta: { title: 'DentalCloud - Gestión Inteligente', requiresAuth: false }
+    },
+
+    // ============================================
     // 🔐 RUTAS PÚBLICAS
     // ============================================
     {
@@ -191,24 +201,7 @@ const router = createRouter({
     // ============================================
 
     // Redirección raíz
-    {
-      path: '/',
-      redirect: () => {
-        const authStore = useAuthStore()
-        
-        if (!authStore.isAuthenticated) {
-          return '/login'
-        }
-        
-        if (authStore.isPacienteUser) {
-          return '/paciente/portal'
-        }
-        if (authStore.isSuperAdmin) {
-          return '/superadmin/dashboard'
-        }
-        return '/dashboard'
-      }
-    },
+
 
     // ============================================
     // ❌ 404 - PÁGINA NO ENCONTRADA
