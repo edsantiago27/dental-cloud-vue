@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import api from '@clinica/services/api'
 
 export const useNotificationsStore = defineStore('notifications', {
   state: () => ({
@@ -13,7 +13,7 @@ export const useNotificationsStore = defineStore('notifications', {
     async fetchNotificaciones() {
       this.loading = true
       try {
-        const response = await axios.get('/usuarios/me/notificaciones')
+        const response = await api.get('/usuarios/me/notificaciones')
         if (response.data.success) {
           this.notificaciones = response.data.data
           this.unreadCount = response.data.unread_count
@@ -27,7 +27,7 @@ export const useNotificationsStore = defineStore('notifications', {
 
     async marcarComoLeida(id) {
       try {
-        const response = await axios.post(`/usuarios/me/notificaciones/${id}/leer`)
+        const response = await api.post(`/usuarios/me/notificaciones/${id}/leer`)
         if (response.data.success) {
           // Actualizar estado localmente para rapidez
           const noti = this.notificaciones.find(n => n.id === id)

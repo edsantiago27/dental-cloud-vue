@@ -128,7 +128,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import axios from 'axios'
+import api from '@clinica/services/api'
 import { useNotification } from '@shared/composables/useNotification'
 
 const props = defineProps({
@@ -188,16 +188,9 @@ async function uploadFile() {
   formData.append('archivo', file.value)
 
   try {
-    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost/api'
-    const endpoint = `${baseUrl}/${props.type}/importar`
-    
-    // Configurar axios para usar el token de localStorage si existe
-    const token = localStorage.getItem('token')
-    
-    const response = await axios.post(endpoint, formData, {
+    const response = await api.post(`/${props.type}/importar`, formData, {
       headers: { 
-        'Content-Type': 'multipart/form-data',
-        'Authorization': `Bearer ${token}`
+        'Content-Type': 'multipart/form-data'
       }
     })
 

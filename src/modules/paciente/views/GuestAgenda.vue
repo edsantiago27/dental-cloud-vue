@@ -255,7 +255,7 @@ const canProceed = computed(() => {
 
 // Methods
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8001/api'
+  baseURL: import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api` : '/api'
 })
 
 function formatDate(date) {

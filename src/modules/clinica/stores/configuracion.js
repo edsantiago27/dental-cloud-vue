@@ -79,7 +79,7 @@ export const useConfiguracionStore = defineStore('configuracion', () => {
     
     // Fallback: construir URL si solo tenemos el filename
     if (configuracion.value.logo) {
-      const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8001'
+      const baseUrl = import.meta.env.VITE_API_URL || ''
       const url = `${baseUrl}/assets/uploads/logos/${configuracion.value.logo}`
       console.log('🖼️ Logo URL construida:', url)
       return url

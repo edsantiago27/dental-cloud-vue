@@ -6,7 +6,7 @@ import axios from 'axios'
  */
 export function createApiInstance(config = {}) {
   const instance = axios.create({
-    baseURL: config.baseURL || import.meta.env.VITE_API_URL || 'http://localhost:8001/api',
+    baseURL: config.baseURL || (import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api` : '/api'),
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
